@@ -8,7 +8,7 @@ export default class CowinApi {
         return new Promise((resolve, reject)=>{
             axios.get(endpoint).then(function (response) {
                 // handle success
-                return resolve(response)
+                return resolve(response.data)
               })
               .catch(function (error) {
                 // handle error
@@ -18,8 +18,9 @@ export default class CowinApi {
     }
     init(zip, date){
         return new Observable(subscriber => {
+            let req = this.req.bind(this);
             this.watcher = setInterval(()=>{
-                this.req(`${url}?pincode=${zip}&date=${date}` ).then(data=>{
+                req(`${url}?pincode=${zip}&date=${date}`).then(data=>{
                     subscriber.next(data);
                 }).catch(err=>{
                     subscriber.error(err);

@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import { Notifications } from "react-push-notification";
 import { Button, Col, Input, Row } from "antd";
@@ -6,12 +5,11 @@ import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
 import moment from "moment";
-import Grid from "antd/lib/card/Grid";
-const cowinApi = new CowinApi();
 
+const cowinApi = new CowinApi();
 const { Search } = Input;
 
-class App extends React.Component {
+class App extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
@@ -19,12 +17,19 @@ class App extends React.Component {
       zip: 560076,
     };
   }
+  componentWillUnmount() {
+    // unsubscribe to ensure no memory leaks
+    this.watcher.unsubscribe();
+}
+
   initWatch(zip) {
+    const self = this;
     this.watcher = cowinApi
       .init(this.state.zip, moment().format("DD-MM-YYYY"))
       .subscribe({
         next(data) {
           console.log(data);
+          self.setState({vaccineCalendar: data})
         },
         error(err) {
           console.error("something wrong occurred: " + err);
@@ -42,42 +47,49 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+       
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>Set alerts for Covid vaccine availability on a Zipcode</p>
+          <h2>Set alerts for Covid vaccine availability in your area</h2>
+        </header>
 
-          <Row >
-            <Col>
-              <Search
-                placeholder="Enter your zipcode"
-                allowClear
-                type="number"
-                enterButton={
-                  this.state.isWatchingAvailability
-                    ? `Tracking`
-                    : `Track Availability`
-                }
-                size="large"
-                loading={this.state.isWatchingAvailability}
-                onSearch={(txt) => {
-                  this.setState(
-                    { zip: txt, isWatchingAvailability: true },
-                    () => {
-                      this.initWatch();
-                    }
-                  );
-                }}
-              />
-            </Col>
-            <Col>
-              {this.state.isWatchingAvailability ? (
-                <Button type="primary" icon={<CloseCircleOutlined />} size={"large"} danger onClick={this.clearWatch.bind(this)}>
+        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+          <Col>
+            <Search
+              placeholder="Enter your zipcode"
+              allowClear
+              type="number"
+              value={this.state.zip}
+              enterButton={
+                this.state.isWatchingAvailability
+                  ? `Tracking`
+                  : `Track Availability`
+              }
+              size="large"
+              loading={this.state.isWatchingAvailability}
+              onSearch={(txt) => {
+                this.setState(
+                  { zip: txt, isWatchingAvailability: true },
+                  () => {
+                    this.initWatch();
+                  }
+                );
+              }}
+            />
+          </Col>
+          <Col>
+            {this.state.isWatchingAvailability ? (
+              <Button
+                type="primary"
+                icon={<CloseCircleOutlined />}
+                size={"large"}
+                danger
+                onClick={this.clearWatch.bind(this)}
+              >
                 Stop
               </Button>
-              ) : null}
-            </Col>
-          </Row>
-        </header>
+            ) : null}
+          </Col>
+        </Row>
       </div>
     );
   }
