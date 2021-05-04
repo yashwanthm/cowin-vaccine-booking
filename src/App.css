@@ -12,6 +12,11 @@
   height: 40vmin;
   pointer-events: none;
 } */
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {

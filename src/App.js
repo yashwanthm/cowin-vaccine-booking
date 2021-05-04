@@ -1,7 +1,7 @@
 import "./App.css";
 import { Notifications } from "react-push-notification";
 import addNotification from 'react-push-notification';
-import { Button, Col, Input, Row, Table } from "antd";
+import { Button, Col, Input, Row, Table, Tag } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
@@ -17,28 +17,24 @@ class App extends React.Component{
     super(props);
     this.state = {
       isWatchingAvailability: false,
-      vaccineCalendar: {"centers":[{"center_id":566035,"name":"APOLLO HOSPITAL 1","address":"Imperial Hospital Research Centre Limited","state_name":"Karnataka","district_name":"BBMP","block_name":"Bommanahalli","pincode":560076,"lat":12,"long":77,"from":"09:00:00","to":"16:00:00","fee_type":"Paid","sessions":[{"session_id":"8e36c9c2-1a4a-4d4c-b283-fe3c9b71d16d","date":"04-05-2021","available_capacity":0,"min_age_limit":18,"vaccine":"COVISHIELD","slots":["09:00AM-11:00AM","11:00AM-01:00PM","01:00PM-03:00PM","03:00PM-04:00PM"]},{"session_id":"cce55c05-a6d2-4531-90db-765afed8deb1","date":"05-05-2021","available_capacity":0,"min_age_limit":18,"vaccine":"COVISHIELD","slots":["09:00AM-11:00AM","11:00AM-01:00PM","01:00PM-03:00PM","03:00PM-04:00PM"]},{"session_id":"e2d4945a-a179-49b5-9ca4-5f5b83a292c3","date":"06-05-2021","available_capacity":0,"min_age_limit":18,"vaccine":"COVISHIELD","slots":["09:00AM-11:00AM","11:00AM-01:00PM","01:00PM-03:00PM","03:00PM-04:00PM"]},{"session_id":"0ee65cd7-39de-463a-b86b-6e25c62f1a8e","date":"07-05-2021","available_capacity":0,"min_age_limit":18,"vaccine":"COVISHIELD","slots":["09:00AM-11:00AM","11:00AM-01:00PM","01:00PM-03:00PM","03:00PM-04:00PM"]},{"session_id":"fa2509f2-11d3-4121-8631-8cdb7494b194","date":"08-05-2021","available_capacity":0,"min_age_limit":18,"vaccine":"COVISHIELD","slots":["09:00AM-11:00AM","11:00AM-01:00PM","01:00PM-03:00PM","03:00PM-04:00PM"]}],"vaccine_fees":[{"vaccine":"COVISHIELD","fee":"850"}]},{"center_id":677577,"name":"Narayanappa Settypalya Covaxin","address":"1st Main,12 Cross,BTM 2ND STAGE NS PALYA","state_name":"Karnataka","district_name":"BBMP","block_name":"South","pincode":560076,"lat":0,"long":1,"from":"09:00:00","to":"16:00:00","fee_type":"Free","sessions":[{"session_id":"9be393d1-cee7-484a-ab71-aaac899b301b","date":"09-05-2021","available_capacity":0,"min_age_limit":45,"vaccine":"COVAXIN","slots":["09:00AM-11:00AM","11:00AM-01:00PM","01:00PM-03:00PM","03:00PM-04:00PM"]}]}]},
-      zip: 560076,
+      vaccineCalendar: {},
+      zip: null,
       dates: []
     };
   }
-  componentDidMount(){
-    this.handleNotification()
-  }
   componentWillUnmount() {
     // unsubscribe to ensure no memory leaks
-    // this.watcher.unsubscribe();
+    if(this.watcher) this.watcher.unsubscribe();
   }
 
   handleNotification(){
     let centers = this.state.vaccineCalendar.centers;
-    // console.log(vaccineCalendar);
-    // return
+
     centers.map(c=>{
       c.sessions.map(s=>{
         if( 
           parseInt(s.min_age_limit)==18 && 
-          s.available_capacity > 0
+          parseInt(s.available_capacity) > 0
         ) {
           addNotification({
             title: c.name,
@@ -76,44 +72,65 @@ class App extends React.Component{
     cowinApi.clearWatch();
     this.setState({ isWatchingAvailability: false });
   }
+  renderTable(vaccineCalendar){
+    return <table style={{marginTop: 10}}>
+    {vaccineCalendar.centers.map((vc) => {
+      let noAvailability = true
+      vc.sessions.map(ss=>{
+        if(ss.available_capacity>0) noAvailability = false;
+      })
+      
+      return (
+        <tr key={vc.center_id}>
+          <td>
+            <h3>{vc.name}</h3>
+            {vc.block_name}
+            {vc.address}
+          </td>
+          
+            
+            {noAvailability ? <td>No Availability</td> : vc.sessions.map((s) => {
+              return (
+                <td key={s.session_id}>
+                  <h4>{s.date}</h4>
+                  <p>{s.vaccine}</p>
+                  <div>
+                    {parseInt(s.available_capacity) > 0
+                      ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
+                      : "No Availability"}
+                  </div>
+                  {parseInt(s.available_capacity > 0) ? (
+                    <div>
+                      <b>Available Slots</b>
+                      {s.slots.map((sl) => {
+                        return <Row>{sl}</Row>;
+                      })}
+                    </div>
+                  ) : null}
+                </td>
+              );
+            })}
+          
+
+          {/* </th> */}
+        </tr>
+      );
+    })}
+  </table>
+  }
   render() {
-    // let vaccineCalendar = new VaccineCalendar(this.state.vaccineCalendar);
-    // let dates = [];
-    // try {
-    //   dates = vaccineCalendar.dates();  
-    // } catch (error) {
-    //   console.log(dates);
-    // }
-    
-    // let columns = [
-    //   {
-    //     title: 'Hospital',
-    //     dataIndex: 'name',
-    //     key: 'name'
-    //   }
-    // ]
-    
-    // dates.map(d=>{
-    //   let obj = {
-    //     ttle: d,
-    //     dataIndex: 'date',
-    //     key: 'sessions'
-    //   };
-    //   console.log(obj);
-    //   columns.push();
-    // })
-    
+    const vaccineCalendar = this.state.vaccineCalendar;
     return (
       <div className="App">
         <Notifications />
         <header className="App-header">
-          <h2>Get notifications for Covid vaccine availability in your area</h2>
+          <h2>Get notifications for Covid-19 vaccine availability in your area</h2>
         </header>
 
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col>
             <Search
-              placeholder="Enter your zipcode"
+              placeholder="Enter your area pincode"
               allowClear
               type="number"
               // value={this.state.zip}
@@ -148,42 +165,9 @@ class App extends React.Component{
             ) : null}
           </Col>
         </Row>
+   
+        {vaccineCalendar && vaccineCalendar.centers ? this.renderTable(vaccineCalendar) : null}
         
-        
-        {/* <Table 
-          columns={columns} 
-          dataSource={this.state.vaccineCalendar.centers} 
-          expandable={{
-            expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
-            // rowExpandable: record => record.name !== 'Not Expandable',
-          }}
-          /> */}
-        <Col>
-          {this.state.vaccineCalendar.centers.map((vc) => {
-            return (
-              <Row key={vc.center_id}>
-                <Col>
-                  {vc.name}
-                  {vc.block_name}{vc.address}
-                  Timings: {vc.from}-{vc.to}
-                </Col>
-                <Col>
-                  {vc.sessions.map(s=>{
-                    return <Row>
-                      {s.date}
-                      {s.available_capacity}
-                      {s.min_age_limit}
-                      {s.vaccine}
-                      {s.slots.map(sl=>{
-                        return <Row>{sl}</Row>
-                      })}
-                    </Row>
-                  })}
-                </Col>
-              </Row>
-            );
-          })}
-        </Col>
       </div>
     );
   }

@@ -6,10 +6,15 @@ export default class VaccineCalendar {
 
   get dates() {
     let dates = [];
-    this._calendar.sessions.map((s) => {
-      if (dates.indexOf(s.date) === -1) dates.splice(s.date);
-    });
+    this._calendar.centers.map(c=>{
+        c.sessions.map((s) => {
+            if (dates.indexOf(s.date) === -1) dates.push(s.date);
+          });
+    })
     return dates;
+  }
+  get filterByMinAge(){
+      return []
   }
   
 }
