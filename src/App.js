@@ -1,11 +1,10 @@
 import "./App.css";
 import { Notifications } from "react-push-notification";
 import addNotification from 'react-push-notification';
-import { Button, Col, Input, Row, Table, Tag } from "antd";
+import { Button, Col, Input, Row } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
-import VaccineCalendar from './models/vaccineCalendar';
 
 import moment from "moment";
 
@@ -32,19 +31,18 @@ class App extends React.Component{
 
     centers.map(c=>{
       c.sessions.map(s=>{
-        if( 
-          parseInt(s.min_age_limit)==18 && 
+        if (
+          parseInt(s.min_age_limit) == 18 &&
           parseInt(s.available_capacity) > 0
         ) {
           addNotification({
             title: c.name,
             subtitle: `${c.address} has ${s.available_capacity} on ${s.date}`,
             message: `${c.name} has ${s.available_capacity} on ${s.date}`,
-            theme: 'darkblue',
-            native: true // when using native, your OS will handle theming.
-        });
+            theme: "darkblue",
+            native: true, // when using native, your OS will handle theming.
+          });
         }
-
       })
     })
   }
