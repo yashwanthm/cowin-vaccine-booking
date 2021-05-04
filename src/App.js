@@ -1,7 +1,7 @@
 import "./App.css";
 import { Notifications } from "react-push-notification";
 import addNotification from 'react-push-notification';
-import { Button, Col, Input, Row } from "antd";
+import { Button, Col, Input, Row, Radio } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
@@ -14,32 +14,50 @@ const { Search } = Input;
 class App extends React.Component{
   constructor(props) {
     super(props);
-    this.state = {
-      isWatchingAvailability: false,
-      vaccineCalendar: {},
-      zip: null,
-      dates: []
-    };
+    if(localStorage.appData){
+      this.state = Object.assign({}, JSON.parse(localStorage.appData))
+    }else{
+      this.state = {
+        isWatchingAvailability: false,
+        minAge: 18,
+        vaccineCalendar: {},
+        zip: null,
+        dates: []
+      };
+    }
+  }
+  componentDidMount(){
+    addNotification({
+      title: "Vaccine Notifications Enabled",
+      subtitle: `You now have notifications active for Covid vaccine availability`,
+      message: `You now have notifications active for Covid vaccine availability`,
+      native: true,
+      requireInteraction: true,
+    });
+  }
+  setStorage(){
+    let state = Object.assign({}, this.state)
+    delete state.vaccineCalendar;
+    delete state.isWatchingAvailability;
+    localStorage.appData = JSON.stringify(state);
   }
   componentWillUnmount() {
     // unsubscribe to ensure no memory leaks
     if(this.watcher) this.watcher.unsubscribe();
   }
-
   handleNotification(){
     let centers = this.state.vaccineCalendar.centers;
-
     centers.map(c=>{
       c.sessions.map(s=>{
         if (
-          parseInt(s.min_age_limit) == 18 &&
+          parseInt(s.min_age_limit) == this.state.minAge &&
           parseInt(s.available_capacity) > 0
         ) {
           addNotification({
             title: c.name,
             subtitle: `${c.address} has ${s.available_capacity} on ${s.date}`,
             message: `${c.name} has ${s.available_capacity} on ${s.date}`,
-            theme: "darkblue",
+            requireInteraction: true,
             native: true, // when using native, your OS will handle theming.
           });
         }
@@ -49,12 +67,14 @@ class App extends React.Component{
 
   initWatch(zip) {
     const self = this;
+    console.log('zip', self.zip);
     this.watcher = cowinApi
       .init(this.state.zip, moment().format("DD-MM-YYYY"))
       .subscribe({
         next(data) {
           self.setState({vaccineCalendar: data},()=>{
-            self.handleNotification()
+            self.handleNotification();
+            self.setStorage()
           })
         },
         error(err) {
@@ -116,19 +136,42 @@ class App extends React.Component{
     })}
   </table>
   }
+  setMinAge(e){
+    this.setState({minAge: e.target.value});
+  }
   render() {
     const vaccineCalendar = this.state.vaccineCalendar;
     return (
       <div className="App">
         <Notifications />
         <header className="App-header">
-          <h2>Get notifications for Covid-19 vaccine availability in your area</h2>
+          <h2>
+            Get notifications for Covid-19 vaccine availability in your area
+          </h2>
         </header>
+        <a href="https://www.cowin.gov.in/home" target="_blank">Visit Cowin to book a Vaccination Slot</a>
 
+        <Col style={{ marginBottom: 10 }}>
+          {this.state.isWatchingAvailability ? null : (
+            <h3>Select age group for getting notifications</h3>
+
+          )}
+          <Radio.Group
+            onChange={this.setMinAge.bind(this)}
+            value={this.state.minAge}
+            disabled={this.state.isWatchingAvailability}
+          >
+            <Radio value={18}>18 to 45 Years</Radio>
+            <Radio value={45}>45+ Years</Radio>
+          </Radio.Group>
+        </Col>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col>
             <Search
-              placeholder="Enter your area pincode"
+              disabled={this.state.isWatchingAvailability}
+              placeholder={
+                this.state.zip ? this.state.zip : "Enter your area pincode"
+              }
               allowClear
               type="number"
               // value={this.state.zip}
@@ -163,9 +206,10 @@ class App extends React.Component{
             ) : null}
           </Col>
         </Row>
-   
-        {vaccineCalendar && vaccineCalendar.centers ? this.renderTable(vaccineCalendar) : null}
-        
+
+        {vaccineCalendar && vaccineCalendar.centers
+          ? this.renderTable(vaccineCalendar)
+          : null}
       </div>
     );
   }
