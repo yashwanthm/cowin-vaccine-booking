@@ -25,7 +25,7 @@ export default class CowinApi {
                 }).catch(err=>{
                     subscriber.error(err);
                 });
-            }, 1000)
+            }, 500)
           });
     }
     clearWatch(){
