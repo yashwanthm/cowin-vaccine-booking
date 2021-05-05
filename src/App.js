@@ -8,27 +8,35 @@ import CowinApi from "./models";
 
 import moment from "moment";
 
+
 const cowinApi = new CowinApi();
 const { Search } = Input;
 
 class App extends React.Component{
   constructor(props) {
     super(props);
-    if(localStorage.appData){
-      this.state = Object.assign({}, JSON.parse(localStorage.appData))
-    }else{
+    // if(localStorage.appData){
+    //   this.state = Object.assign({}, JSON.parse(localStorage.appData))
+    // }else{
       this.state = {
         isWatchingAvailability: false,
         minAge: 18,
         vaccineCalendar: {},
         zip: null,
+        mobile: null,
         dates: []
       };
-    }
+    // }
   }
   componentDidMount(){
+    // N.main();
+    // new Notification('To do list', { body: 'text', sound: './notif.ogg', silent: false });
+ 
+    this.notifSound = document.getElementById('notif');
+    this.notifSound.play();
     addNotification({
       title: "Vaccine Notifications Enabled",
+      // sound: audio,
       subtitle: `You now have notifications active for Covid vaccine availability`,
       message: `You now have notifications active for Covid vaccine availability`,
       native: true,
@@ -53,10 +61,11 @@ class App extends React.Component{
           parseInt(s.min_age_limit) == this.state.minAge &&
           parseInt(s.available_capacity) > 0
         ) {
+          this.notifSound.play();
           addNotification({
             title: c.name,
-            subtitle: `${c.address} has ${s.available_capacity} on ${s.date}`,
-            message: `${c.name} has ${s.available_capacity} on ${s.date}`,
+            subtitle: `${c.pincode} ${c.address} has ${s.available_capacity} on ${s.date}`,
+            message: `${c.pincode} ${c.name} has ${s.available_capacity} on ${s.date}`,
             requireInteraction: true,
             native: true, // when using native, your OS will handle theming.
           });
@@ -101,7 +110,7 @@ class App extends React.Component{
       return (
         <tr key={vc.center_id}>
           <td>
-            <h3>{vc.name}</h3>
+            <h3>{vc.pincode} {vc.name}</h3>
             {vc.block_name}
             {vc.address}
           </td>
@@ -139,17 +148,31 @@ class App extends React.Component{
   setMinAge(e){
     this.setState({minAge: e.target.value});
   }
+  generateOtp(){
+    cowinApi.generateOtp(this.state.mobile).then(data=>{
+      console.log(data);
+    }).catch(err=>{
+      console.log(err);
+    })
+  }
   render() {
     const vaccineCalendar = this.state.vaccineCalendar;
     return (
       <div className="App">
+        
         <Notifications />
+        <audio id="notif">
+          <source src="https://assets.coderrocketfuel.com/pomodoro-times-up.mp3"></source>
+        </audio>
         <header className="App-header">
           <h2>
             Get notifications for Covid-19 vaccine availability in your area
           </h2>
         </header>
         <a href="https://www.cowin.gov.in/home" target="_blank">Visit Cowin to book a Vaccination Slot</a>
+
+
+        
 
         <Col style={{ marginBottom: 10 }}>
           {this.state.isWatchingAvailability ? null : (
@@ -167,6 +190,13 @@ class App extends React.Component{
         </Col>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col>
+            {/* <Input type="number" size="large" placeholder='Mobile' onChange={e=>{
+              this.setState({ mobile: e.target.value }, () => {
+                if (e.target.value.toString().length === 10) {
+                  this.generateOtp();
+                }
+              });
+            }}/> */}
             <Search
               disabled={this.state.isWatchingAvailability}
               placeholder={
@@ -206,7 +236,7 @@ class App extends React.Component{
             ) : null}
           </Col>
         </Row>
-
+        
         {vaccineCalendar && vaccineCalendar.centers
           ? this.renderTable(vaccineCalendar)
           : null}

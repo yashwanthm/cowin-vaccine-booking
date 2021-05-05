@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Observable } from 'rxjs';
 
 const url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin`
-
+const secret = "U2FsdGVkX19mD56KTNfQsZgXJMwOG7u/6tuj0Qvil1LEjx783oxHXGUTDWYm+XMYVGXPeu+a24sl5ndEKcLTUQ==";
 export default class CowinApi {
     req(endpoint){
         return new Promise((resolve, reject)=>{
@@ -31,5 +31,17 @@ export default class CowinApi {
     clearWatch(){
         console.log(this);
         clearInterval(this.watcher);
+    }
+    async generateOtp(mobile){
+        return await axios.post('https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP', {
+            mobile: mobile,
+            secret
+          })
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
     }
 }
