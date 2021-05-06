@@ -1,6 +1,5 @@
 import "./App.css";
-import { Notifications } from "react-push-notification";
-import addNotification from 'react-push-notification';
+// import { Notifications } from "react-push-notification";
 import { Button, Col, Input, Row, Radio } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
@@ -29,19 +28,55 @@ class App extends React.Component{
     // }
   }
   componentDidMount(){
-    // N.main();
-    // new Notification('To do list', { body: 'text', sound: './notif.ogg', silent: false });
- 
-    this.notifSound = document.getElementById('notif');
-    this.notifSound.play();
-    addNotification({
-      title: "Vaccine Notifications Enabled",
-      // sound: audio,
-      subtitle: `You now have notifications active for Covid vaccine availability`,
-      message: `You now have notifications active for Covid vaccine availability`,
-      native: true,
-      requireInteraction: true,
+    Notification.requestPermission(function (status) {
+      console.log("Notification permission status:", status);
     });
+
+    // if ('OTPCredential' in window) {
+    window.addEventListener("DOMContentLoaded", (e) => {
+      // const input = document.querySelector('input[autocomplete="one-time-code"]');
+      // if (!input) return;
+      const ac = new AbortController();
+      // const form = input.closest('form');
+      // if (form) {
+      //   form.addEventListener('submit', e => {
+      //     ac.abort();
+      //   });
+      // }
+      // navigator.credentials
+      //   .get({
+      //     otp: { transport: ["sms"] },
+      //     signal: ac.signal,
+      //   })
+      //   .then((otp) => {
+      //     console.log("otp is ", otp);
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
+    });
+
+    this.notifSound = document.getElementById("notif");
+    this.notifSound.play();
+
+      let opts = {
+        title: "Vaccine Notifications Enabled",
+        body: `You now have notifications active for Covid vaccine availability`,
+        native: true,
+        vibrate: [300, 100, 400]
+      };
+      try {
+        Notification.requestPermission(function(result) {
+          if (result === 'granted') {
+            navigator.serviceWorker.ready.then(function(registration) {
+              registration.showNotification(opts.title, opts);
+            });
+          }
+        });
+        new Notification(opts.title, opts);  
+      } catch (error) {
+        console.log(error);
+      }
   }
   setStorage(){
     let state = Object.assign({}, this.state)
@@ -62,13 +97,22 @@ class App extends React.Component{
           parseInt(s.available_capacity) > 0
         ) {
           this.notifSound.play();
-          addNotification({
+
+          let opts = {
             title: c.name,
-            subtitle: `${c.pincode} ${c.address} has ${s.available_capacity} on ${s.date}`,
-            message: `${c.pincode} ${c.name} has ${s.available_capacity} on ${s.date}`,
-            requireInteraction: true,
-            native: true, // when using native, your OS will handle theming.
+            body: `${c.pincode} ${c.address} has ${s.available_capacity} on ${s.date}`,
+            vibrate: [300, 100, 400],
+            native: true
+          }
+          Notification.requestPermission(function(result) {
+            if (result === 'granted') {
+              navigator.serviceWorker.ready.then(function(registration) {
+                registration.showNotification(opts.message, opts);
+              });
+            }
           });
+          new Notification(opts.title, opts);  
+          
         }
       })
     })
@@ -160,7 +204,7 @@ class App extends React.Component{
     return (
       <div className="App">
         
-        <Notifications />
+        {/* <Notifications /> */}
         <audio id="notif">
           <source src="https://assets.coderrocketfuel.com/pomodoro-times-up.mp3"></source>
         </audio>
@@ -244,5 +288,4 @@ class App extends React.Component{
     );
   }
 }
-
 export default App;
