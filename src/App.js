@@ -7,7 +7,7 @@ import CowinApi from "./models";
 
 import moment from "moment";
 
-
+console.log('asdad');
 const cowinApi = new CowinApi();
 const { Search } = Input;
 
@@ -19,41 +19,55 @@ class App extends React.Component{
     // }else{
       this.state = {
         isWatchingAvailability: false,
+        isAuthenticated: false,
         minAge: 18,
+        beneficiaries: [],
         vaccineCalendar: {},
         zip: null,
+        enableOtp: false,
         mobile: null,
         dates: []
       };
     // }
   }
-  componentDidMount(){
-    Notification.requestPermission(function (status) {
-      console.log("Notification permission status:", status);
-    });
+  async waitForOtp(){
 
-    // if ('OTPCredential' in window) {
-    window.addEventListener("DOMContentLoaded", (e) => {
-      // const input = document.querySelector('input[autocomplete="one-time-code"]');
-      // if (!input) return;
-      const ac = new AbortController();
-      // const form = input.closest('form');
-      // if (form) {
-      //   form.addEventListener('submit', e => {
-      //     ac.abort();
-      //   });
-      // }
-      // navigator.credentials
-      //   .get({
-      //     otp: { transport: ["sms"] },
-      //     signal: ac.signal,
-      //   })
-      //   .then((otp) => {
-      //     console.log("otp is ", otp);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+    console.log('waiting for otp');
+    if(this.ac){
+      this.ac.abort();
+    }
+    if ('OTPCredential' in window) {
+      
+      console.log('Waiting for SMS. Try sending yourself a following message:\n\n' +
+          'Your verification code is: 123ABC\n\n' +
+          '@whatwebcando.today #123ABC');
+
+          try {
+            this.ac = new AbortController();
+            const theotp = await navigator.credentials.get({
+              otp: { transport:['sms'] },
+              signal: this.ac.signal
+            }).then(otp => {
+              console.log('otp is ', otp);
+              console.log(`otp, ${otp}`);
+              this.setState({otp});
+            }).catch(err => {
+              console.log(`ssss ${err}`);
+            });  
+            console.log(theotp);
+          } catch (error) {
+            console.log(error);
+          }
+          
+    } else {
+      console.log('Web OTP API not supported');
+    }
+      
+  }
+  componentDidMount(){
+    // const self = this;    
+    Notification.requestPermission((status) => {
+      console.log("Notification permission status:", status);
     });
 
     this.notifSound = document.getElementById("notif");
@@ -96,6 +110,7 @@ class App extends React.Component{
           parseInt(s.min_age_limit) == this.state.minAge &&
           parseInt(s.available_capacity) > 0
         ) {
+          this.setState({enableOtp: true})
           this.notifSound.play();
 
           let opts = {
@@ -132,6 +147,25 @@ class App extends React.Component{
         },
         error(err) {
           console.error("something wrong occurred: " + err);
+        },
+        complete() {
+          console.log("done");
+          this.setState({ isWatchingAvailability: false });
+        },
+      });
+  }
+  trackAuth() {
+    const self = this;
+    
+    this.watcher = cowinApi
+      .trackAuth(this.state.token)
+      .subscribe({
+        next(data) {
+          self.setState({beneficiaries: data})
+        },
+        error(err) {
+          console.error("something wrong occurred: " + err);
+          this.setState({isAuthenticated: false})
         },
         complete() {
           console.log("done");
@@ -193,17 +227,32 @@ class App extends React.Component{
     this.setState({minAge: e.target.value});
   }
   generateOtp(){
+    this.setState({enableOtp: true});
+    return;
     cowinApi.generateOtp(this.state.mobile).then(data=>{
       console.log(data);
+      this.setState({otpData: data});
+      this.waitForOtp();
+      console.log(13);
     }).catch(err=>{
       console.log(err);
+    })
+  }
+  verifyOtp(){
+    this.setState({enableOtp: false});
+    cowinApi.verifyOtp(this.state.otp, this.state.otpData.txnId).then(data=>{
+      this.setState({token: data.token, isAuthenticated: true}, ()=>{
+        this.trackAuth();
+      })
+    }).catch(err=>{
+      console.log(err);
+      this.generateOtp();
     })
   }
   render() {
     const vaccineCalendar = this.state.vaccineCalendar;
     return (
       <div className="App">
-        
         {/* <Notifications /> */}
         <audio id="notif">
           <source src="https://assets.coderrocketfuel.com/pomodoro-times-up.mp3"></source>
@@ -213,15 +262,13 @@ class App extends React.Component{
             Get notifications for Covid-19 vaccine availability in your area
           </h2>
         </header>
-        <a href="https://www.cowin.gov.in/home" target="_blank">Visit Cowin to book a Vaccination Slot</a>
-
-
-        
+        <a href="https://www.cowin.gov.in/home" target="_blank">
+          Visit Cowin to book a Vaccination Slot
+        </a>
 
         <Col style={{ marginBottom: 10 }}>
           {this.state.isWatchingAvailability ? null : (
             <h3>Select age group for getting notifications</h3>
-
           )}
           <Radio.Group
             onChange={this.setMinAge.bind(this)}
@@ -233,39 +280,64 @@ class App extends React.Component{
           </Radio.Group>
         </Col>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-          <Col>
-            {/* <Input type="number" size="large" placeholder='Mobile' onChange={e=>{
-              this.setState({ mobile: e.target.value }, () => {
-                if (e.target.value.toString().length === 10) {
-                  this.generateOtp();
+          {this.state.isAuthenticated ? null : (
+            <Col>
+              {this.state.enableOtp ? (
+                <Search
+                  placeholder="Enter OTP"
+                  allowClear
+                  type="number"
+                  // value={this.state.zip}
+                  enterButton={"Submit"}
+                  size="large"
+                  onSearch={(e) => {
+                    console.log(e);
+                    this.setState({ otp: e },()=>{
+                      this.verifyOtp()
+                    });
+                  }}
+                />
+              ) : (
+                <Search
+                  placeholder="Mobile Number"
+                  allowClear
+                  type="number"
+                  value={this.state.mobile}
+                  enterButton={"Generate OTP"}
+                  size="large"
+                  onSearch={(e) => {
+                    this.setState({ mobile: e, enableOtp: true });
+                  }}
+                />
+              )}
+
+              <Search
+                disabled={this.state.isWatchingAvailability}
+                placeholder={
+                  this.state.zip ? this.state.zip : "Enter your area pincode"
                 }
-              });
-            }}/> */}
-            <Search
-              disabled={this.state.isWatchingAvailability}
-              placeholder={
-                this.state.zip ? this.state.zip : "Enter your area pincode"
-              }
-              allowClear
-              type="number"
-              // value={this.state.zip}
-              enterButton={
-                this.state.isWatchingAvailability
-                  ? `Tracking`
-                  : `Track Availability`
-              }
-              size="large"
-              loading={this.state.isWatchingAvailability}
-              onSearch={(txt) => {
-                this.setState(
-                  { zip: txt, isWatchingAvailability: true },
-                  () => {
-                    this.initWatch();
-                  }
-                );
-              }}
-            />
-          </Col>
+                allowClear
+                type="number"
+                // value={this.state.zip}
+                enterButton={
+                  this.state.isWatchingAvailability
+                    ? `Tracking`
+                    : `Track Availability`
+                }
+                size="large"
+                loading={this.state.isWatchingAvailability}
+                onSearch={(txt) => {
+                  this.setState(
+                    { zip: txt, isWatchingAvailability: true },
+                    () => {
+                      this.initWatch();
+                    }
+                  );
+                }}
+              />
+            </Col>
+          )}
+
           <Col>
             {this.state.isWatchingAvailability ? (
               <Button
@@ -280,7 +352,7 @@ class App extends React.Component{
             ) : null}
           </Col>
         </Row>
-        
+
         {vaccineCalendar && vaccineCalendar.centers
           ? this.renderTable(vaccineCalendar)
           : null}
