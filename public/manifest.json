@@ -1,6 +1,6 @@
 {
   "short_name": "Cowin Booking",
-  "name": "Cowin Vaccination Utility",
+  "name": "Cowid-19 Vaccination - Booking and Notifications Utility",
   "icons": [
     {
       "src": "windows10/SmallTile.scale-100.png",
