@@ -419,9 +419,10 @@ class App extends React.Component{
           <h2>Get notifications for Covid-19 vaccine availability.</h2>
           <p style={{ color: "#999" }}>
             This app continously tracks for availability of vaccine and can
-            proceed with booking on your behalf. Login and select beneficiaries
-            to enable automatic booking.
-          </p>
+            proceed with booking on your behalf.</p> 
+            <p>Login and select beneficiaries
+            to enable automatic booking.</p>
+          
         </header>
 
         {/* <Col style={{ marginBottom: 10 }}>
