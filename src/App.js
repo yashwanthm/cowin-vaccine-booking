@@ -25,36 +25,37 @@ speech.pitch = 1;
 class App extends React.Component{
   constructor(props) {
     super(props);
-    let state = {}
+    let state = {
+      isWatchingAvailability: false,
+      vaccineType: 'ANY',
+      bookingInProgress: false,
+      isAuthenticated: localStorage.token ? true : false,
+      minAge: 18,
+      districtId: 264,
+      stateId: 16,
+      beneficiaries: [],
+      selectedBeneficiaries: [],
+      otpData: {
+        txnId: null
+      },
+      vaccineCalendar: {},
+      zip: null,
+      enableOtp: false,
+      otp: null,
+      mobile: null,
+      token: localStorage.token || null,
+      selectedTab: "1",
+      dates: [],
+      states: [],
+      districs: [],
+      session: null,
+      bookingCenter: null,
+      showSuccessModal: false
+    };
     if(localStorage.appData){
-      state = Object.assign({}, JSON.parse(localStorage.appData))
+      state = Object.assign(state, JSON.parse(localStorage.appData))
     } else {
-      state = {
-        isWatchingAvailability: false,
-        bookingInProgress: false,
-        isAuthenticated: localStorage.token ? true : false,
-        minAge: 18,
-        districtId: 264,
-        stateId: 16,
-        beneficiaries: [],
-        selectedBeneficiaries: [],
-        otpData: {
-          txnId: null
-        },
-        vaccineCalendar: {},
-        zip: null,
-        enableOtp: false,
-        otp: null,
-        mobile: null,
-        token: localStorage.token || null,
-        selectedTab: "1",
-        dates: [],
-        states: [],
-        districs: [],
-        session: null,
-        bookingCenter: null,
-        showSuccessModal: false
-      };
+      
     }
     this.state = state;
   }
@@ -165,13 +166,20 @@ class App extends React.Component{
     let booking = false;
     centers.map(c=>{
       c.sessions.map(s=>{
+        
         if (
           parseInt(s.min_age_limit) === this.state.minAge &&
           parseInt(s.available_capacity) >= requiredNums && 
           !this.state.bookingInProgress
         ) {
-          this.setState({enableOtp: true})
+
+          let vt = this.state.vaccineType;
+          if(vt !== 'ANY' && vt!== s.vaccine){
+            return;
+          }
+          
           this.notifSound.play();
+          
 
           let opts = {
             title: c.name,
@@ -523,6 +531,22 @@ class App extends React.Component{
                 })}
               </div>
             ) : null}
+
+            <Row style={{ marginTop: 10 }}>
+              <h2 style={{ marginTop: 10, marginBottom: 0 }}>Vaccine Type</h2>
+              <Radio.Group
+                style={{ marginTop: 18, marginLeft: 10 }}
+                onChange={(e)=>{
+                  this.setState({vaccineType: e.target.value})
+                }}
+                value={this.state.vaccineType}
+                disabled={this.state.isWatchingAvailability}
+              >
+                <Radio value={'ANY'}>Any</Radio>
+                <Radio value={'COVAXIN'}>Covaxin</Radio>
+                <Radio value={'COVISHIELD'}>Covishield</Radio>
+              </Radio.Group>
+            </Row>
 
             <Row style={{ marginTop: 10 }}>
               <h2 style={{ marginTop: 10, marginBottom: 0 }}>Age Group</h2>
