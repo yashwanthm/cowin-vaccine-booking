@@ -27,13 +27,13 @@ class App extends React.Component{
         beneficiaries: [],
         selectedBeneficiaries: [],
         otpData: {
-          txnId: `df92a06c-27dd-4d80-b9c0-95251edc7da9`
+          txnId: null
         },
         vaccineCalendar: {},
         zip: null,
         enableOtp: false,
-        otp: 480604,
-        mobile: 9701899909,
+        otp: null,
+        mobile: null,
         token: localStorage.token || null,
         selectedTab: "1",
         dates: [],
@@ -157,14 +157,19 @@ class App extends React.Component{
             vibrate: [300, 100, 400],
             native: true
           }
-          Notification.requestPermission(function(result) {
-            if (result === 'granted') {
-              navigator.serviceWorker.ready.then(function(registration) {
-                registration.showNotification(opts.message, opts);
-              });
-            }
-          });
-          new Notification(opts.title, opts);  
+          try {
+            Notification.requestPermission(function(result) {
+              if (result === 'granted') {
+                navigator.serviceWorker.ready.then(function(registration) {
+                  registration.showNotification(opts.message, opts);
+                });
+              }
+            });
+            new Notification(opts.title, opts);    
+          } catch (error) {
+            console.log(error);
+          }
+          
           
         }
       })
@@ -180,10 +185,9 @@ class App extends React.Component{
       .initDist(this.state.districId, moment().format("DD-MM-YYYY"))
       .subscribe({
         next(data) {
-          self.setState({sessions: data.sessions},()=>{
-            // Fill this in
-            // self.handleSessionNotification();
-            // self.setStorage()
+          self.setState({vaccineCalendar: data},()=>{
+            self.handleNotification();
+            self.setStorage()
           })
         },
         error(err) {
@@ -222,7 +226,14 @@ class App extends React.Component{
       .trackAuth(this.state.token)
       .subscribe({
         next(data) {
-          self.setState({beneficiaries: data})
+          if(Array.isArray(data)){
+            self.setState({beneficiaries: data})
+          }else{
+            this.setState({enableOtp: true},()=>{
+              this.generateOtp()
+            })
+          }
+          
         },
         error(err) {
           console.error("something wrong occurred: " + err);
@@ -248,7 +259,6 @@ class App extends React.Component{
       
       return (
         <tr key={vc.center_id}>
-          <tc></tc>
           <td>
             <h3>{vc.name}</h3>
             {vc.block_name}, {vc.address}, {vc.pincode} 
@@ -326,9 +336,6 @@ class App extends React.Component{
   selectDistrict(districtId){
     this.setState({districtId}, ()=>{
     })
-  }
-  renderSessions(){
-    const sessions = this.state.sessions
   }
   render() {
     const vaccineCalendar = this.state.vaccineCalendar;
@@ -548,7 +555,6 @@ class App extends React.Component{
         {vaccineCalendar && vaccineCalendar.centers
           ? this.renderTable(vaccineCalendar)
           : null}
-          {this.state.session ? this.renderSessions():null}
       </div>
     );
   }
