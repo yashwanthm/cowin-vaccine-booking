@@ -1,6 +1,6 @@
 import "./App.css";
 // import { Notifications } from "react-push-notification";
-import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs } from "antd";
+import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
@@ -12,17 +12,30 @@ const cowinApi = new CowinApi();
 const { Search } = Input;
 const { Option } = Select;
 
+let speech = new SpeechSynthesisUtterance();
+
+speech.lang = "en-US";
+speech.volume = 1;
+speech.rate = 1;
+speech.pitch = 1;                
+
+
+
+
 class App extends React.Component{
   constructor(props) {
     super(props);
-    // if(localStorage.appData){
-    //   this.state = Object.assign({}, JSON.parse(localStorage.appData))
-    // }else{
-      this.state = {
+    let state = {}
+    if(localStorage.appData){
+      console.log('there');
+      state = Object.assign({}, JSON.parse(localStorage.appData))
+    } else {
+      state = {
         isWatchingAvailability: false,
+        bookingInProgress: false,
         isAuthenticated: localStorage.token ? true : false,
         minAge: 18,
-        districId: 265,
+        districtId: 264,
         stateId: 16,
         beneficiaries: [],
         selectedBeneficiaries: [],
@@ -38,10 +51,12 @@ class App extends React.Component{
         selectedTab: "1",
         dates: [],
         states: [],
-        districs: []
-
+        districs: [],
+        session: null,
+        bookingCenter: null
       };
-    // }
+    }
+    this.state = state;
   }
   async waitForOtp(){
 
@@ -96,8 +111,8 @@ class App extends React.Component{
 
     cowinApi.getStates().then(data=>{
       this.setState({states: data.states},()=>{
-        this.selectState(16);
-        this.selectDistrict(265);
+        this.selectState(this.state.stateId);
+        this.selectDistrict(this.state.districtId);
       })
     }).catch(err=>{
       console.log(err);
@@ -132,21 +147,29 @@ class App extends React.Component{
   }
   setStorage(){
     let state = Object.assign({}, this.state)
+    console.log('setstorage');
     delete state.vaccineCalendar;
     delete state.isWatchingAvailability;
     localStorage.appData = JSON.stringify(state);
   }
   componentWillUnmount() {
     // unsubscribe to ensure no memory leaks
+    // this.setStorage();
     if(this.watcher) this.watcher.unsubscribe();
   }
   handleNotification(){
     let centers = this.state.vaccineCalendar.centers;
+    let requiredNums = 1;
+    if(this.state.selectedBeneficiaries && Array.isArray(this.state.selectedBeneficiaries) && this.state.selectedBeneficiaries.length>0){
+      requiredNums = this.state.selectedBeneficiaries.length;
+    }
+    let booking = false;
     centers.map(c=>{
       c.sessions.map(s=>{
         if (
-          parseInt(s.min_age_limit) == this.state.minAge &&
-          parseInt(s.available_capacity) > 0
+          parseInt(s.min_age_limit) === this.state.minAge &&
+          parseInt(s.available_capacity) >= requiredNums && 
+          !this.state.bookingInProgress
         ) {
           this.setState({enableOtp: true})
           this.notifSound.play();
@@ -166,6 +189,12 @@ class App extends React.Component{
               }
             });
             new Notification(opts.title, opts);    
+            speech.text = "Vaccines Available. Attempting to book.";
+            window.speechSynthesis.speak(speech);
+            this.setState({bookingInProgress: true},()=>{
+              this.book(s, c);
+            })
+            
           } catch (error) {
             console.log(error);
           }
@@ -175,19 +204,56 @@ class App extends React.Component{
       })
     })
   }
+  async book(session, center){
+    let benIds = [];
+    await this.setState({bookingSession: session, bookingCenter: center});
+    if(this.state.selectedBeneficiaries.length === 0){
+      if(!this.state.isAuthenticated){
+        this.setState({enableOtp: true},()=>{
+          this.generateOtp()
+        })
+      }
+      return;
+    }else{
+      this.state.selectedBeneficiaries.map(sb=>{
+        benIds.push(sb.beneficiary_reference_id)
+      })
+    }
+    
+    
+    let payload = {
+      dose: this.state.dose,
+      session_id: session.session_id,
+      slot: session.slots[0],
+      beneficiaries: benIds
+    }
+    cowinApi.book(payload, this.state.token).then(data=>{
+      console.log('Booking success ', data.appointment_id);
+      this.clearWatch();
+      this.setState({bookingInProgress: false, appointment_id: data.appointment_id, showSuccessModal: true});
+    }).catch(err=>{
+      this.setState({bookingInProgress: false, session: null, bookingCenter: null});
+      let msg = 'Booking did not get through, tracking for next slot';
+      speech.text = msg;
+      window.speechSynthesis.speak(speech);
+      console.log(msg);
+    })
+
+  }
 
   initWatch(zip) {
     const self = this;
 
+    this.setStorage();
     this.setState({isWatchingAvailability: true});
     if(this.state.selectedTab === "1"){
       this.watcher = cowinApi
-      .initDist(this.state.districId, moment().format("DD-MM-YYYY"))
+      .initDist(this.state.districtId, moment().format("DD-MM-YYYY"))
       .subscribe({
         next(data) {
           self.setState({vaccineCalendar: data},()=>{
             self.handleNotification();
-            self.setStorage()
+            // self.setStorage()
           })
         },
         error(err) {
@@ -298,6 +364,8 @@ class App extends React.Component{
     this.setState({minAge: e.target.value});
   }
   generateOtp(){
+    speech.text = "OTP has been sent to your phone. Please enter OTP";
+    window.speechSynthesis.speak(speech);
     this.setState({enableOtp: true}, ()=>{
       cowinApi.generateOtp(this.state.mobile).then(data=>{
         console.log(data);
@@ -353,11 +421,11 @@ class App extends React.Component{
           </h2>
         </header>
 
-        <Col style={{ marginBottom: 10 }}>
+        {/* <Col style={{ marginBottom: 10 }}>
           {this.state.isWatchingAvailability ? null : (
             <title>Select age group for getting notifications</title>
           )}
-        </Col>
+        </Col> */}
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col>
             {isAuthenticated ? null : (
@@ -365,7 +433,9 @@ class App extends React.Component{
                 <h1>Login</h1>
                 {this.state.enableOtp ? null : (
                   <Search
-                    placeholder= {this.state.mobile ? this.state.mobile : "Mobile Number"}
+                    placeholder={
+                      this.state.mobile ? this.state.mobile : "Mobile Number"
+                    }
                     allowClear
                     type="number"
                     // value={this.state.mobile}
@@ -409,7 +479,11 @@ class App extends React.Component{
                     and add beneficiaries
                   </p>
                 ) : (
-                  <p>Select beneficiaries to book a slot automatically when there's availability. This app can continuously track availability and make a booking.</p>
+                  <p>
+                    Select beneficiaries to book a slot automatically when
+                    there's availability. This app can continuously track
+                    availability and make a booking.
+                  </p>
                 )}
                 {this.state.beneficiaries.map((b) => {
                   return (
@@ -448,9 +522,36 @@ class App extends React.Component{
               </div>
             ) : null}
 
-            
+            <Row style={{ marginTop: 10 }}>
+              <h2 style={{ marginTop: 10, marginBottom: 0 }}>Age Group</h2>
+              <Radio.Group
+                style={{ marginTop: 18, marginLeft: 10 }}
+                onChange={this.setMinAge.bind(this)}
+                value={this.state.minAge}
+                disabled={this.state.isWatchingAvailability}
+              >
+                <Radio value={18}>18 to 45 Years</Radio>
+                <Radio value={45}>45+ Years</Radio>
+              </Radio.Group>
+            </Row>
 
-            <h2 style={{marginTop: 15, marginBottom: 0}}>Select Location</h2>
+            <Row style={{ marginTop: 5 }}>
+              <h2 style={{ marginTop: 10, marginBottom: 0 }}>Dose</h2>
+              <Radio.Group
+                style={{ marginTop: 18, marginLeft: 10 }}
+                onChange={(dose) => {
+                  this.setState({ dose: dose });
+                }}
+                defaultValue={1}
+                value={this.state.dose}
+                disabled={this.state.isWatchingAvailability}
+              >
+                <Radio value={1}>Dose 1</Radio>
+                <Radio value={4}>Dose 2</Radio>
+              </Radio.Group>
+            </Row>
+
+            <h2 style={{ marginTop: 15, marginBottom: 0 }}>Select Location</h2>
             <Tabs
               defaultActiveKey="1"
               onChange={(e) => {
@@ -458,13 +559,10 @@ class App extends React.Component{
               }}
             >
               <TabPane tab="Track By District" key={1}>
-                
-                
-                
                 <Select
                   style={{ width: 234 }}
                   size="large"
-                  defaultValue={16}
+                  defaultValue={this.state.stateId}
                   onChange={this.selectState.bind(this)}
                   placeholder="Select State"
                 >
@@ -476,13 +574,15 @@ class App extends React.Component{
                     );
                   })}
                 </Select>
-                
+
                 <Select
                   style={{ width: 234 }}
-                  defaultValue={265}
+                  defaultValue={this.state.districtId}
                   size="large"
-                  onChange={val=>{this.selectDistrict(val)}}
-                  placeholder="Select State"
+                  onChange={(val) => {
+                    this.selectDistrict(val);
+                  }}
+                  placeholder="Select District"
                 >
                   {this.state.districs.map((d) => {
                     return (
@@ -492,11 +592,24 @@ class App extends React.Component{
                     );
                   })}
                 </Select>
-                <Button type="primary" size="large" onClick={e=>this.initWatch()}>
+                <Button
+                  type="primary"
+                  size="large"
+                  onClick={(e) => this.initWatch()}
+                >
                   Track Availability
                 </Button>
-                
-                
+                {this.state.isWatchingAvailability ? (
+                  <Button
+                    type="primary"
+                    icon={<CloseCircleOutlined />}
+                    size={"large"}
+                    danger
+                    onClick={this.clearWatch.bind(this)}
+                  >
+                    Stop
+                  </Button>
+                ) : null}
               </TabPane>
               <TabPane tab="Track By Pincode" key={2}>
                 <Search
@@ -523,20 +636,21 @@ class App extends React.Component{
                     );
                   }}
                 />
+                {this.state.isWatchingAvailability ? (
+                  <Button
+                    type="primary"
+                    icon={<CloseCircleOutlined />}
+                    size={"large"}
+                    danger
+                    onClick={this.clearWatch.bind(this)}
+                  >
+                    Stop
+                  </Button>
+                ) : null}
               </TabPane>
             </Tabs>
 
-            <Radio.Group
-            style={{marginTop: 10}}
-              onChange={this.setMinAge.bind(this)}
-              value={this.state.minAge}
-              disabled={this.state.isWatchingAvailability}
-            >
-              <Radio value={18}>18 to 45 Years</Radio>
-              <Radio value={45}>45+ Years</Radio>
-            </Radio.Group>
-
-            <Col>
+            {/* <Col>
               {this.state.isWatchingAvailability ? (
                 <Button
                   type="primary"
@@ -548,13 +662,44 @@ class App extends React.Component{
                   Stop
                 </Button>
               ) : null}
-            </Col>
+            </Col> */}
           </Col>
         </Row>
 
         {vaccineCalendar && vaccineCalendar.centers
           ? this.renderTable(vaccineCalendar)
           : null}
+
+        {this.state.session && this.state.bookingCenter ? (
+          <Modal
+            title="Basic Modal"
+            visible={this.state.showSuccessModal}
+            onOk={(e) => {
+              this.setState({ showSuccessModal: false });
+            }}
+            onCancel={(e) => {
+              this.setState({ showSuccessModal: false });
+            }}
+          >
+            <h1>Congrats!</h1>
+            <p>
+              You vaccine slot is booked at {this.state.bookingCenter.name},{" "}
+              {this.state.bookingCenter.block_name},{" "}
+              {this.state.bookingCenter.address},{" "}
+              {this.state.bookingCenter.district_name},{" "}
+              {this.state.bookingCenter.state_name},{" "}
+              {this.state.bookingCenter.pincode}
+            </p>
+            <p>Your appointment id is {this.state.appointment_id}</p>
+            <p>
+              You can login into{" "}
+              <a href="https://www.cowin.gov.in/home" target="_blank">
+                Cowin
+              </a>{" "}
+              to see details of your Vaccine slot
+            </p>
+          </Modal>
+        ) : null}
       </div>
     );
   }
