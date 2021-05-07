@@ -1,15 +1,16 @@
 import "./App.css";
 // import { Notifications } from "react-push-notification";
-import { Button, Col, Input, Row, Radio } from "antd";
+import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
 
 import moment from "moment";
 
-console.log('asdad');
+const { TabPane } = Tabs;
 const cowinApi = new CowinApi();
 const { Search } = Input;
+const { Option } = Select;
 
 class App extends React.Component{
   constructor(props) {
@@ -19,14 +20,26 @@ class App extends React.Component{
     // }else{
       this.state = {
         isWatchingAvailability: false,
-        isAuthenticated: false,
+        isAuthenticated: localStorage.token ? true : false,
         minAge: 18,
+        districId: 265,
+        stateId: 16,
         beneficiaries: [],
+        selectedBeneficiaries: [],
+        otpData: {
+          txnId: `df92a06c-27dd-4d80-b9c0-95251edc7da9`
+        },
         vaccineCalendar: {},
         zip: null,
         enableOtp: false,
-        mobile: null,
-        dates: []
+        otp: 480604,
+        mobile: 9701899909,
+        token: localStorage.token || null,
+        selectedTab: "1",
+        dates: [],
+        states: [],
+        districs: []
+
       };
     // }
   }
@@ -64,7 +77,32 @@ class App extends React.Component{
     }
       
   }
+  getBeneficiaries(){
+    cowinApi.getBenefeciaries(this.state.token).then(data=>{
+      this.setState({beneficiaries: data});
+    }).catch(err=>{
+      console.log(err);
+      delete localStorage.token;
+      this.setState({isAuthenticated: false, token: null})
+    })
+  }
   componentDidMount(){
+    if(this.state.isAuthenticated){
+      this.getBeneficiaries();
+    }else if(this.state.mobile){
+      // this.setState({enableOtp: true},()=>{this.generateOtp()})
+      
+    }
+
+    cowinApi.getStates().then(data=>{
+      this.setState({states: data.states},()=>{
+        this.selectState(16);
+        this.selectDistrict(265);
+      })
+    }).catch(err=>{
+      console.log(err);
+    })
+    
     // const self = this;    
     Notification.requestPermission((status) => {
       console.log("Notification permission status:", status);
@@ -135,8 +173,29 @@ class App extends React.Component{
 
   initWatch(zip) {
     const self = this;
-    console.log('zip', self.zip);
-    this.watcher = cowinApi
+
+    this.setState({isWatchingAvailability: true});
+    if(this.state.selectedTab === "1"){
+      this.watcher = cowinApi
+      .initDist(this.state.districId, moment().format("DD-MM-YYYY"))
+      .subscribe({
+        next(data) {
+          self.setState({sessions: data.sessions},()=>{
+            // Fill this in
+            // self.handleSessionNotification();
+            // self.setStorage()
+          })
+        },
+        error(err) {
+          console.error("something wrong occurred: " + err);
+        },
+        complete() {
+          console.log("done");
+          this.setState({ isWatchingAvailability: false });
+        },
+      });
+    }else{
+      this.watcher = cowinApi
       .init(this.state.zip, moment().format("DD-MM-YYYY"))
       .subscribe({
         next(data) {
@@ -153,6 +212,8 @@ class App extends React.Component{
           this.setState({ isWatchingAvailability: false });
         },
       });
+    }
+    
   }
   trackAuth() {
     const self = this;
@@ -187,10 +248,10 @@ class App extends React.Component{
       
       return (
         <tr key={vc.center_id}>
+          <tc></tc>
           <td>
-            <h3>{vc.pincode} {vc.name}</h3>
-            {vc.block_name}
-            {vc.address}
+            <h3>{vc.name}</h3>
+            {vc.block_name}, {vc.address}, {vc.pincode} 
           </td>
           
             
@@ -227,21 +288,25 @@ class App extends React.Component{
     this.setState({minAge: e.target.value});
   }
   generateOtp(){
-    this.setState({enableOtp: true});
-    return;
-    cowinApi.generateOtp(this.state.mobile).then(data=>{
-      console.log(data);
-      this.setState({otpData: data});
-      this.waitForOtp();
-      console.log(13);
-    }).catch(err=>{
-      console.log(err);
-    })
+    this.setState({enableOtp: true}, ()=>{
+      cowinApi.generateOtp(this.state.mobile).then(data=>{
+        console.log(data);
+        this.setState({otpData: data});
+        // this.waitForOtp();
+      }).catch(err=>{
+        console.log(err);
+        this.setState({enableOtp: false})
+      })
+    });
+    
   }
   verifyOtp(){
     this.setState({enableOtp: false});
     cowinApi.verifyOtp(this.state.otp, this.state.otpData.txnId).then(data=>{
+      console.log('otp verify ', data);
+      localStorage.token = data.token;
       this.setState({token: data.token, isAuthenticated: true}, ()=>{
+        this.getBeneficiaries();
         this.trackAuth();
       })
     }).catch(err=>{
@@ -249,8 +314,26 @@ class App extends React.Component{
       this.generateOtp();
     })
   }
+  selectState(stateId){
+    this.setState({stateId}, ()=>{
+      cowinApi.getDistricts(stateId).then(data=>{
+        this.setState({districs: data});
+      }).catch(err=>{
+        console.log(err)
+      })
+    })
+  }
+  selectDistrict(districtId){
+    this.setState({districtId}, ()=>{
+    })
+  }
+  renderSessions(){
+    const sessions = this.state.sessions
+  }
   render() {
     const vaccineCalendar = this.state.vaccineCalendar;
+    const isAuthenticated = this.state.isAuthenticated;
+    const {beneficiaries, selectedBeneficiaries} = this.state;
     return (
       <div className="App">
         {/* <Notifications /> */}
@@ -262,100 +345,210 @@ class App extends React.Component{
             Get notifications for Covid-19 vaccine availability in your area
           </h2>
         </header>
-        <a href="https://www.cowin.gov.in/home" target="_blank">
-          Visit Cowin to book a Vaccination Slot
-        </a>
 
         <Col style={{ marginBottom: 10 }}>
           {this.state.isWatchingAvailability ? null : (
-            <h3>Select age group for getting notifications</h3>
+            <title>Select age group for getting notifications</title>
           )}
-          <Radio.Group
-            onChange={this.setMinAge.bind(this)}
-            value={this.state.minAge}
-            disabled={this.state.isWatchingAvailability}
-          >
-            <Radio value={18}>18 to 45 Years</Radio>
-            <Radio value={45}>45+ Years</Radio>
-          </Radio.Group>
         </Col>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-          {this.state.isAuthenticated ? null : (
-            <Col>
-              {this.state.enableOtp ? (
+          <Col>
+            {isAuthenticated ? null : (
+              <div>
+                <h1>Login</h1>
+                {this.state.enableOtp ? null : (
+                  <Search
+                    placeholder= {this.state.mobile ? this.state.mobile : "Mobile Number"}
+                    allowClear
+                    type="number"
+                    // value={this.state.mobile}
+                    enterButton={"Generate OTP"}
+                    size="large"
+                    onSearch={(e) => {
+                      this.setState({ mobile: e, enableOtp: true }, () => {
+                        this.generateOtp();
+                      });
+                    }}
+                  />
+                )}
+                {this.state.enableOtp ? (
+                  <Search
+                    placeholder="Enter OTP"
+                    allowClear
+                    type="number"
+                    // value={this.state.zip}
+                    enterButton={"Submit"}
+                    size="large"
+                    onSearch={(e) => {
+                      console.log(e);
+                      this.setState({ otp: e }, () => {
+                        this.verifyOtp();
+                      });
+                    }}
+                  />
+                ) : null}
+              </div>
+            )}
+
+            {isAuthenticated ? (
+              <div>
+                <h2>Beneficiaries</h2>
+                {this.state.beneficiaries.length === 0 ? (
+                  <p>
+                    You do not have any benificiares added yet. Please login to{" "}
+                    <a href="https://www.cowin.gov.in/home" target="_blank">
+                      Cowin
+                    </a>{" "}
+                    and add beneficiaries
+                  </p>
+                ) : (
+                  <p>Select beneficiaries to book a slot automatically when there's availability. This app can continuously track availability and make a booking.</p>
+                )}
+                {this.state.beneficiaries.map((b) => {
+                  return (
+                    <Row>
+                      <Checkbox
+                        checked={
+                          selectedBeneficiaries.findIndex((sb) => {
+                            return (
+                              sb.beneficiary_reference_id ===
+                              b.beneficiary_reference_id
+                            );
+                          }) !== -1
+                        }
+                        onClick={(e) => {
+                          let sbs = this.state.selectedBeneficiaries;
+                          let idx = sbs.findIndex((sb) => {
+                            return (
+                              sb.beneficiary_reference_id ===
+                              b.beneficiary_reference_id
+                            );
+                          });
+                          console.log(idx);
+                          if (idx === -1) {
+                            sbs.push(b);
+                          } else {
+                            sbs.splice(idx, 1);
+                          }
+                          this.setState({ selectedBeneficiaries: sbs });
+                        }}
+                      >
+                        {b.name}
+                      </Checkbox>
+                    </Row>
+                  );
+                })}
+              </div>
+            ) : null}
+
+            
+
+            <h2 style={{marginTop: 15, marginBottom: 0}}>Select Location</h2>
+            <Tabs
+              defaultActiveKey="1"
+              onChange={(e) => {
+                this.setState({ selectedTab: e });
+              }}
+            >
+              <TabPane tab="Track By District" key={1}>
+                
+                
+                
+                <Select
+                  style={{ width: 234 }}
+                  size="large"
+                  defaultValue={16}
+                  onChange={this.selectState.bind(this)}
+                  placeholder="Select State"
+                >
+                  {this.state.states.map((s) => {
+                    return (
+                      <Option key={s.state_id} value={s.state_id}>
+                        {s.state_name}
+                      </Option>
+                    );
+                  })}
+                </Select>
+                
+                <Select
+                  style={{ width: 234 }}
+                  defaultValue={265}
+                  size="large"
+                  onChange={val=>{this.selectDistrict(val)}}
+                  placeholder="Select State"
+                >
+                  {this.state.districs.map((d) => {
+                    return (
+                      <Option key={d.district_id} value={d.district_id}>
+                        {d.district_name}
+                      </Option>
+                    );
+                  })}
+                </Select>
+                <Button type="primary" size="large" onClick={e=>this.initWatch()}>
+                  Track Availability
+                </Button>
+                
+                
+              </TabPane>
+              <TabPane tab="Track By Pincode" key={2}>
                 <Search
-                  placeholder="Enter OTP"
+                  disabled={this.state.isWatchingAvailability}
+                  placeholder={
+                    this.state.zip ? this.state.zip : "Enter your area pincode"
+                  }
                   allowClear
                   type="number"
                   // value={this.state.zip}
-                  enterButton={"Submit"}
+                  enterButton={
+                    this.state.isWatchingAvailability
+                      ? `Tracking`
+                      : `Track Availability`
+                  }
                   size="large"
-                  onSearch={(e) => {
-                    console.log(e);
-                    this.setState({ otp: e },()=>{
-                      this.verifyOtp()
-                    });
+                  loading={this.state.isWatchingAvailability}
+                  onSearch={(txt) => {
+                    this.setState(
+                      { zip: txt, isWatchingAvailability: true },
+                      () => {
+                        this.initWatch();
+                      }
+                    );
                   }}
                 />
-              ) : (
-                <Search
-                  placeholder="Mobile Number"
-                  allowClear
-                  type="number"
-                  value={this.state.mobile}
-                  enterButton={"Generate OTP"}
-                  size="large"
-                  onSearch={(e) => {
-                    this.setState({ mobile: e, enableOtp: true });
-                  }}
-                />
-              )}
+              </TabPane>
+            </Tabs>
 
-              <Search
-                disabled={this.state.isWatchingAvailability}
-                placeholder={
-                  this.state.zip ? this.state.zip : "Enter your area pincode"
-                }
-                allowClear
-                type="number"
-                // value={this.state.zip}
-                enterButton={
-                  this.state.isWatchingAvailability
-                    ? `Tracking`
-                    : `Track Availability`
-                }
-                size="large"
-                loading={this.state.isWatchingAvailability}
-                onSearch={(txt) => {
-                  this.setState(
-                    { zip: txt, isWatchingAvailability: true },
-                    () => {
-                      this.initWatch();
-                    }
-                  );
-                }}
-              />
+            <Radio.Group
+            style={{marginTop: 10}}
+              onChange={this.setMinAge.bind(this)}
+              value={this.state.minAge}
+              disabled={this.state.isWatchingAvailability}
+            >
+              <Radio value={18}>18 to 45 Years</Radio>
+              <Radio value={45}>45+ Years</Radio>
+            </Radio.Group>
+
+            <Col>
+              {this.state.isWatchingAvailability ? (
+                <Button
+                  type="primary"
+                  icon={<CloseCircleOutlined />}
+                  size={"large"}
+                  danger
+                  onClick={this.clearWatch.bind(this)}
+                >
+                  Stop
+                </Button>
+              ) : null}
             </Col>
-          )}
-
-          <Col>
-            {this.state.isWatchingAvailability ? (
-              <Button
-                type="primary"
-                icon={<CloseCircleOutlined />}
-                size={"large"}
-                danger
-                onClick={this.clearWatch.bind(this)}
-              >
-                Stop
-              </Button>
-            ) : null}
           </Col>
         </Row>
 
         {vaccineCalendar && vaccineCalendar.centers
           ? this.renderTable(vaccineCalendar)
           : null}
+          {this.state.session ? this.renderSessions():null}
       </div>
     );
   }
