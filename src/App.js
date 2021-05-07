@@ -641,7 +641,7 @@ class App extends React.Component{
                   size="large"
                   onClick={(e) => this.initWatch()}
                 >
-                  Track Availability
+                  {this.state.isAuthenticated ? "Track Availability & Book": "Track Availability"}
                 </Button>
                 {this.state.isWatchingAvailability ? (
                   <Button
@@ -667,7 +667,7 @@ class App extends React.Component{
                   enterButton={
                     this.state.isWatchingAvailability
                       ? `Tracking`
-                      : `Track Availability`
+                      : (this.state.isAuthenticated ? "Track Availability & Book": "Track Availability")
                   }
                   size="large"
                   loading={this.state.isWatchingAvailability}
