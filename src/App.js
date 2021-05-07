@@ -31,8 +31,8 @@ class App extends React.Component{
       bookingInProgress: false,
       isAuthenticated: localStorage.token ? true : false,
       minAge: 18,
-      districtId: 264,
-      stateId: 16,
+      districtId: null,
+      stateId: null,
       beneficiaries: [],
       selectedBeneficiaries: [],
       otpData: {
