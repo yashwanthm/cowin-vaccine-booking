@@ -583,15 +583,15 @@ class App extends React.Component{
               <h2 style={{ marginTop: 10, marginBottom: 0 }}>Dose</h2>
               <Radio.Group
                 style={{ marginTop: 18, marginLeft: 10 }}
-                onChange={(dose) => {
-                  this.setState({ dose: dose });
+                onChange={(e) => {
+                  this.setState({ dose: e.target.value });
                 }}
                 defaultValue={1}
                 value={this.state.dose}
                 disabled={this.state.isWatchingAvailability}
               >
                 <Radio value={1}>Dose 1</Radio>
-                <Radio value={4}>Dose 2</Radio>
+                <Radio value={2}>Dose 2</Radio>
               </Radio.Group>
             </Row>
 
