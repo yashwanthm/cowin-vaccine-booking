@@ -425,7 +425,7 @@ class App extends React.Component{
           <source src="https://assets.coderrocketfuel.com/pomodoro-times-up.mp3"></source>
         </audio>
         <header className="App-header">
-          <h2>Get notifications for Covid-19 vaccine availability.</h2>
+          <h2>Vaccine bookings and notifications for Covid-19 vaccine availability.</h2>
           <p>Please create an account on <a href="https://www.cowin.gov.in/home" target="_blank">
                       Cowin
                     </a> and continue here.</p>
