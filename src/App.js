@@ -426,6 +426,9 @@ class App extends React.Component{
         </audio>
         <header className="App-header">
           <h2>Get notifications for Covid-19 vaccine availability.</h2>
+          <p>Please create an account on <a href="https://www.cowin.gov.in/home" target="_blank">
+                      Cowin
+                    </a> and continue here.</p>
           <p style={{ color: "#999" }}>
             This app continously tracks for availability of vaccine and can
             proceed with booking on your behalf.</p> 
