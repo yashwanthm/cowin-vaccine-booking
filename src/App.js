@@ -119,14 +119,23 @@ class App extends React.Component{
       console.log(err);
     })
     
-    // const self = this;    
-    Notification.requestPermission((status) => {
-      console.log("Notification permission status:", status);
-    });
+    // const self = this;  
+    try {
+      Notification.requestPermission((status) => {
+        console.log("Notification permission status:", status);
+      });  
+    } catch (error) {
+      console.log(error);
+    }  
+    
 
     this.notifSound = document.getElementById("notif");
-    this.notifSound.play();
 
+    try {
+      // this.notifSound.play();  
+    } catch (error) {
+      console.log(error)
+    }
       let opts = {
         title: "Vaccine Notifications Enabled",
         body: `You now have notifications active for Covid vaccine availability`,
@@ -178,7 +187,12 @@ class App extends React.Component{
             return;
           }
           
-          this.notifSound.play();
+          try {
+            // this.notifSound.play();  
+          } catch (error) {
+            
+          }
+          
           
 
           let opts = {
