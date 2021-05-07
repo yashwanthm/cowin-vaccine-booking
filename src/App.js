@@ -27,7 +27,6 @@ class App extends React.Component{
     super(props);
     let state = {}
     if(localStorage.appData){
-      console.log('there');
       state = Object.assign({}, JSON.parse(localStorage.appData))
     } else {
       state = {
@@ -53,7 +52,8 @@ class App extends React.Component{
         states: [],
         districs: [],
         session: null,
-        bookingCenter: null
+        bookingCenter: null,
+        showSuccessModal: false
       };
     }
     this.state = state;
@@ -381,7 +381,7 @@ class App extends React.Component{
   verifyOtp(){
     this.setState({enableOtp: false});
     cowinApi.verifyOtp(this.state.otp, this.state.otpData.txnId).then(data=>{
-      console.log('otp verify ', data);
+      // console.log('otp verify ', data);
       localStorage.token = data.token;
       this.setState({token: data.token, isAuthenticated: true}, ()=>{
         this.getBeneficiaries();
@@ -416,9 +416,12 @@ class App extends React.Component{
           <source src="https://assets.coderrocketfuel.com/pomodoro-times-up.mp3"></source>
         </audio>
         <header className="App-header">
-          <h2>
-            Get notifications for Covid-19 vaccine availability in your area
-          </h2>
+          <h2>Get notifications for Covid-19 vaccine availability.</h2>
+          <p style={{ color: "#999" }}>
+            This app continously tracks for availability of vaccine and can
+            proceed with booking on your behalf. Login and select beneficiaries
+            to enable automatic booking.
+          </p>
         </header>
 
         {/* <Col style={{ marginBottom: 10 }}>
@@ -457,7 +460,6 @@ class App extends React.Component{
                     enterButton={"Submit"}
                     size="large"
                     onSearch={(e) => {
-                      console.log(e);
                       this.setState({ otp: e }, () => {
                         this.verifyOtp();
                       });
@@ -505,7 +507,6 @@ class App extends React.Component{
                               b.beneficiary_reference_id
                             );
                           });
-                          console.log(idx);
                           if (idx === -1) {
                             sbs.push(b);
                           } else {
@@ -672,7 +673,7 @@ class App extends React.Component{
 
         {this.state.session && this.state.bookingCenter ? (
           <Modal
-            title="Basic Modal"
+            title="Congrats!"
             visible={this.state.showSuccessModal}
             onOk={(e) => {
               this.setState({ showSuccessModal: false });
@@ -681,9 +682,9 @@ class App extends React.Component{
               this.setState({ showSuccessModal: false });
             }}
           >
-            <h1>Congrats!</h1>
             <p>
-              You vaccine slot is booked at {this.state.bookingCenter.name},{" "}
+              You vaccine slot is booked for selected beneficiaries at{" "}
+              {this.state.bookingCenter.name},{" "}
               {this.state.bookingCenter.block_name},{" "}
               {this.state.bookingCenter.address},{" "}
               {this.state.bookingCenter.district_name},{" "}
