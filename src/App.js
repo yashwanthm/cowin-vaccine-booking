@@ -439,16 +439,22 @@ class App extends React.Component{
           <source src="https://assets.coderrocketfuel.com/pomodoro-times-up.mp3"></source>
         </audio>
         <header className="App-header">
-          <h2>Vaccine bookings and notifications for Covid-19 vaccine availability.</h2>
-          <p>Please create an account on <a href="https://www.cowin.gov.in/home" target="_blank">
-                      Cowin
-                    </a> and continue here.</p>
+          <h2>
+            Vaccine bookings and notifications for Covid-19 vaccine
+            availability.
+          </h2>
+          <p>
+            Please create an account on{" "}
+            <a href="https://www.cowin.gov.in/home" target="_blank">
+              Cowin
+            </a>{" "}
+            and continue here.
+          </p>
           <p style={{ color: "#999" }}>
             This app continously tracks for availability of vaccine and can
-            proceed with booking on your behalf.</p> 
-            <p>Login and select beneficiaries
-            to enable automatic booking.</p>
-          
+            proceed with booking on your behalf.
+          </p>
+          <p>Login and select beneficiaries to enable automatic booking.</p>
         </header>
 
         {/* <Col style={{ marginBottom: 10 }}>
@@ -554,15 +560,15 @@ class App extends React.Component{
               <h2 style={{ marginTop: 10, marginBottom: 0 }}>Vaccine Type</h2>
               <Radio.Group
                 style={{ marginTop: 18, marginLeft: 10 }}
-                onChange={(e)=>{
-                  this.setState({vaccineType: e.target.value})
+                onChange={(e) => {
+                  this.setState({ vaccineType: e.target.value });
                 }}
                 value={this.state.vaccineType}
                 disabled={this.state.isWatchingAvailability}
               >
-                <Radio value={'ANY'}>Any</Radio>
-                <Radio value={'COVAXIN'}>Covaxin</Radio>
-                <Radio value={'COVISHIELD'}>Covishield</Radio>
+                <Radio value={"ANY"}>Any</Radio>
+                <Radio value={"COVAXIN"}>Covaxin</Radio>
+                <Radio value={"COVISHIELD"}>Covishield</Radio>
               </Radio.Group>
             </Row>
 
@@ -639,9 +645,14 @@ class App extends React.Component{
                 <Button
                   type="primary"
                   size="large"
+                  loading={this.state.isWatchingAvailability}
                   onClick={(e) => this.initWatch()}
                 >
-                  {this.state.isAuthenticated ? "Track Availability & Book": "Track Availability"}
+                  {this.state.isWatchingAvailability
+                    ? "Tracking"
+                    : this.state.isAuthenticated
+                    ? "Track Availability & Book"
+                    : "Track Availability"}
                 </Button>
                 {this.state.isWatchingAvailability ? (
                   <Button
@@ -656,6 +667,7 @@ class App extends React.Component{
                 ) : null}
               </TabPane>
               <TabPane tab="Track By Pincode" key={2}>
+                <Row>
                 <Search
                   disabled={this.state.isWatchingAvailability}
                   placeholder={
@@ -667,7 +679,9 @@ class App extends React.Component{
                   enterButton={
                     this.state.isWatchingAvailability
                       ? `Tracking`
-                      : (this.state.isAuthenticated ? "Track Availability & Book": "Track Availability")
+                      : this.state.isAuthenticated
+                      ? "Track Availability & Book"
+                      : "Track Availability"
                   }
                   size="large"
                   loading={this.state.isWatchingAvailability}
@@ -691,6 +705,7 @@ class App extends React.Component{
                     Stop
                   </Button>
                 ) : null}
+                </Row>
               </TabPane>
             </Tabs>
 
