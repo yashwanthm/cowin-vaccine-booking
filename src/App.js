@@ -389,7 +389,7 @@ class App extends React.Component{
       })
     }).catch(err=>{
       console.log(err);
-      this.generateOtp();
+      // this.generateOtp();
     })
   }
   selectState(stateId){
