@@ -4,6 +4,7 @@ import CryptoJS from 'crypto-js';
 const apipath = `https://cdn-api.co-vin.in/api`;
 const url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin`
 const zurl = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict`
+const burl = `https://cdn-api.co-vin.in/api//v2/appointment/schedule`
 const secret = "U2FsdGVkX19mD56KTNfQsZgXJMwOG7u/6tuj0Qvil1LEjx783oxHXGUTDWYm+XMYVGXPeu+a24sl5ndEKcLTUQ==";
 export default class CowinApi {
     req(endpoint){
@@ -73,7 +74,6 @@ export default class CowinApi {
           .catch((error) => console.log(error));
     }
     async getBenefeciaries(token){
-      console.log(token);
       return await axios.get('https://cdn-api.co-vin.in/api/v2/appointment/beneficiaries',{headers: {
         "content-type": "application/json",
         "authorization": `Bearer ${token}`
@@ -81,6 +81,17 @@ export default class CowinApi {
         return response.data.beneficiaries
       }).catch(err=>{
         throw err
+      })
+    }
+
+    async book(payload, token){
+      return await axios.post(burl, payload, {headers: {
+        "content-type": "application/json",
+        "authorization": `Bearer ${token}`
+      }}).then(response=>{
+        return response.data
+      }).catch(err=>{
+        throw err;
       })
     }
 
@@ -93,7 +104,7 @@ export default class CowinApi {
             }).catch(err=>{
                 subscriber.error(err);
             });
-        }, 3000 )
+        }, 1000 * 45 )
       });
     }
     async getStates(){
@@ -110,5 +121,6 @@ export default class CowinApi {
         throw err
       })
     }
+    
     
 }

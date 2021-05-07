@@ -94,7 +94,7 @@ class App extends React.Component{
   }
   getBeneficiaries(){
     cowinApi.getBenefeciaries(this.state.token).then(data=>{
-      this.setState({beneficiaries: data});
+      this.setState({beneficiaries: data},()=>{this.setStorage()});
     }).catch(err=>{
       console.log(err);
       delete localStorage.token;
@@ -147,14 +147,13 @@ class App extends React.Component{
   }
   setStorage(){
     let state = Object.assign({}, this.state)
-    console.log('setstorage');
     delete state.vaccineCalendar;
     delete state.isWatchingAvailability;
     localStorage.appData = JSON.stringify(state);
   }
   componentWillUnmount() {
     // unsubscribe to ensure no memory leaks
-    // this.setStorage();
+    this.setStorage();
     if(this.watcher) this.watcher.unsubscribe();
   }
   handleNotification(){
@@ -296,7 +295,7 @@ class App extends React.Component{
             self.setState({beneficiaries: data})
           }else{
             this.setState({enableOtp: true},()=>{
-              this.generateOtp()
+              self.generateOtp()
             })
           }
           
@@ -384,6 +383,7 @@ class App extends React.Component{
       // console.log('otp verify ', data);
       localStorage.token = data.token;
       this.setState({token: data.token, isAuthenticated: true}, ()=>{
+        this.setStorage();
         this.getBeneficiaries();
         this.trackAuth();
       })
