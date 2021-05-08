@@ -13,6 +13,8 @@ import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
 import {BroadcastUpdatePlugin} from 'workbox-broadcast-update';
+console.log('swwwww');
+
 
 clientsClaim();
 
@@ -58,6 +60,7 @@ registerRoute(
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
       new ExpirationPlugin({ maxEntries: 50 }),
+      new BroadcastUpdatePlugin()
     ],
   })
 );
@@ -65,6 +68,7 @@ registerRoute(
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
 self.addEventListener('message', async (event) => {
+  console.log('message - ', event)
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
