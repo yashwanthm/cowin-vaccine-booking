@@ -358,7 +358,7 @@ class App extends React.Component{
           </td>
           
             
-            {noAvailability ? <td>No Availability</td> : vc.sessions.map((s) => {
+            {false ? <td>No Availability</td> : vc.sessions.map((s) => {
               return (
                 <td key={s.session_id}>
                   <h4>{s.date}</h4>
@@ -366,7 +366,7 @@ class App extends React.Component{
                   <div>
                     {parseInt(s.available_capacity) > 0
                       ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
-                      : "No Availability"}
+                      : `${s.available_capacity} shots available for ${s.min_age_limit}+`}
                   </div>
                   {parseInt(s.available_capacity > 0) ? (
                     <div>
