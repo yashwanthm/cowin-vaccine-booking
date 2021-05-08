@@ -477,8 +477,7 @@ class App extends React.Component{
             <br />
             If you do not get the OTP for more than 2 mins, please refresh and
             start over. When the load is high, OTP generation fails. Please bear
-            with it.
-            <br/> You can choose to track notifications only. Simply proceed with tracking without logging in.
+            with it. You can choose to track notifications only. Simply proceed with tracking without logging in.
           </p>
         </header>
 
