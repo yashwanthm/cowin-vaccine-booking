@@ -384,6 +384,9 @@ class App extends React.Component{
           
             
             {false ? <td>No Availability</td> : vc.sessions.map((s) => {
+              if(parseInt(s.min_age_limit) !== parseInt(this.state.minAge)){
+                return;
+              }
               return (
                 <td key={s.session_id}>
                   <h4>{s.date}</h4>
@@ -523,7 +526,7 @@ class App extends React.Component{
                     enterButton={"Generate OTP"}
                     size="large"
                     onSearch={(e) => {
-                      this.setState({ mobile: e, enableOtp: true }, () => {
+                      this.setState({ mobile: e === "" ?  this.state.mobile: e, enableOtp: true }, () => {
                         this.generateOtp();
                       });
                     }}
