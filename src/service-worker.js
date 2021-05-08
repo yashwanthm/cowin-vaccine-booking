@@ -12,6 +12,7 @@ import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
+import {BroadcastUpdatePlugin} from 'workbox-broadcast-update';
 
 clientsClaim();
 
@@ -63,9 +64,19 @@ registerRoute(
 
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
-self.addEventListener('message', (event) => {
+self.addEventListener('message', async (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+  }
+  if (event.data.meta === 'workbox-broadcast-update') {
+    const {cacheName, updatedUrl} = event.data.payload;
+
+    // Do something with cacheName and updatedUrl.
+    // For example, get the cached content and update
+    // the content on the page.
+    const cache = await caches.open(cacheName);
+    const updatedResponse = await cache.match(updatedUrl);
+    const updatedText = await updatedResponse.text();
   }
 });
 

@@ -46,6 +46,7 @@ export default class CowinApi {
     clearWatch(){
         console.log(this);
         clearInterval(this.watcher);
+        clearInterval(this.authWatcher);
     }
     async generateOtp(mobile){
         return await axios.post('https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP', {
@@ -98,11 +99,11 @@ export default class CowinApi {
     trackAuth(token){
       return new Observable(subscriber => {
         let req = this.getBenefeciaries.bind(this);
-        this.watcher = setInterval(()=>{
+        this.authWatcher = setInterval(()=>{
             req(token).then(data=>{
                 subscriber.next(data);
             }).catch(err=>{
-                subscriber.error(err);
+                subscriber.next(err);
             });
         }, 1000 * 45 )
       });
