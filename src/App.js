@@ -459,20 +459,26 @@ class App extends React.Component{
             availability.
           </h2>
           <p>
+            This web-app can continously tracks for availability of vaccine and
+            proceed with booking on your behalf.
+          </p>
+          <p style={{ color: "#555" }}>
             Please create an account on{" "}
-            <a href="https://www.cowin.gov.in/home" target="_blank" rel="noreferrer">
+            <a
+              href="https://www.cowin.gov.in/home"
+              target="_blank"
+              rel="noreferrer"
+            >
               Cowin
             </a>{" "}
             and continue here.
-          </p>
-          <p style={{ color: "#999" }}>
-            This app continously tracks for availability of vaccine and can
-            proceed with booking on your behalf.
-          </p>
-          <p>Login and select beneficiaries to enable automatic booking.</p>
-          <p>
+            <br />
+            Login and select beneficiaries to enable automatic booking.
+            <br />
             If you do not get the OTP for more than 2 mins, please refresh and
-            start over. When the load is high, OTP generation fails. Please bear with it.
+            start over. When the load is high, OTP generation fails. Please bear
+            with it.
+            <br/> You can choose to track notifications only. Simply proceed with tracking without logging in.
           </p>
         </header>
 
@@ -527,7 +533,11 @@ class App extends React.Component{
                 {beneficiaries.length === 0 ? (
                   <p>
                     You do not have any benificiares added yet. Please login to{" "}
-                    <a href="https://www.cowin.gov.in/home" target="_blank" rel="noreferrer">
+                    <a
+                      href="https://www.cowin.gov.in/home"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       Cowin
                     </a>{" "}
                     and add beneficiaries
@@ -808,7 +818,11 @@ class App extends React.Component{
             <p>Your appointment id is {this.state.appointment_id}</p>
             <p>
               You can login into{" "}
-              <a href="https://www.cowin.gov.in/home" target="_blank" rel="noreferrer">
+              <a
+                href="https://www.cowin.gov.in/home"
+                target="_blank"
+                rel="noreferrer"
+              >
                 Cowin
               </a>{" "}
               to see details of your Vaccine slot
