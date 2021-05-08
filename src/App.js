@@ -497,6 +497,8 @@ class App extends React.Component{
             with it. You can choose to track notifications only. Simply proceed with tracking without logging in.
             <br/>
             *Please be careful with the location selection as the booking can automatically happen at any center that has availability.
+            <br/>
+            **Availability is very short. Please keep feeding in OTPs when the session expires to book as soon as there's availability.
           </p>
         </header>
 
