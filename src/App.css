@@ -38,6 +38,29 @@ td, th {
 .App-link {
   color: #61dafb;
 }
+.paytm-button{
+  font-weight: 600;
+  border-radius: 2px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  outline: none;
+  border-width: 1px;
+  border-style: solid;
+  transition: all 0.3s ease;
+  max-width: 100%;
+  font-size: 1rem;
+  padding: 6px 16px;
+  min-width: 40px;
+  width: 288px;
+  height: 40px;
+  background-color: #00b9f5;
+  color: #fff;
+  border-color: #00b9f5;
+}
 
 @keyframes App-logo-spin {
   from {

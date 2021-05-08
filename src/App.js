@@ -668,46 +668,58 @@ class App extends React.Component{
               </TabPane>
               <TabPane tab="Track By Pincode" key={2}>
                 <Row>
-                <Search
-                  disabled={this.state.isWatchingAvailability}
-                  placeholder={
-                    this.state.zip ? this.state.zip : "Enter your area pincode"
-                  }
-                  allowClear
-                  type="number"
-                  // value={this.state.zip}
-                  enterButton={
-                    this.state.isWatchingAvailability
-                      ? `Tracking`
-                      : this.state.isAuthenticated
-                      ? "Track Availability & Book"
-                      : "Track Availability"
-                  }
-                  size="large"
-                  loading={this.state.isWatchingAvailability}
-                  onSearch={(txt) => {
-                    this.setState(
-                      { zip: txt, isWatchingAvailability: true },
-                      () => {
-                        this.initWatch();
-                      }
-                    );
-                  }}
-                />
-                {this.state.isWatchingAvailability ? (
-                  <Button
-                    type="primary"
-                    icon={<CloseCircleOutlined />}
-                    size={"large"}
-                    danger
-                    onClick={this.clearWatch.bind(this)}
-                  >
-                    Stop
-                  </Button>
-                ) : null}
+                  <Search
+                    disabled={this.state.isWatchingAvailability}
+                    placeholder={
+                      this.state.zip
+                        ? this.state.zip
+                        : "Enter your area pincode"
+                    }
+                    allowClear
+                    type="number"
+                    // value={this.state.zip}
+                    enterButton={
+                      this.state.isWatchingAvailability
+                        ? `Tracking`
+                        : this.state.isAuthenticated
+                        ? "Track Availability & Book"
+                        : "Track Availability"
+                    }
+                    size="large"
+                    loading={this.state.isWatchingAvailability}
+                    onSearch={(txt) => {
+                      this.setState(
+                        { zip: txt, isWatchingAvailability: true },
+                        () => {
+                          this.initWatch();
+                        }
+                      );
+                    }}
+                  />
+                  {this.state.isWatchingAvailability ? (
+                    <Button
+                      type="primary"
+                      icon={<CloseCircleOutlined />}
+                      size={"large"}
+                      danger
+                      onClick={this.clearWatch.bind(this)}
+                    >
+                      Stop
+                    </Button>
+                  ) : null}
                 </Row>
               </TabPane>
             </Tabs>
+
+            <h3 style={{ marginTop: 15, marginBottom: 0 }}>Donate</h3>
+            <a
+              className="paytm-button"
+              href="https://paytm.me/gO-42Lh"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Donate with PayTM
+            </a>
 
             {/* <Col>
               {this.state.isWatchingAvailability ? (
