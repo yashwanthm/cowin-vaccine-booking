@@ -56,6 +56,10 @@ class App extends React.Component{
     if(localStorage.appData){
       state = Object.assign(state, JSON.parse(localStorage.appData))
     } 
+    if(localStorage.token){
+      state.token = localStorage.token;
+      state.isAuthenticated = true;
+    }
     this.state = state;
   }
   async waitForOtp(){
