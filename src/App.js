@@ -461,6 +461,7 @@ class App extends React.Component{
             proceed with booking on your behalf.
           </p>
           <p>Login and select beneficiaries to enable automatic booking.</p>
+          <p>If you do not get the OTP for more than 2 mins, please refresh and start over.</p>
         </header>
 
         {/* <Col style={{ marginBottom: 10 }}>
