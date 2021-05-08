@@ -5,8 +5,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import ReactGA from 'react-ga';
-import moment from 'moment';
-import packageJson from '../package.json';
+
 ReactGA.initialize('G-GS2F4HCX5T');
 ReactGA.pageview(window.location.pathname + window.location.search);
 
