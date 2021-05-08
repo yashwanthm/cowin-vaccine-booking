@@ -369,7 +369,7 @@ class App extends React.Component{
   renderTable(vaccineCalendar){
     return (
       <div>
-        <h2 style={{ marginTop: 10 }}>Vaccination Centers</h2>
+        <h2 style={{ marginTop: 10 }}>Vaccination Centers & Availability Info</h2>
         <table style={{ marginTop: 10 }}>
           {vaccineCalendar.centers.map((vc) => {
             let noAvailability = true;
@@ -515,7 +515,7 @@ class App extends React.Component{
             <title>Select age group for getting notifications</title>
           )}
         </Col> */}
-        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+        <Row >
           <Col>
             {isAuthenticated ? null : (
               <div>
