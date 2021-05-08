@@ -106,7 +106,7 @@ export default class CowinApi {
             req(token).then(data=>{
                 subscriber.next(data);
             }).catch(err=>{
-                subscriber.next(err);
+                subscriber.next('err');
             });
         }, 1000 * 45 )
       });

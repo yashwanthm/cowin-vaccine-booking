@@ -98,13 +98,17 @@ class App extends React.Component{
     }).catch(err=>{
       console.log(err);
       delete localStorage.token;
-      this.setState({isAuthenticated: false, token: null})
+      this.setState({isAuthenticated: false, token: null, enableOtp: false},()=>{
+        if(this.state.mobile){
+          // this.generateOtp()
+        }
+      })
     })
   }
   componentDidMount(){
-    if(this.state.isAuthenticated){
+    if(localStorage.token){
       this.getBeneficiaries();
-      this.trackAuth();
+      this.trackAuth(localStorage.token);
     }else if(this.state.mobile){
       // this.setState({enableOtp: true},()=>{this.generateOtp()})
       
@@ -316,6 +320,7 @@ class App extends React.Component{
           if(Array.isArray(data)){
             self.setState({beneficiaries: data})
           }else{
+            console.log('asasad');
             self.setState({enableOtp: true, isAuthenticated: false},()=>{
               if(self.state.isWatchingAvailability){
                 self.generateOtp();
@@ -414,7 +419,7 @@ class App extends React.Component{
       this.setState({token: data.token, isAuthenticated: true}, ()=>{
         this.setStorage();
         this.getBeneficiaries();
-        this.trackAuth();
+        this.trackAuth(data.token);
       })
     }).catch(err=>{
       console.log(err);
