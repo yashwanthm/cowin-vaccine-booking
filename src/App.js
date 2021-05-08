@@ -11,16 +11,7 @@ import moment from "moment";
 const { TabPane } = Tabs;
 const cowinApi = new CowinApi();
 const { Search } = Input;
-const { Option } = Select;
-
-let speech = new SpeechSynthesisUtterance();
-
-speech.lang = "en-US";
-speech.volume = 1;
-speech.rate = 1;
-speech.pitch = 1;                
-
-
+const { Option } = Select;               
 
 
 class App extends React.Component{
@@ -108,6 +99,22 @@ class App extends React.Component{
         }
       })
     })
+  }
+  speak(msg){
+    try {
+      let speech = new SpeechSynthesisUtterance();
+
+      speech.lang = "en-US";
+      speech.volume = 1;
+      speech.rate = 1;
+      speech.pitch = 1; 
+      speech.text = msg;
+      window.speechSynthesis.speak(speech);  
+    } catch (error) {
+      console.log(error);
+    }
+    
+
   }
   componentDidMount(){
     if(localStorage.token){
@@ -217,8 +224,8 @@ class App extends React.Component{
               }
             });
             new Notification(opts.title, opts);    
-            speech.text = "Vaccines Available. Attempting to book.";
-            window.speechSynthesis.speak(speech);
+            
+            this.speak("Vaccines Available. Attempting to book.");
             this.setState({bookingInProgress: true},()=>{
               this.book(s, c);
             })
@@ -262,8 +269,7 @@ class App extends React.Component{
     }).catch(err=>{
       this.setState({bookingInProgress: false, session: null, bookingCenter: null});
       let msg = 'Booking did not get through, tracking for next slot';
-      speech.text = msg;
-      window.speechSynthesis.speak(speech);
+      this.speak(msg);
       console.log(msg);
     })
 
@@ -326,7 +332,7 @@ class App extends React.Component{
           }else{
             console.log('asasad');
             self.setState({enableOtp: true, isAuthenticated: false},()=>{
-              if(self.state.isWatchingAvailability && !this.state.enableOtp){
+              if(self.state.isWatchingAvailability && !self.state.enableOtp){
                 self.generateOtp();
               }
             })
@@ -336,7 +342,7 @@ class App extends React.Component{
         error(err) {
           console.error("something wrong occurred: " + err);
           self.setState({isAuthenticated: false},()=>{
-            if(self.state.isWatchingAvailability && !this.state.enableOtp){
+            if(self.state.isWatchingAvailability && !self.state.enableOtp){
               self.generateOtp();
             }
           })
@@ -401,8 +407,7 @@ class App extends React.Component{
     this.setState({minAge: e.target.value});
   }
   generateOtp(){
-    speech.text = "OTP has been sent to your phone. Please enter OTP";
-    window.speechSynthesis.speak(speech);
+    this.speak("OTP has been sent to your phone. Please enter OTP");
     this.setState({enableOtp: true}, ()=>{
       cowinApi.generateOtp(this.state.mobile).then(data=>{
         // console.log(data);
