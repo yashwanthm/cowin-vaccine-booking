@@ -535,6 +535,7 @@ class App extends React.Component{
                   return (
                     <Row>
                       <Checkbox
+                        disabled={this.state.isWatchingAvailability}
                         checked={
                           selectedBeneficiaries.findIndex((sb) => {
                             return (
