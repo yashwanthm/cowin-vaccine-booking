@@ -641,7 +641,7 @@ class App extends React.Component{
 
             <h2 style={{ marginTop: 15, marginBottom: 0 }}>Select Location</h2>
             <Tabs
-              defaultActiveKey="1"
+              defaultActiveKey={this.state.selectedTab || "1"}
               onChange={(e) => {
                 this.setState({ selectedTab: e });
               }}
