@@ -88,7 +88,7 @@ class App extends React.Component{
       
   }
   getBeneficiaries(){
-    console.log('get bens');
+    // console.log('get bens');
     cowinApi.getBenefeciaries(this.state.token).then(data=>{
       this.setState({beneficiaries: data},()=>{this.setStorage()});
     }).catch(err=>{
@@ -326,7 +326,7 @@ class App extends React.Component{
       .trackAuth(this.state.token)
       .subscribe({
         next(data) {
-          console.log({sdata: data})
+          // console.log({sdata: data})
           if(Array.isArray(data)){
             self.setState({beneficiaries: data})
           }else{
