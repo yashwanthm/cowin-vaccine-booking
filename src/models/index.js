@@ -6,7 +6,7 @@ const url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calend
 const zurl = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict`
 const burl = `https://cdn-api.co-vin.in/api//v2/appointment/schedule`
 const secret = "U2FsdGVkX19mD56KTNfQsZgXJMwOG7u/6tuj0Qvil1LEjx783oxHXGUTDWYm+XMYVGXPeu+a24sl5ndEKcLTUQ==";
-const pollFreq = parseInt(localStorage.pollFreq) || 1000;
+const pollFreq = parseInt(localStorage.pollFreq) || 1800;
 export default class CowinApi {
     req(endpoint){
         return new Promise((resolve, reject)=>{
@@ -49,7 +49,9 @@ export default class CowinApi {
     clearWatch(){
         console.log(this);
         clearInterval(this.watcher);
-        clearInterval(this.authWatcher);
+    }
+    clearAuthWatch(){
+      clearInterval(this.authWatcher)
     }
     async generateOtp(mobile){
         return await axios.post('https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP', {

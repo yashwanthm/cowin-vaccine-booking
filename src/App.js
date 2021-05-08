@@ -172,6 +172,7 @@ class App extends React.Component{
   }
   setStorage(){
     let state = Object.assign({}, this.state)
+    delete state.enableOtp;
     delete state.vaccineCalendar;
     delete state.isWatchingAvailability;
     localStorage.appData = JSON.stringify(state);
@@ -331,9 +332,12 @@ class App extends React.Component{
             self.setState({beneficiaries: data})
           }else{
             console.log('asasad');
-            self.setState({enableOtp: true, isAuthenticated: false},()=>{
-              if(self.state.isWatchingAvailability && !self.state.enableOtp){
+            delete localStorage.token;
+            self.setState({enableOtp: true, isAuthenticated: false, token: null},()=>{
+              self.speak('Session expired!');
+              if(self.state.isWatchingAvailability){
                 self.generateOtp();
+                cowinApi.clearAuthWatch();
               }
             })
           }
@@ -341,9 +345,12 @@ class App extends React.Component{
         },
         error(err) {
           console.error("something wrong occurred: " + err);
-          self.setState({isAuthenticated: false},()=>{
+          self.speak('Session expired!');
+          delete localStorage.token;
+          self.setState({isAuthenticated: false, token: null},()=>{
             if(self.state.isWatchingAvailability && !self.state.enableOtp){
               self.generateOtp();
+              cowinApi.clearAuthWatch();
             }
           })
         },
@@ -421,7 +428,6 @@ class App extends React.Component{
     
   }
   verifyOtp(){
-    this.setState({enableOtp: false});
     cowinApi.verifyOtp(this.state.otp, this.state.otpData.txnId).then(data=>{
       // console.log('otp verify ', data);
       localStorage.token = data.token;
@@ -433,7 +439,7 @@ class App extends React.Component{
     }).catch(err=>{
       console.log(err);
       if(this.state.isAuthenticated){
-        delete localStorage.data;
+        delete localStorage.appData;
         delete localStorage.token;
         this.setState({token: null, isAuthenticated: false});
       }
