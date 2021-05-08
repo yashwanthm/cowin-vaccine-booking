@@ -332,7 +332,7 @@ class App extends React.Component{
           }else{
             console.log('asasad');
             delete localStorage.token;
-            self.setState({enableOtp: true, isAuthenticated: false, token: null},()=>{
+            self.setState({isAuthenticated: false, token: null},()=>{
               self.speak('Session expired!');
               if(self.state.isWatchingAvailability){
                 self.generateOtp();
