@@ -6,6 +6,7 @@ const url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calend
 const zurl = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict`
 const burl = `https://cdn-api.co-vin.in/api//v2/appointment/schedule`
 const secret = "U2FsdGVkX19mD56KTNfQsZgXJMwOG7u/6tuj0Qvil1LEjx783oxHXGUTDWYm+XMYVGXPeu+a24sl5ndEKcLTUQ==";
+const pollFreq = 5* 1000;
 export default class CowinApi {
     req(endpoint){
         return new Promise((resolve, reject)=>{
@@ -28,19 +29,21 @@ export default class CowinApi {
                 }).catch(err=>{
                     subscriber.error(err);
                 });
-            }, 500)
+            }, pollFreq)
           });
     }
     initDist(dist, date){
       return new Observable(subscriber => {
           let req = this.req.bind(this);
-          this.watcher = setInterval(()=>{
+          let m = ()=>{
               req(`${zurl}?district_id=${dist}&date=${date}`).then(data=>{
                   subscriber.next(data);
               }).catch(err=>{
                   subscriber.error(err);
               });
-          }, 500)
+            }
+            m();
+          this.watcher = setInterval(m, pollFreq)
         });
   }
     clearWatch(){
