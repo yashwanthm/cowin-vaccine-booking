@@ -367,53 +367,58 @@ class App extends React.Component{
     this.setState({ isWatchingAvailability: false });
   }
   renderTable(vaccineCalendar){
-    return <table style={{marginTop: 10}}>
-    {vaccineCalendar.centers.map((vc) => {
-      let noAvailability = true
-      vc.sessions.map(ss=>{
-        // eslint-disable-next-line no-unused-vars
-        if(ss.available_capacity>0) noAvailability = false;
-      })
-      
-      return (
-        <tr key={vc.center_id}>
-          <td>
-            <h3>{vc.name}</h3>
-            {vc.block_name}, {vc.address}, {vc.pincode} 
-          </td>
-          
-            
-            {false ? <td>No Availability</td> : vc.sessions.map((s) => {
-              if(parseInt(s.min_age_limit) !== parseInt(this.state.minAge)){
-                return;
-              }
-              return (
-                <td key={s.session_id}>
-                  <h4>{s.date}</h4>
-                  <p>{s.vaccine}</p>
-                  <div>
-                    {parseInt(s.available_capacity) > 0
-                      ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
-                      : `${s.available_capacity} shots available for ${s.min_age_limit}+`}
-                  </div>
-                  {parseInt(s.available_capacity > 0) ? (
-                    <div>
-                      <b>Available Slots</b>
-                      {s.slots.map((sl) => {
-                        return <Row>{sl}</Row>;
-                      })}
-                    </div>
-                  ) : null}
-                </td>
-              );
-            })}
-          
+    return (
+      <div>
+        <h2 style={{ marginTop: 10 }}>Vaccination Centers</h2>
+        <table style={{ marginTop: 10 }}>
+          {vaccineCalendar.centers.map((vc) => {
+            let noAvailability = true;
+            vc.sessions.map((ss) => {
+              // eslint-disable-next-line no-unused-vars
+              if (ss.available_capacity > 0) noAvailability = false;
+            });
 
-          {/* </th> */}
-        </tr>
-      );
-    })}
-  </table>
+            return (
+              <tr key={vc.center_id}>
+                <td>
+                  <h3>{vc.name}</h3>
+                  {vc.block_name}, {vc.address}, {vc.pincode}
+                </td>
+
+                {false ? (
+                  <td>No Availability</td>
+                ) : (
+                  vc.sessions.map((s) => {
+                    return (
+                      <td key={s.session_id}>
+                        <h4>{s.date}</h4>
+                        <p>{s.vaccine}</p>
+                        <div>
+                          {parseInt(s.available_capacity) > 0
+                            ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
+                            : `${s.available_capacity} shots available for ${s.min_age_limit}+`}
+                        </div>
+                        {parseInt(s.available_capacity > 0) ? (
+                          <div>
+                            <b>Available Slots</b>
+                            {s.slots.map((sl) => {
+                              return <Row>{sl}</Row>;
+                            })}
+                          </div>
+                        ) : null}
+                      </td>
+                    );
+                  })
+                )}
+
+                {/* </th> */}
+              </tr>
+            );
+          })}
+        </table>
+      </div>
+    );
+      
   }
   setMinAge(e){
     this.setState({minAge: e.target.value});
