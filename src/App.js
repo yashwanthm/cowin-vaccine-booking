@@ -52,9 +52,9 @@ class App extends React.Component{
       bookingCenter: null,
       showSuccessModal: false
     };
-    // if(localStorage.appData){
-    //   state = Object.assign(state, JSON.parse(localStorage.appData))
-    // } 
+    if(localStorage.appData){
+      state = Object.assign(state, JSON.parse(localStorage.appData))
+    } 
     this.state = state;
   }
   async waitForOtp(){
@@ -101,10 +101,9 @@ class App extends React.Component{
     })
   }
   componentDidMount(){
-    this.trackAuth();
-    return;
     if(this.state.isAuthenticated){
       this.getBeneficiaries();
+      this.trackAuth();
     }else if(this.state.mobile){
       // this.setState({enableOtp: true},()=>{this.generateOtp()})
       
