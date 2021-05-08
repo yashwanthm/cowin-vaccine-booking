@@ -81,6 +81,7 @@ self.addEventListener('message', async (event) => {
     const cache = await caches.open(cacheName);
     const updatedResponse = await cache.match(updatedUrl);
     const updatedText = await updatedResponse.text();
+    console.log(updatedText);
   }
 });
 

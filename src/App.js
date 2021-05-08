@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import "./App.css";
 // import { Notifications } from "react-push-notification";
 import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal } from "antd";
@@ -171,7 +172,6 @@ class App extends React.Component{
     if(this.state.selectedBeneficiaries && Array.isArray(this.state.selectedBeneficiaries) && this.state.selectedBeneficiaries.length>0){
       requiredNums = this.state.selectedBeneficiaries.length;
     }
-    let booking = false;
     centers.map(c=>{
       c.sessions.map(s=>{
         
@@ -347,6 +347,7 @@ class App extends React.Component{
     {vaccineCalendar.centers.map((vc) => {
       let noAvailability = true
       vc.sessions.map(ss=>{
+        // eslint-disable-next-line no-unused-vars
         if(ss.available_capacity>0) noAvailability = false;
       })
       
@@ -451,7 +452,7 @@ class App extends React.Component{
           </h2>
           <p>
             Please create an account on{" "}
-            <a href="https://www.cowin.gov.in/home" target="_blank">
+            <a href="https://www.cowin.gov.in/home" target="_blank" rel="noreferrer">
               Cowin
             </a>{" "}
             and continue here.
@@ -515,10 +516,10 @@ class App extends React.Component{
             {isAuthenticated ? (
               <div>
                 <h2>Beneficiaries</h2>
-                {this.state.beneficiaries.length === 0 ? (
+                {beneficiaries.length === 0 ? (
                   <p>
                     You do not have any benificiares added yet. Please login to{" "}
-                    <a href="https://www.cowin.gov.in/home" target="_blank">
+                    <a href="https://www.cowin.gov.in/home" target="_blank" rel="noreferrer">
                       Cowin
                     </a>{" "}
                     and add beneficiaries
@@ -798,7 +799,7 @@ class App extends React.Component{
             <p>Your appointment id is {this.state.appointment_id}</p>
             <p>
               You can login into{" "}
-              <a href="https://www.cowin.gov.in/home" target="_blank">
+              <a href="https://www.cowin.gov.in/home" target="_blank" rel="noreferrer">
                 Cowin
               </a>{" "}
               to see details of your Vaccine slot

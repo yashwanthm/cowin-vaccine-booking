@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 export default class VaccineCalendar {
 
   constructor(calendar) {
