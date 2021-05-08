@@ -2,7 +2,7 @@
   "name": "cowin-notif",
   "version": "0.1.0",
   "private": true,
-  
+  "homepage": "http://yashwanthm.github.io/cowin-vaccine-booking",
   "buildDate": "",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
