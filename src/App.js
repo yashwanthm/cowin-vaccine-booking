@@ -88,6 +88,7 @@ class App extends React.Component{
       
   }
   getBeneficiaries(){
+    console.log('get bens');
     cowinApi.getBenefeciaries(this.state.token).then(data=>{
       this.setState({beneficiaries: data},()=>{this.setStorage()});
     }).catch(err=>{
@@ -117,12 +118,10 @@ class App extends React.Component{
 
   }
   componentDidMount(){
-    if(localStorage.token){
+    let token = localStorage.token || this.state.token;
+    if(token){
       this.getBeneficiaries();
-      this.trackAuth(localStorage.token);
-    }else if(this.state.mobile){
-      // this.setState({enableOtp: true},()=>{this.generateOtp()})
-      
+      this.trackAuth(token);
     }
 
     cowinApi.getStates().then(data=>{
