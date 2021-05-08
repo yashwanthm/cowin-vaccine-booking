@@ -322,7 +322,7 @@ class App extends React.Component{
           }else{
             console.log('asasad');
             self.setState({enableOtp: true, isAuthenticated: false},()=>{
-              if(self.state.isWatchingAvailability){
+              if(self.state.isWatchingAvailability && !this.state.enableOtp){
                 self.generateOtp();
               }
             })
@@ -332,7 +332,7 @@ class App extends React.Component{
         error(err) {
           console.error("something wrong occurred: " + err);
           self.setState({isAuthenticated: false},()=>{
-            if(self.state.isWatchingAvailability){
+            if(self.state.isWatchingAvailability && !this.state.enableOtp){
               self.generateOtp();
             }
           })
@@ -416,15 +416,18 @@ class App extends React.Component{
     cowinApi.verifyOtp(this.state.otp, this.state.otpData.txnId).then(data=>{
       // console.log('otp verify ', data);
       localStorage.token = data.token;
-      this.setState({token: data.token, isAuthenticated: true}, ()=>{
+      this.setState({token: data.token, isAuthenticated: true, enableOtp: false}, ()=>{
         this.setStorage();
         this.getBeneficiaries();
         this.trackAuth(data.token);
       })
     }).catch(err=>{
       console.log(err);
-      this.setState({enableOtp: true});
-      // this.generateOtp();
+      if(this.state.isAuthenticated){
+        delete localStorage.data;
+        delete localStorage.token;
+        this.setState({token: null, isAuthenticated: false});
+      }
     })
   }
   selectState(stateId){
@@ -469,7 +472,7 @@ class App extends React.Component{
           <p>Login and select beneficiaries to enable automatic booking.</p>
           <p>
             If you do not get the OTP for more than 2 mins, please refresh and
-            start over.
+            start over. When the load is high, OTP generation fails. Please bear with it.
           </p>
         </header>
 
