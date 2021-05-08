@@ -82,7 +82,7 @@ export default class CowinApi {
     async getBenefeciaries(token){
       return await axios.get('https://cdn-api.co-vin.in/api/v2/appointment/beneficiaries',{headers: {
         "content-type": "application/json",
-        "authorization": `Bearer ${token}`
+        "authorization": `Bearer ${localStorage.token}`
       }}).then(response=>{
         return response.data.beneficiaries
       }).catch(err=>{
@@ -93,7 +93,7 @@ export default class CowinApi {
     async book(payload, token){
       return await axios.post(burl, payload, {headers: {
         "content-type": "application/json",
-        "authorization": `Bearer ${token}`
+        "authorization": `Bearer ${localStorage.token}`
       }}).then(response=>{
         return response.data
       }).catch(err=>{

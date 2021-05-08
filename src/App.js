@@ -477,21 +477,23 @@ class App extends React.Component{
             proceed with booking on your behalf.
           </p>
           <p style={{ color: "#555" }}>
-            Please create an account on{" "}
+            Please register on{" "}
             <a
               href="https://www.cowin.gov.in/home"
               target="_blank"
               rel="noreferrer"
             >
               Cowin
-            </a>{" "}
-            and continue here.
+            </a>{", "}
+            add beneficiaries and then, come back here.
             <br />
             Login and select beneficiaries to enable automatic booking.
             <br />
             If you do not get the OTP for more than 2 mins, please refresh and
             start over. When the load is high, OTP generation fails. Please bear
             with it. You can choose to track notifications only. Simply proceed with tracking without logging in.
+            <br/>
+            *Please be careful with the location selection as the booking can automatically happen at any center that has availability.
           </p>
         </header>
 
