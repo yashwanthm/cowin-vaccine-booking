@@ -316,8 +316,10 @@ class App extends React.Component{
           if(Array.isArray(data)){
             self.setState({beneficiaries: data})
           }else{
-            self.setState({enableOtp: true},()=>{
-              self.generateOtp()
+            self.setState({enableOtp: true, isAuthenticated: false},()=>{
+              if(self.state.isWatchingAvailability){
+                self.generateOtp();
+              }
             })
           }
           
