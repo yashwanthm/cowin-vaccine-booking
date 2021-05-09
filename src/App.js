@@ -508,7 +508,7 @@ class App extends React.Component{
           </h2>
           <p>
             This web-app can continously tracks for availability of vaccine and
-            proceed with booking on your behalf.
+            proceed with booking on your behalf if you are logged in.
           </p>
           <p style={{ color: "#555" }}>
             Please register on{" "}
