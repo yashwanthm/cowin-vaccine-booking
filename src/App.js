@@ -509,8 +509,7 @@ class App extends React.Component{
         </audio>
         <header className="App-header">
           <h2>
-            Vaccine bookings and notifications for Covid-19 vaccine
-            availability.
+          Covid-19 automatic vaccine bookings and notifications for availability.
           </h2>
           <p>
             This web-app can continously tracks for availability of vaccine and
