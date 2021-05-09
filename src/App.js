@@ -566,6 +566,7 @@ class App extends React.Component{
                   />
                 )}
                 {this.state.enableOtp ? (
+                  <span>
                   <Search
                     placeholder="Enter OTP"
                     allowClear
@@ -579,6 +580,10 @@ class App extends React.Component{
                       });
                     }}
                   />
+                  <Button danger onClick={e=>{this.setState({enableOtp: false})}} type="link">
+                    Cancel
+                  </Button>
+                  </span>
                 ) : null}
               </div>
             )}
