@@ -452,7 +452,7 @@ class App extends React.Component{
     this.setState({minAge: e.target.value});
   }
   generateOtp(){
-    this.speak("OTP has been sent to your phone. Please enter OTP");
+    this.speak("One Time Password has been sent to your phone. Please enter.");
     this.setState({enableOtp: true}, ()=>{
       cowinApi.generateOtp(this.state.mobile).then(data=>{
         // console.log(data);
