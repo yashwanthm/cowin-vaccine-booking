@@ -41,6 +41,12 @@ const version = metas[metas.length-1].getAttribute("build-version");
 class App extends React.Component{
   constructor(props) {
     super(props);
+    this.bookingIntervals=[];
+    setInterval(() => {
+      this.bookingIntervals.map(b=>{
+        clearInterval(b)
+      })
+    }, 1000);
     let state = {
       isWatchingAvailability: false,
       vaccineType: 'ANY',
@@ -284,17 +290,22 @@ class App extends React.Component{
       slot: session.slots[0],
       beneficiaries: benIds
     }
-    cowinApi.book(payload, this.state.token).then(data=>{
-      console.log('Booking success ', data.appointment_id);
-      this.clearWatch();
-      this.setState({bookingInProgress: false, appointment_id: data.appointment_id, showSuccessModal: true});
-    }).catch(err=>{
-      this.setState({bookingInProgress: false, session: null, bookingCenter: null});
-      let msg = 'Booking did not get through, tracking for next slot';
-      this.speak(msg);
-      console.log(msg);
-    })
-
+    // let thisInterval = setInterval(()=>{
+      cowinApi.book(payload, this.state.token).then(data=>{
+        console.log('Booking success ', data.appointment_id);
+        this.clearWatch();
+        this.setState({bookingInProgress: false, appointment_id: data.appointment_id, showSuccessModal: true});
+      }).catch(err=>{
+        this.setState({bookingInProgress: false, session: null, bookingCenter: null});
+        let msg = 'Booking did not get through, tracking for next slot';
+        // this.speak(msg);
+        console.log(msg);
+      })  
+    // }, 100)
+    // if(!this.bookingIntervals){
+    //   this.bookingIntervals = [];
+    // }
+    // this.bookingIntervals.push(thisInterval);
   }
 
   initWatch(zip) {
@@ -448,10 +459,11 @@ class App extends React.Component{
     this.setState({minAge: e.target.value});
   }
   generateOtp(){
-    this.speak("One Time Password has been sent to your phone. Please enter.");
+    
     this.setState({enableOtp: true}, ()=>{
       cowinApi.generateOtp(this.state.mobile).then(data=>{
         // console.log(data);
+        this.speak("One Time Password has been sent to your phone. Please enter.");
         this.setState({otpData: data, enableOtp: true});
         // this.waitForOtp();
       }).catch(err=>{
