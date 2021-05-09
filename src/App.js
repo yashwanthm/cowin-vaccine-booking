@@ -12,19 +12,13 @@ import {
   WhatsappShareButton,
   TwitterShareButton,
   LinkedinShareButton,
-  WorkplaceShareButton,
   TelegramShareButton,
   RedditShareButton,
-  LivejournalShareButton,
-  InstapaperShareButton,
   FacebookIcon,
   LinkedinIcon,
   WhatsappIcon,
   TwitterIcon,
   RedditIcon,
-  WorkplaceIcon,
-  InstapaperIcon,
-  LivejournalIcon,
   TelegramIcon
 
 } from "react-share"
@@ -876,13 +870,6 @@ class App extends React.Component{
           >
             <TwitterIcon size={48} round />
           </TwitterShareButton>
-          <TelegramShareButton
-            url={promosg.url}
-            title={promosg.text}
-            className="Demo__some-network__share-button"
-          >
-            <TelegramIcon size={48} round />
-          </TelegramShareButton>
           <WhatsappShareButton
             url={promosg.url}
             title={promosg.text}
@@ -903,29 +890,15 @@ class App extends React.Component{
           >
             <RedditIcon size={48} round />
           </RedditShareButton>
-          <WorkplaceShareButton
+          
+          <TelegramShareButton
             url={promosg.url}
-            quote={promosg.text}
+            title={promosg.text}
             className="Demo__some-network__share-button"
           >
-            <WorkplaceIcon size={48} round />
-          </WorkplaceShareButton>
-          <LivejournalShareButton
-            url={promosg.url}
-            title={promosg.tags[0]}
-            description={promosg.msg + ' ' + promosg.url + promosg.tags.toString()}
-            className="Demo__some-network__share-button"
-          >
-            <LivejournalIcon size={48} round />
-          </LivejournalShareButton>
-          <InstapaperShareButton
-            url={promosg.url}
-            title={promosg.title}
-            description={promosg.msg + ' ' + promosg.url + promosg.tags.toString()}
-            className="Demo__some-network__share-button"
-          >
-            <InstapaperIcon size={48} round />
-          </InstapaperShareButton>
+            <TelegramIcon size={48} round />
+          </TelegramShareButton>
+          
 
           <div style={{marginTop: 10}}></div> 
           <Text code>Build last updated at: {version}</Text>
