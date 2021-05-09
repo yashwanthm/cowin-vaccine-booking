@@ -117,6 +117,10 @@ td, th {
   width: auto;
   height: 16px;
 }
+
+.Demo__some-network__share-button{
+  margin-right: 5px;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

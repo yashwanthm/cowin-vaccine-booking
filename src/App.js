@@ -7,11 +7,39 @@ import React from "react";
 import CowinApi from "./models";
 
 import moment from "moment";
+import {
+  FacebookShareButton,
+  WhatsappShareButton,
+  TwitterShareButton,
+  LinkedinShareButton,
+  WorkplaceShareButton,
+  TelegramShareButton,
+  RedditShareButton,
+  LivejournalShareButton,
+  InstapaperShareButton,
+  FacebookIcon,
+  LinkedinIcon,
+  WhatsappIcon,
+  TwitterIcon,
+  RedditIcon,
+  WorkplaceIcon,
+  InstapaperIcon,
+  LivejournalIcon,
+  TelegramIcon
+
+} from "react-share"
 
 const { TabPane } = Tabs;
 const cowinApi = new CowinApi();
 const { Search } = Input;
-const { Option } = Select;               
+const { Option } = Select;       
+
+const promosg = {
+  text: 'Use this link to track vaccine availability and automatically book a slot for you and your family.',
+  title: 'Automated vaccine booking and availability tracking',
+  tags: ['covid19vaccines', 'covid19help', 'vaccination2021', 'covid19india'],
+  url: window.location.href.indexOf('localhost') ? 'https://yashwanthm.github.io/cowin-vaccine-booking/' : window.location.href
+}
 
 
 class App extends React.Component{
@@ -519,7 +547,7 @@ class App extends React.Component{
           <Col>
             {isAuthenticated ? null : (
               <div>
-                <h1>Login</h1>
+                <h2>Login</h2>
                 {this.state.enableOtp ? null : (
                   <Search
                     placeholder={
@@ -613,11 +641,11 @@ class App extends React.Component{
                 })}
               </div>
             ) : null}
-
+            <h2 style={{ marginTop: 14, marginBottom: 0 }}>Booking Preferences</h2>
             <Row style={{ marginTop: 10 }}>
-              <h2 style={{ marginTop: 10, marginBottom: 0 }}>Vaccine Type</h2>
+              <h3 style={{ marginTop: 10, marginBottom: 0 }}>Vaccine Type</h3>
               <Radio.Group
-                style={{ marginTop: 18, marginLeft: 10 }}
+                style={{ marginTop: 12, marginLeft: 10 }}
                 onChange={(e) => {
                   this.setState({ vaccineType: e.target.value });
                 }}
@@ -631,9 +659,9 @@ class App extends React.Component{
             </Row>
 
             <Row style={{ marginTop: 10 }}>
-              <h2 style={{ marginTop: 10, marginBottom: 0 }}>Age Group</h2>
+              <h3 style={{ marginTop: 10, marginBottom: 0 }}>Age Group</h3>
               <Radio.Group
-                style={{ marginTop: 18, marginLeft: 10 }}
+                style={{ marginTop: 12, marginLeft: 10 }}
                 onChange={this.setMinAge.bind(this)}
                 value={this.state.minAge}
                 disabled={this.state.isWatchingAvailability}
@@ -644,9 +672,9 @@ class App extends React.Component{
             </Row>
 
             <Row style={{ marginTop: 5 }}>
-              <h2 style={{ marginTop: 10, marginBottom: 0 }}>Dose</h2>
+              <h3 style={{ marginTop: 10, marginBottom: 0 }}>Dose</h3>
               <Radio.Group
-                style={{ marginTop: 18, marginLeft: 10 }}
+                style={{ marginTop: 12, marginLeft: 10 }}
                 onChange={(e) => {
                   this.setState({ dose: e.target.value });
                 }}
@@ -659,7 +687,7 @@ class App extends React.Component{
               </Radio.Group>
             </Row>
 
-            <h2 style={{ marginTop: 15, marginBottom: 0 }}>Select Location</h2>
+            <h2 style={{ marginTop: 15, marginBottom: 0 }}>Select Location for Tracking Availability</h2>
             <Tabs
               defaultActiveKey={this.state.selectedTab || "1"}
               onChange={(e) => {
@@ -822,6 +850,74 @@ class App extends React.Component{
             Donate
           </a>
         </div>
+
+        <h3 style={{ marginTop: 15, marginBottom: 0 }}>Share</h3>
+        {/* <FacebookShareButton quote={promosg.text} hashtag={promosg.tags[0]}/> */}
+        <FacebookShareButton
+            url={promosg.url}
+            quote={promosg.text}
+            hashtag={promosg.tags[0]}
+            className="Demo__some-network__share-button"
+          >
+            <FacebookIcon size={48} round />
+          </FacebookShareButton>
+          <TwitterShareButton
+            url={promosg.url}
+            title={promosg.title}
+            className="Demo__some-network__share-button"
+          >
+            <TwitterIcon size={48} round />
+          </TwitterShareButton>
+          <TelegramShareButton
+            url={promosg.url}
+            title={promosg.text}
+            className="Demo__some-network__share-button"
+          >
+            <TelegramIcon size={48} round />
+          </TelegramShareButton>
+          <WhatsappShareButton
+            url={promosg.url}
+            title={promosg.text}
+            separator=":: "
+            className="Demo__some-network__share-button"
+          >
+            <WhatsappIcon size={48} round />
+          </WhatsappShareButton>
+          <LinkedinShareButton url={promosg.url} summary={promosg.text} className="Demo__some-network__share-button">
+            <LinkedinIcon size={48} round />
+          </LinkedinShareButton>
+          <RedditShareButton
+            url={promosg.url}
+            title={promosg.text}
+            windowWidth={660}
+            windowHeight={460}
+            className="Demo__some-network__share-button"
+          >
+            <RedditIcon size={48} round />
+          </RedditShareButton>
+          <WorkplaceShareButton
+            url={promosg.url}
+            quote={promosg.text}
+            className="Demo__some-network__share-button"
+          >
+            <WorkplaceIcon size={48} round />
+          </WorkplaceShareButton>
+          <LivejournalShareButton
+            url={promosg.url}
+            title={promosg.tags[0]}
+            description={promosg.msg + ' ' + promosg.url + promosg.tags.toString()}
+            className="Demo__some-network__share-button"
+          >
+            <LivejournalIcon size={48} round />
+          </LivejournalShareButton>
+          <InstapaperShareButton
+            url={promosg.url}
+            title={promosg.title}
+            description={promosg.msg + ' ' + promosg.url + promosg.tags.toString()}
+            className="Demo__some-network__share-button"
+          >
+            <InstapaperIcon size={48} round />
+          </InstapaperShareButton>
 
         {this.state.session && this.state.bookingCenter ? (
           <Modal
