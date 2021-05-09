@@ -129,7 +129,7 @@ class App extends React.Component{
     try {
       let speech = new SpeechSynthesisUtterance();
 
-      speech.lang = "en-US";
+      speech.lang = "en-UK";
       speech.volume = 1;
       speech.rate = 1;
       speech.pitch = 1; 
@@ -230,8 +230,6 @@ class App extends React.Component{
           } catch (error) {
             
           }
-          
-          
 
           let opts = {
             title: c.name,
@@ -249,7 +247,7 @@ class App extends React.Component{
             });
             new Notification(opts.title, opts);    
             
-            this.speak("Vaccines Available. Attempting to book.");
+            this.speak(`Vaccines available at ${c.name}`);
             this.setState({bookingInProgress: true},()=>{
               this.book(s, c);
             })
@@ -422,7 +420,7 @@ class App extends React.Component{
                         <div>
                           {parseInt(s.available_capacity) > 0
                             ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
-                            : `${s.available_capacity} shots available for ${s.min_age_limit}+`}
+                            : `No Availability`}
                         </div>
                         {parseInt(s.available_capacity > 0) ? (
                           <div>
