@@ -420,7 +420,7 @@ class App extends React.Component{
                         <div>
                           {parseInt(s.available_capacity) > 0
                             ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
-                            : `No Availability`}
+                            : `No Availability ${s.min_age_limit}`}
                         </div>
                         {parseInt(s.available_capacity > 0) ? (
                           <div>
