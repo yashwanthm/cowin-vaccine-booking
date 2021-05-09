@@ -350,6 +350,7 @@ class App extends React.Component{
   trackAuth() {
     const self = this;
     console.log('trackauth');
+    if(this.state.isAuthenticated===false) return;
     this.authWatch = cowinApi
       .trackAuth(this.state.token)
       .subscribe({
