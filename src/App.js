@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 import "./App.css";
 // import { Notifications } from "react-push-notification";
-import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal } from "antd";
+import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typography } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
@@ -28,7 +28,7 @@ import {
   TelegramIcon
 
 } from "react-share"
-
+const { Text } = Typography;
 const { TabPane } = Tabs;
 const cowinApi = new CowinApi();
 const { Search } = Input;
@@ -41,6 +41,8 @@ const promosg = {
   url: window.location.href.indexOf('localhost') ? 'https://yashwanthm.github.io/cowin-vaccine-booking/' : window.location.href
 }
 
+const metas = document.getElementsByTagName("meta");
+const version = metas[metas.length-1].getAttribute("build-version");
 
 class App extends React.Component{
   constructor(props) {
@@ -925,6 +927,8 @@ class App extends React.Component{
             <InstapaperIcon size={48} round />
           </InstapaperShareButton>
 
+          <div style={{marginTop: 10}}></div> 
+          <Text code>Build last updated at: {version}</Text>
         {this.state.session && this.state.bookingCenter ? (
           <Modal
             title="Congrats!"
