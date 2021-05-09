@@ -259,7 +259,7 @@ class App extends React.Component{
                 this.book(s, c);
               })
             }else{
-              this.generateOtp();
+              // this.generateOtp();
             }
             
             
