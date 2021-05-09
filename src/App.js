@@ -359,12 +359,12 @@ class App extends React.Component{
             self.setState({beneficiaries: data})
           }else{
             console.log('asasad');
+            cowinApi.clearAuthWatch();
             delete localStorage.token;
             self.setState({isAuthenticated: false, token: null},()=>{
               
               if(self.state.isWatchingAvailability){
                 self.generateOtp();
-                cowinApi.clearAuthWatch();
                 self.speak('Session expired!');
               }
               
@@ -375,11 +375,12 @@ class App extends React.Component{
         error(err) {
           console.error("something wrong occurred: " + err);
           self.speak('Session expired!');
+          cowinApi.clearAuthWatch();
           delete localStorage.token;
           self.setState({isAuthenticated: false, token: null},()=>{
             if(self.state.isWatchingAvailability && !self.state.enableOtp){
               self.generateOtp();
-              cowinApi.clearAuthWatch();
+              
               self.speak('Session expired!');
             }
           })
