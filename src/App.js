@@ -254,9 +254,14 @@ class App extends React.Component{
             new Notification(opts.title, opts);    
             
             this.speak(`Vaccines available at ${c.name}`);
-            this.setState({bookingInProgress: true},()=>{
-              this.book(s, c);
-            })
+            if(this.state.isAuthenticated){
+              this.setState({bookingInProgress: true},()=>{
+                this.book(s, c);
+              })
+            }else{
+              this.generateOtp();
+            }
+            
             
           } catch (error) {
             console.log(error);
