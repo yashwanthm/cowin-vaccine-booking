@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 import "./App.css";
 // import { Notifications } from "react-push-notification";
-import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typography } from "antd";
+import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typography, notification } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
@@ -283,6 +283,12 @@ class App extends React.Component{
       })
     })
   }
+  bookingError = (msg, desc) => {
+    notification.error({
+      message: msg,
+      description: desc
+    });
+  };
   getCaptcha(){
     cowinApi.getCaptcha().then(data=>{
       this.speak('Enter captcha to verify and proceed booking')
@@ -336,7 +342,9 @@ class App extends React.Component{
           showCaptcha: false
         });
         this.bookingInProgress = false;
-        let msg = 'Booking did not get through, tracking for next slot';
+        let msg = 'Booking did not get through. ';
+        let desc = "The availability probably ran out before you could take an action. You can refresh if needed. Otherwise the app will continue to look for slots."
+        this.bookingError(msg, desc);
         // this.speak(msg);
         console.log(msg);
       })  
