@@ -87,6 +87,7 @@ class App extends React.Component{
     if(localStorage.token){
       state.token = localStorage.token;
       state.isAuthenticated = true;
+      state.enableOtp = false;
     }
     this.state = state;
   }
