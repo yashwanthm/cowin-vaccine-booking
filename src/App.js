@@ -648,6 +648,8 @@ class App extends React.Component{
             {", "}
             add beneficiaries and then, come back here.
             <br />
+            <b>This app now supports captcha also.</b>
+            <br />
             Login and select beneficiaries to enable automatic booking.
             <br />
             If you do not get the OTP for more than 2 mins, please refresh and
