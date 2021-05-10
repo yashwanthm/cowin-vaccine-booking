@@ -152,7 +152,7 @@ class App extends React.Component{
 
   }
   componentDidMount(){
-    this.speak('her');
+    this.notifSound = document.getElementById("notif");
     let token = localStorage.token || this.state.token;
     if(token){
       this.getBeneficiaries();
@@ -178,7 +178,8 @@ class App extends React.Component{
     }  
     
 
-    this.notifSound = document.getElementById("notif");
+    
+
 
     try {
       // this.notifSound.play();  
@@ -573,6 +574,8 @@ class App extends React.Component{
       return;
     }
     return <Modal
+        mask={true}
+        maskClosable={false}
         title="Congrats!"
         visible={this.state.showSuccessModal}
         onOk={(e) => {
