@@ -612,7 +612,7 @@ class App extends React.Component{
           >
             Cowin
           </a>{" "}
-          to see details of your Vaccine slot
+          to see details of your vaccincation slot.
         </p>
       </Modal>;
     
