@@ -678,7 +678,7 @@ class App extends React.Component{
             automatically happen at any center that has availability.
             <br />
             **Availability is very short. Please keep feeding in OTPs when the
-            session expires to book as soon as there's availability.
+            session expires to input the captcha available to book as soon as there's availability. It takes time, it took me 2 days to get a slot.
           </p>
         </header>
 
