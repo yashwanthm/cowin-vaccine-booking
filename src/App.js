@@ -642,7 +642,7 @@ class App extends React.Component{
             availability.
           </h2>
           <p>
-            This web-app can continously tracks for availability of vaccine and
+            This web-app can continously track for availability of vaccine and
             proceed with booking on your behalf if you are logged in.
           </p>
           <p style={{ color: "#555" }}>
@@ -655,7 +655,7 @@ class App extends React.Component{
               Cowin
             </a>
             {", "}
-            add beneficiaries and then, come back here.
+            add beneficiaries and then, come back here for automated bookings.
             <br />
             <b>
               This app now <a
@@ -675,9 +675,9 @@ class App extends React.Component{
             with tracking without logging in.
             <br />
             *Please be careful with the location selection as the booking can
-            automatically happen at any center that has availability.
+            automatically happen at any center that has availability within your selected region.
             <br />
-            **Availability is very short. Please keep feeding in OTPs when the
+            **There are limited number of slots opening up and it is running out almost instantly. Please keep feeding in OTPs when the
             session expires to input the captcha available to book as soon as there's availability. It takes time, it took me 2 days to get a slot.
           </p>
         </header>
