@@ -595,7 +595,7 @@ class App extends React.Component{
         }}
       >
         <p>
-          You vaccine slot is booked for selected beneficiaries at{" "}
+          Your vaccination slot is booked for selected beneficiaries at{" "}
           {this.state.bookingCenter.name}, {this.state.bookingCenter.block_name}
           , {this.state.bookingCenter.address},{" "}
           {this.state.bookingCenter.district_name},{" "}
@@ -648,7 +648,15 @@ class App extends React.Component{
             {", "}
             add beneficiaries and then, come back here.
             <br />
-            <b>This app now supports captcha also.</b>
+            <b>
+              This app now <a
+                href="https://github.com/yashwanthm/cowin-vaccine-booking/issues/4"
+                target="_blank"
+                rel="noreferrer"
+              >
+                supports captcha/security code.
+              </a>
+            </b>
             <br />
             Login and select beneficiaries to enable automatic booking.
             <br />
@@ -961,7 +969,7 @@ class App extends React.Component{
           </Col>
         </Row>
 
-        {this.state.showCaptcha ? this.renderCaptcha(): null}
+        {this.state.showCaptcha ? this.renderCaptcha() : null}
         {vaccineCalendar && vaccineCalendar.centers
           ? this.renderTable(vaccineCalendar)
           : null}
@@ -1053,7 +1061,6 @@ class App extends React.Component{
         <div style={{ marginTop: 10 }}></div>
         <Text code>Build last updated at: {version}</Text>
         {this.renderModal()}
-        
       </div>
     );
   }
