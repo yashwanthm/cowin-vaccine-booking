@@ -69,6 +69,7 @@ class App extends React.Component{
       selectedTab: "1",
       dates: [],
       states: [],
+      dose: 1,
       districs: [],
       session: null,
       bookingCenter: null,
