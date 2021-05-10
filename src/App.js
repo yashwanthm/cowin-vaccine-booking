@@ -5,6 +5,8 @@ import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typograp
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
+// import captcha from './captcha.json';
+import parseHTML from 'html-react-parser';
 
 import moment from "moment";
 import {
@@ -42,6 +44,7 @@ class App extends React.Component{
   constructor(props) {
     super(props);
     this.bookingIntervals=[];
+    this.bookingInProgress = false;
     setInterval(() => {
       this.bookingIntervals.map(b=>{
         clearInterval(b)
@@ -72,6 +75,9 @@ class App extends React.Component{
       dose: 1,
       districs: [],
       session: null,
+      showCaptcha: false, //change to false
+      captcha: null, //change to null
+      bookingCaptcha: null,
       bookingCenter: null,
       showSuccessModal: false
     };
@@ -133,7 +139,7 @@ class App extends React.Component{
     })
   }
   speak(msg){
-    try {
+    
       let speech = new SpeechSynthesisUtterance();
 
       speech.lang = "en-UK";
@@ -142,13 +148,11 @@ class App extends React.Component{
       speech.pitch = 1; 
       speech.text = msg;
       window.speechSynthesis.speak(speech);  
-    } catch (error) {
-      console.log(error);
-    }
     
 
   }
   componentDidMount(){
+    this.speak('her');
     let token = localStorage.token || this.state.token;
     if(token){
       this.getBeneficiaries();
@@ -256,8 +260,13 @@ class App extends React.Component{
             
             this.speak(`Vaccines available at ${c.name}`);
             if(this.state.isAuthenticated){
-              this.setState({bookingInProgress: true},()=>{
-                this.book(s, c);
+              this.setState({bookingInProgress: true, bookingCenter: c, bookingSession: s},()=>{
+                if(!this.bookingInProgress){
+                  this.getCaptcha();
+                  this.bookingInProgress = true;
+                  this.clearWatch();
+                  // this.book(s, c);
+                }
               })
             }else{
               // this.generateOtp();
@@ -273,9 +282,21 @@ class App extends React.Component{
       })
     })
   }
-  async book(session, center){
+  getCaptcha(){
+    cowinApi.getCaptcha().then(data=>{
+      this.speak('Enter captcha to verify and proceed booking')
+      this.setState({captcha: data.captcha, showCaptcha: true},()=>{
+      })
+    }).catch(err=>{
+      console.log('error getting captcha ',err)
+      this.setState({bookingInProgress: false})
+      this.bookingInProgress = false
+    })
+  }
+  async book(captcha){
+    console.log('book');
     let benIds = [];
-    await this.setState({bookingSession: session, bookingCenter: center});
+    let session = this.state.bookingSession;
     if(this.state.selectedBeneficiaries.length === 0){
       if(!this.state.isAuthenticated){
         this.setState({enableOtp: true},()=>{
@@ -294,15 +315,26 @@ class App extends React.Component{
       dose: this.state.dose ? parseInt(this.state.dose) : 1,
       session_id: session.session_id,
       slot: session.slots[0],
-      beneficiaries: benIds
+      beneficiaries: benIds,
+      captcha: this.state.bookingCaptcha
     }
     // let thisInterval = setInterval(()=>{
       cowinApi.book(payload, this.state.token).then(data=>{
         console.log('Booking success ', data.appointment_id);
         this.clearWatch();
-        this.setState({bookingInProgress: false, appointment_id: data.appointment_id, showSuccessModal: true});
+        this.setState({bookingInProgress: false, appointment_id: JSON.stringify(data), showSuccessModal: true});
       }).catch(err=>{
-        this.setState({bookingInProgress: false, session: null, bookingCenter: null});
+        this.bookingInProgress = false;
+        this.setState({
+          bookingInProgress: false, 
+          session: null, 
+          bookingCenter: null, 
+          captcha: null, 
+          bookingSession: null, 
+          bookingCaptcha: null, 
+          showCaptcha: false
+        });
+        this.bookingInProgress = false;
         let msg = 'Booking did not get through, tracking for next slot';
         // this.speak(msg);
         console.log(msg);
@@ -511,6 +543,77 @@ class App extends React.Component{
     this.setState({districtId}, ()=>{
     })
   }
+  renderCaptcha(){
+    return (
+      <div>
+        <h2 style={{ marginTop: 10, marginBottom: 0 }}>Enter Captcha</h2>
+        <Row>
+          <Col>{parseHTML(this.state.captcha)}</Col>
+          <Search
+            placeholder="Enter Captcha"
+            allowClear
+            style={{width: 300, marginTop: 10}}
+            // value={this.state.zip}
+            enterButton={"Submit & Book"}
+            size="large"
+            onSearch={(e) => {
+              console.log(e);
+              this.setState({ bookingCaptcha: e }, () => {
+                this.book();
+              });
+            }}
+          />
+          
+        </Row>
+      </div>
+    );
+  }
+  renderModal(){
+    if(!this.state.bookingSession || !this.state.bookingCenter){
+      return;
+    }
+    return <Modal
+        title="Congrats!"
+        visible={this.state.showSuccessModal}
+        onOk={(e) => {
+          window.location='https://selfregistration.cowin.gov.in/dashboard'
+        }}
+        onCancel={(e) => {
+          this.setState({
+            bookingInProgress: false, 
+            showSuccessModal: false, 
+            bookingCenter: null, 
+            bookingSession: null, 
+            captcha: null, 
+            bookingCaptcha: null,
+            showCaptcha: false
+          });
+          this.bookingInProgress = false
+        }}
+      >
+        <p>
+          You vaccine slot is booked for selected beneficiaries at{" "}
+          {this.state.bookingCenter.name}, {this.state.bookingCenter.block_name}
+          , {this.state.bookingCenter.address},{" "}
+          {this.state.bookingCenter.district_name},{" "}
+          {this.state.bookingCenter.state_name},{" "}
+          {this.state.bookingCenter.pincode}
+        </p>
+        <p>Your appointment id is {this.state.appointment_id}</p>
+        <p>
+          You can login into{" "}
+          <a
+            href="https://www.cowin.gov.in/home"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Cowin
+          </a>{" "}
+          to see details of your Vaccine slot
+        </p>
+      </Modal>;
+    
+  }
   render() {
     const vaccineCalendar = this.state.vaccineCalendar;
     const isAuthenticated = this.state.isAuthenticated;
@@ -523,7 +626,8 @@ class App extends React.Component{
         </audio>
         <header className="App-header">
           <h2>
-          Covid-19 automatic vaccine bookings and notifications for availability.
+            Covid-19 automatic vaccine bookings and notifications for
+            availability.
           </h2>
           <p>
             This web-app can continously tracks for availability of vaccine and
@@ -537,18 +641,22 @@ class App extends React.Component{
               rel="noreferrer"
             >
               Cowin
-            </a>{", "}
+            </a>
+            {", "}
             add beneficiaries and then, come back here.
             <br />
             Login and select beneficiaries to enable automatic booking.
             <br />
             If you do not get the OTP for more than 2 mins, please refresh and
             start over. When the load is high, OTP generation fails. Please bear
-            with it. You can choose to track notifications only. Simply proceed with tracking without logging in.
-            <br/>
-            *Please be careful with the location selection as the booking can automatically happen at any center that has availability.
-            <br/>
-            **Availability is very short. Please keep feeding in OTPs when the session expires to book as soon as there's availability.
+            with it. You can choose to track notifications only. Simply proceed
+            with tracking without logging in.
+            <br />
+            *Please be careful with the location selection as the booking can
+            automatically happen at any center that has availability.
+            <br />
+            **Availability is very short. Please keep feeding in OTPs when the
+            session expires to book as soon as there's availability.
           </p>
         </header>
 
@@ -557,7 +665,7 @@ class App extends React.Component{
             <title>Select age group for getting notifications</title>
           )}
         </Col> */}
-        <Row >
+        <Row>
           <Col>
             {isAuthenticated ? null : (
               <div>
@@ -573,30 +681,42 @@ class App extends React.Component{
                     enterButton={"Generate OTP"}
                     size="large"
                     onSearch={(e) => {
-                      this.setState({ mobile: e === "" ?  this.state.mobile: e, enableOtp: true }, () => {
-                        this.generateOtp();
-                      });
+                      this.setState(
+                        {
+                          mobile: e === "" ? this.state.mobile : e,
+                          enableOtp: true,
+                        },
+                        () => {
+                          this.generateOtp();
+                        }
+                      );
                     }}
                   />
                 )}
                 {this.state.enableOtp ? (
                   <span>
-                  <Search
-                    placeholder="Enter OTP"
-                    allowClear
-                    type="number"
-                    // value={this.state.zip}
-                    enterButton={"Submit"}
-                    size="large"
-                    onSearch={(e) => {
-                      this.setState({ otp: e }, () => {
-                        this.verifyOtp();
-                      });
-                    }}
-                  />
-                  <Button danger onClick={e=>{this.setState({enableOtp: false})}} type="link">
-                    Cancel
-                  </Button>
+                    <Search
+                      placeholder="Enter OTP"
+                      allowClear
+                      type="number"
+                      // value={this.state.zip}
+                      enterButton={"Submit"}
+                      size="large"
+                      onSearch={(e) => {
+                        this.setState({ otp: e }, () => {
+                          this.verifyOtp();
+                        });
+                      }}
+                    />
+                    <Button
+                      danger
+                      onClick={(e) => {
+                        this.setState({ enableOtp: false });
+                      }}
+                      type="link"
+                    >
+                      Cancel
+                    </Button>
                   </span>
                 ) : null}
               </div>
@@ -660,7 +780,9 @@ class App extends React.Component{
                 })}
               </div>
             ) : null}
-            <h2 style={{ marginTop: 14, marginBottom: 0 }}>Booking Preferences</h2>
+            <h2 style={{ marginTop: 14, marginBottom: 0 }}>
+              Booking Preferences
+            </h2>
             <Row style={{ marginTop: 10 }}>
               <h3 style={{ marginTop: 10, marginBottom: 0 }}>Vaccine Type</h3>
               <Radio.Group
@@ -706,7 +828,9 @@ class App extends React.Component{
               </Radio.Group>
             </Row>
 
-            <h2 style={{ marginTop: 15, marginBottom: 0 }}>Select Location for Tracking Availability</h2>
+            <h2 style={{ marginTop: 15, marginBottom: 0 }}>
+              Select Location for Tracking Availability
+            </h2>
             <Tabs
               defaultActiveKey={this.state.selectedTab || "1"}
               onChange={(e) => {
@@ -832,6 +956,7 @@ class App extends React.Component{
           </Col>
         </Row>
 
+        {this.state.showCaptcha ? this.renderCaptcha(): null}
         {vaccineCalendar && vaccineCalendar.centers
           ? this.renderTable(vaccineCalendar)
           : null}
@@ -873,86 +998,57 @@ class App extends React.Component{
         <h3 style={{ marginTop: 15, marginBottom: 0 }}>Share</h3>
         {/* <FacebookShareButton quote={promosg.text} hashtag={promosg.tags[0]}/> */}
         <FacebookShareButton
-            url={promosg.url}
-            quote={promosg.text}
-            hashtag={promosg.tags[0]}
-            className="Demo__some-network__share-button"
-          >
-            <FacebookIcon size={48} round />
-          </FacebookShareButton>
-          <TwitterShareButton
-            url={promosg.url}
-            title={promosg.title}
-            className="Demo__some-network__share-button"
-          >
-            <TwitterIcon size={48} round />
-          </TwitterShareButton>
-          <WhatsappShareButton
-            url={promosg.url}
-            title={promosg.text}
-            separator=":: "
-            className="Demo__some-network__share-button"
-          >
-            <WhatsappIcon size={48} round />
-          </WhatsappShareButton>
-          <LinkedinShareButton url={promosg.url} summary={promosg.text} className="Demo__some-network__share-button">
-            <LinkedinIcon size={48} round />
-          </LinkedinShareButton>
-          <RedditShareButton
-            url={promosg.url}
-            title={promosg.text}
-            windowWidth={660}
-            windowHeight={460}
-            className="Demo__some-network__share-button"
-          >
-            <RedditIcon size={48} round />
-          </RedditShareButton>
-          
-          <TelegramShareButton
-            url={promosg.url}
-            title={promosg.text}
-            className="Demo__some-network__share-button"
-          >
-            <TelegramIcon size={48} round />
-          </TelegramShareButton>
-          
+          url={promosg.url}
+          quote={promosg.text}
+          hashtag={promosg.tags[0]}
+          className="Demo__some-network__share-button"
+        >
+          <FacebookIcon size={48} round />
+        </FacebookShareButton>
+        <TwitterShareButton
+          url={promosg.url}
+          title={promosg.title}
+          className="Demo__some-network__share-button"
+        >
+          <TwitterIcon size={48} round />
+        </TwitterShareButton>
+        <WhatsappShareButton
+          url={promosg.url}
+          title={promosg.text}
+          separator=":: "
+          className="Demo__some-network__share-button"
+        >
+          <WhatsappIcon size={48} round />
+        </WhatsappShareButton>
+        <LinkedinShareButton
+          url={promosg.url}
+          summary={promosg.text}
+          className="Demo__some-network__share-button"
+        >
+          <LinkedinIcon size={48} round />
+        </LinkedinShareButton>
+        <RedditShareButton
+          url={promosg.url}
+          title={promosg.text}
+          windowWidth={660}
+          windowHeight={460}
+          className="Demo__some-network__share-button"
+        >
+          <RedditIcon size={48} round />
+        </RedditShareButton>
 
-          <div style={{marginTop: 10}}></div> 
-          <Text code>Build last updated at: {version}</Text>
-        {this.state.session && this.state.bookingCenter ? (
-          <Modal
-            title="Congrats!"
-            visible={this.state.showSuccessModal}
-            onOk={(e) => {
-              this.setState({ showSuccessModal: false });
-            }}
-            onCancel={(e) => {
-              this.setState({ showSuccessModal: false });
-            }}
-          >
-            <p>
-              You vaccine slot is booked for selected beneficiaries at{" "}
-              {this.state.bookingCenter.name},{" "}
-              {this.state.bookingCenter.block_name},{" "}
-              {this.state.bookingCenter.address},{" "}
-              {this.state.bookingCenter.district_name},{" "}
-              {this.state.bookingCenter.state_name},{" "}
-              {this.state.bookingCenter.pincode}
-            </p>
-            <p>Your appointment id is {this.state.appointment_id}</p>
-            <p>
-              You can login into{" "}
-              <a
-                href="https://www.cowin.gov.in/home"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Cowin
-              </a>{" "}
-              to see details of your Vaccine slot
-            </p>
-          </Modal>
-        ) : null}
+        <TelegramShareButton
+          url={promosg.url}
+          title={promosg.text}
+          className="Demo__some-network__share-button"
+        >
+          <TelegramIcon size={48} round />
+        </TelegramShareButton>
+
+        <div style={{ marginTop: 10 }}></div>
+        <Text code>Build last updated at: {version}</Text>
+        {this.renderModal()}
+        
       </div>
     );
   }

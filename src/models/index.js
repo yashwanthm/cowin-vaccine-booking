@@ -128,6 +128,17 @@ export default class CowinApi {
         throw err
       })
     }
+
+    async getCaptcha(){
+      return await axios.post('https://cdn-api.co-vin.in/api/v2/auth/getRecaptcha', {}, {headers: {
+        "content-type": "application/json",
+        "authorization": `Bearer ${localStorage.token}`
+      }}).then(response=>{
+        return response.data
+      }).catch(err=>{
+        throw err;
+      })
+    }
     
     
 }
