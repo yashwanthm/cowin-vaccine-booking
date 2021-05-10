@@ -290,7 +290,7 @@ class App extends React.Component{
     
     
     let payload = {
-      dose: this.state.dose,
+      dose: parseInt(this.state.dose),
       session_id: session.session_id,
       slot: session.slots[0],
       beneficiaries: benIds
@@ -469,6 +469,7 @@ class App extends React.Component{
       cowinApi.generateOtp(this.state.mobile).then(data=>{
         // console.log(data);
         this.speak("One Time Password has been sent to your phone. Please enter.");
+        // this.notifSound.play();  
         this.setState({otpData: data, enableOtp: true});
         // this.waitForOtp();
       }).catch(err=>{
