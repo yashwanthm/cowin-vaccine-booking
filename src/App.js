@@ -290,7 +290,7 @@ class App extends React.Component{
     
     
     let payload = {
-      dose: parseInt(this.state.dose),
+      dose: this.state.dose ? parseInt(this.state.dose) : 1,
       session_id: session.session_id,
       slot: session.slots[0],
       beneficiaries: benIds
