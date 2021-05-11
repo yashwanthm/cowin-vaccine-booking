@@ -657,9 +657,29 @@ class App extends React.Component{
             </a>
             {", "}
             add beneficiaries and then, come back here for automated bookings.
+           <br/>
+            For automatic bookings, login, select beneficiaries, keep feeding in OTPs every few mins. When there's availability, the app will automatically attempt for a booking based on your preferences. When there's availability, you will have to enter captcha code. The app will speak out for any inputs(OTP and Captcha) required.
+            For more information, please see the <a
+                href="https://github.com/yashwanthm/cowin-vaccine-booking/wiki/Usage-Guide"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Help/Usage Guide
+              </a>
+            <br />
+            <br />
+            *Please be careful with the location selection as the booking can
+            automatically happen at any center that has availability within your
+            selected region.
+            <br />
+            **There are limited number of slots opening up and it is running out
+            almost instantly. Please keep feeding in OTPs when the session
+            expires to input the captcha available to book as soon as there's
+            availability. It takes time, it took me 2 days to get a slot.
             <br />
             <b>
-              This app now <a
+              This app now{" "}
+              <a
                 href="https://github.com/yashwanthm/cowin-vaccine-booking/issues/4"
                 target="_blank"
                 rel="noreferrer"
@@ -667,19 +687,6 @@ class App extends React.Component{
                 supports captcha/security code.
               </a>
             </b>
-            <br />
-            Login and select beneficiaries to enable automatic booking.
-            <br />
-            If you do not get the OTP for more than 2 mins, please refresh and
-            start over. When the load is high, OTP generation fails. Please bear
-            with it. You can choose to track notifications only. Simply proceed
-            with tracking without logging in.
-            <br />
-            *Please be careful with the location selection as the booking can
-            automatically happen at any center that has availability within your selected region.
-            <br />
-            **There are limited number of slots opening up and it is running out almost instantly. Please keep feeding in OTPs when the
-            session expires to input the captcha available to book as soon as there's availability. It takes time, it took me 2 days to get a slot.
           </p>
         </header>
 
