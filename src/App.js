@@ -5,6 +5,7 @@ import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typograp
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
+import walletImage from './wallet.png'
 // import captcha from './captcha.json';
 import parseHTML from 'html-react-parser';
 
@@ -1023,6 +1024,9 @@ class App extends React.Component{
             ></img>{" "}
             Donate
           </a>
+
+          <p style={{marginTop: 10, marginBottom: 0, fontWeight: 'bold'}}>Crypto Wallet</p>
+          <img style={{width: 100}} src={walletImage} alt="crypto-wallet"/>
         </div>
 
         <h3 style={{ marginTop: 15, marginBottom: 0 }}>Share</h3>
