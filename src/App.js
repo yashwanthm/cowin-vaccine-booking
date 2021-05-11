@@ -453,6 +453,7 @@ class App extends React.Component{
     return (
       <div>
         <h2 style={{ marginTop: 10 }}>Vaccination Centers & Availability Info</h2>
+        <Text type="secondary">You will see all kinds of availability below. But, the notifications and bookings will be done for your selected preferences only.</Text>
         <table style={{ marginTop: 10 }}>
           {vaccineCalendar.centers.map((vc) => {
             let noAvailability = true;
