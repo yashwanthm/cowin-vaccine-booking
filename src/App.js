@@ -45,7 +45,6 @@ class App extends React.Component{
   constructor(props) {
     super(props);
     this.bookingIntervals=[];
-    this.bookingInProgress = false;
     setInterval(() => {
       this.bookingIntervals.map(b=>{
         clearInterval(b)
@@ -226,6 +225,7 @@ class App extends React.Component{
     if(this.state.selectedBeneficiaries && Array.isArray(this.state.selectedBeneficiaries) && this.state.selectedBeneficiaries.length>0){
       requiredNums = this.state.selectedBeneficiaries.length;
     }
+    let bkgInProgress = false;
     centers.map(c=>{
       c.sessions.map(s=>{
         
@@ -269,9 +269,9 @@ class App extends React.Component{
             this.speak(`Vaccines available at ${c.name}`);
             if(this.state.isAuthenticated){
               this.setState({bookingInProgress: true, bookingCenter: c, bookingSession: s},()=>{
-                if(!this.bookingInProgress){
+                if(!this.state.bookingCaptcha && !bkgInProgress){
                   this.getCaptcha();
-                  this.bookingInProgress = true;
+                  bkgInProgress = true;
                   this.clearWatch();
                   // this.book(s, c);
                 }
@@ -297,14 +297,15 @@ class App extends React.Component{
     });
   };
   getCaptcha(){
-    cowinApi.getCaptcha().then(data=>{
-      this.speak('Enter captcha to verify and proceed booking')
-      this.setState({captcha: data.captcha, showCaptcha: true},()=>{
+    this.setState({bookingInProgress: true}, ()=>{
+      cowinApi.getCaptcha().then(data=>{
+        this.speak('Enter captcha to verify and proceed booking')
+        this.setState({captcha: data.captcha, showCaptcha: true},()=>{
+        })
+      }).catch(err=>{
+        console.log('error getting captcha ',err)
+        this.setState({bookingInProgress: false})
       })
-    }).catch(err=>{
-      console.log('error getting captcha ',err)
-      this.setState({bookingInProgress: false})
-      this.bookingInProgress = false
     })
   }
   async book(captcha){
@@ -338,7 +339,6 @@ class App extends React.Component{
         this.clearWatch();
         this.setState({bookingInProgress: false, appointment_id: JSON.stringify(data), showSuccessModal: true});
       }).catch(err=>{
-        this.bookingInProgress = false;
         this.setState({
           bookingInProgress: false, 
           session: null, 
@@ -348,7 +348,6 @@ class App extends React.Component{
           bookingCaptcha: null, 
           showCaptcha: false
         });
-        this.bookingInProgress = false;
         let msg = 'Booking did not get through. ';
         let desc = "The availability probably ran out before you could take an action. You can refresh if needed. Otherwise the app will continue to look for slots."
         this.bookingError(msg, desc);
@@ -608,7 +607,6 @@ class App extends React.Component{
             bookingCaptcha: null,
             showCaptcha: false
           });
-          this.bookingInProgress = false
         }}
       >
         <p>
