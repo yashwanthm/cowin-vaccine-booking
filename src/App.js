@@ -69,6 +69,7 @@ class App extends React.Component{
       enableOtp: false,
       otp: null,
       mobile: null,
+      feeType: 'Any',
       token: localStorage.token || null,
       selectedTab: "1",
       dates: [],
@@ -236,6 +237,10 @@ class App extends React.Component{
 
           let vt = this.state.vaccineType;
           if(vt !== 'ANY' && vt!== s.vaccine){
+            return;
+          }
+
+          if(this.state.feeType && this.state.feeType !== "Any" && this.state.feeType!==c.fee_type){
             return;
           }
           
@@ -467,7 +472,8 @@ class App extends React.Component{
               <tr key={vc.center_id}>
                 <td>
                   <h3>{vc.name}</h3>
-                  {vc.block_name}, {vc.address}, {vc.pincode}
+                  <b>Fee: {vc.fee_type}</b><br/>
+                  {vc.block_name}, {vc.address}, {vc.pincode}.
                 </td>
 
                 {false ? (
@@ -840,6 +846,20 @@ class App extends React.Component{
               >
                 <Radio value={18}>18 to 45 Years</Radio>
                 <Radio value={45}>45+ Years</Radio>
+              </Radio.Group>
+            </Row>
+
+            <Row style={{ marginTop: 10 }}>
+              <h3 style={{ marginTop: 10, marginBottom: 0 }}>Fee Type</h3>
+              <Radio.Group
+                style={{ marginTop: 12, marginLeft: 10 }}
+                onChange={e=>{this.setState({feeType: e.target.value})}}
+                value={this.state.feeType}
+                disabled={this.state.isWatchingAvailability}
+              >
+                <Radio value={'Any'}>Any</Radio>
+                <Radio value={'Free'}>Free</Radio>
+                <Radio value={'Paid'}>Paid</Radio>
               </Radio.Group>
             </Row>
 
