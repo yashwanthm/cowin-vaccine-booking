@@ -645,7 +645,7 @@ class App extends React.Component{
           </h1>
           <p>
             This web-app can continously track for availability of vaccine and
-            proceed with booking on your behalf if you are logged in.
+            proceed with booking on your behalf if you are logged in. <br/><b>The app does not store any of your personal information.</b>
           </p>
           <p style={{ color: "#555" }}>
             Please register on{" "}
