@@ -684,7 +684,7 @@ class App extends React.Component{
             automatically happen at any center that has availability within your
             selected region.
             <br />
-            *If you are on mobile, make sure that you keep the tab active otherwise, tracking will be automatically paused unless your device has a way to keeping the app from pausing when it goes to background.
+            *If you are on mobile, make sure that you keep the tab active and the auto screenlock is off.Tracking will be automatically paused unless your device has a way to keeping the app from pausing when it goes to background.
             <br />
             **There are limited number of slots opening up and it is running out
             almost instantly. Please keep feeding in OTPs when the session
