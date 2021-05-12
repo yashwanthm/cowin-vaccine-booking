@@ -3,9 +3,9 @@ This utility can login into Cowin, track vaccine availability and automatically 
 The webpage is available at https://yashwanthm.github.io/cowin-vaccine-booking/
 
 
-#Running locally
-yarn install
-yarn start
+# Running locally
+```yarn install```
+```yarn start```
 
-##Update poll frequency using
+## Update poll frequency using
 ```localstorage.pollFreq = 1000```
