@@ -650,7 +650,8 @@ class App extends React.Component{
           </h1>
           <p>
             This web-app can continously track for availability of vaccine and
-            proceed with booking on your behalf if you are logged in. <br/><b>The app does not store any of your personal information.</b>
+            proceed with booking on your behalf if you are logged in. <br />
+            <b>The app does not store any of your personal information.</b>
           </p>
           <p style={{ color: "#555" }}>
             Please register on{" "}
@@ -663,15 +664,20 @@ class App extends React.Component{
             </a>
             {", "}
             add beneficiaries and then, come back here for automated bookings.
-           <br/>
-            For automatic bookings, login, select beneficiaries, keep feeding in OTPs every few mins. When there's availability, the app will automatically attempt for a booking based on your preferences. When there's availability, you will have to enter captcha code. The app will speak out for any inputs(OTP and Captcha) required.
-            For more information, please see the <a
-                href="https://github.com/yashwanthm/cowin-vaccine-booking/wiki/Usage-Guide"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Help/Usage Guide
-              </a>
+            <br />
+            For automatic bookings, login, select beneficiaries, keep feeding in
+            OTPs every few mins. When there's availability, the app will
+            automatically attempt for a booking based on your preferences. When
+            there's availability, you will have to enter captcha code. The app
+            will speak out for any inputs(OTP and Captcha) required. For more
+            information, please see the{" "}
+            <a
+              href="https://github.com/yashwanthm/cowin-vaccine-booking/wiki/Usage-Guide"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Help/Usage Guide
+            </a>
             <br />
             <br />
             *Please be careful with the location selection as the booking can
@@ -852,13 +858,15 @@ class App extends React.Component{
               <h3 style={{ marginTop: 10, marginBottom: 0 }}>Fee Type</h3>
               <Radio.Group
                 style={{ marginTop: 12, marginLeft: 10 }}
-                onChange={e=>{this.setState({feeType: e.target.value})}}
+                onChange={(e) => {
+                  this.setState({ feeType: e.target.value });
+                }}
                 value={this.state.feeType}
                 disabled={this.state.isWatchingAvailability}
               >
-                <Radio value={'Any'}>Any</Radio>
-                <Radio value={'Free'}>Free</Radio>
-                <Radio value={'Paid'}>Paid</Radio>
+                <Radio value={"Any"}>Any</Radio>
+                <Radio value={"Free"}>Free</Radio>
+                <Radio value={"Paid"}>Paid</Radio>
               </Radio.Group>
             </Row>
 
@@ -1044,8 +1052,10 @@ class App extends React.Component{
             Donate
           </a>
 
-          <p style={{marginTop: 10, marginBottom: 0, fontWeight: 'bold'}}>Crypto Wallet</p>
-          <img style={{width: 100}} src={walletImage} alt="crypto-wallet"/>
+          <p style={{ marginTop: 10, marginBottom: 0, fontWeight: "bold" }}>
+            Crypto Wallet
+          </p>
+          <img style={{ width: 100 }} src={walletImage} alt="crypto-wallet" />
         </div>
 
         <h3 style={{ marginTop: 15, marginBottom: 0 }}>Share</h3>
@@ -1101,6 +1111,24 @@ class App extends React.Component{
         <div style={{ marginTop: 10 }}></div>
         <Text code>Build last updated at: {version}</Text>
         {this.renderModal()}
+
+        <div>
+          <p>
+            <a
+              href="https://github.com/yashwanthm/cowin-vaccine-booking/issues"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Report an issue
+            </a> <a
+              href="https://github.com/yashwanthm/cowin-vaccine-booking/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Git Repo is here
+            </a>
+          </p>
+        </div>
       </div>
     );
   }
