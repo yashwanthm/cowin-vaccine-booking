@@ -240,7 +240,7 @@ class App extends React.Component{
             return;
           }
 
-          if(this.state.feeType && this.state.feeType !== "Any" && this.state.feeType!==c.fee_type){
+          if(this.state.feeType && this.state.feeType !== "Any" && this.state.feeType !== c.fee_type){
             return;
           }
           
@@ -479,6 +479,9 @@ class App extends React.Component{
                   <td>No Availability</td>
                 ) : (
                   vc.sessions.map((s) => {
+                    if(this.state.vaccineType !== "Any" && s.vaccine !== this.state.vaccineType){
+                      return;
+                    }
                     return (
                       <td key={s.session_id}>
                         <h4>{s.date}</h4>
