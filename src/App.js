@@ -1017,7 +1017,7 @@ class App extends React.Component{
         <div>
           <a
             className="paytm-button"
-            href="https://paytm.me/gO-42Lh"
+            href="https://paytm.me/yV-4JXd"
             rel="noreferrer"
             target="_blank"
           >
