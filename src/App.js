@@ -722,6 +722,7 @@ class App extends React.Component{
                       this.state.mobile ? this.state.mobile : "Mobile Number"
                     }
                     allowClear
+                    defaultValue={this.state.mobile || null}
                     type="number"
                     // value={this.state.mobile}
                     enterButton={"Generate OTP"}
@@ -967,6 +968,7 @@ class App extends React.Component{
                         : "Enter your area pincode"
                     }
                     allowClear
+                    defaultValue={this.state.zip || null}
                     type="number"
                     // value={this.state.zip}
                     enterButton={
