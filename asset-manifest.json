@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/cowin-vaccine-booking/static/css/main.434c83f2.chunk.css",
-    "main.js": "/cowin-vaccine-booking/static/js/main.5ba2c72f.chunk.js",
-    "main.js.map": "/cowin-vaccine-booking/static/js/main.5ba2c72f.chunk.js.map",
+    "main.js": "/cowin-vaccine-booking/static/js/main.ec9d6f86.chunk.js",
+    "main.js.map": "/cowin-vaccine-booking/static/js/main.ec9d6f86.chunk.js.map",
     "runtime-main.js": "/cowin-vaccine-booking/static/js/runtime-main.09bbbbbd.js",
     "runtime-main.js.map": "/cowin-vaccine-booking/static/js/runtime-main.09bbbbbd.js.map",
     "static/css/2.92c2f793.chunk.css": "/cowin-vaccine-booking/static/css/2.92c2f793.chunk.css",
@@ -16,6 +16,7 @@
     "static/css/2.92c2f793.chunk.css.map": "/cowin-vaccine-booking/static/css/2.92c2f793.chunk.css.map",
     "static/css/main.434c83f2.chunk.css.map": "/cowin-vaccine-booking/static/css/main.434c83f2.chunk.css.map",
     "static/js/2.c74211a3.chunk.js.LICENSE.txt": "/cowin-vaccine-booking/static/js/2.c74211a3.chunk.js.LICENSE.txt",
+    "static/media/OfflineMerchant.b9f1ab6b.png": "/cowin-vaccine-booking/static/media/OfflineMerchant.b9f1ab6b.png",
     "static/media/wallet.bc6f0cd6.png": "/cowin-vaccine-booking/static/media/wallet.bc6f0cd6.png"
   },
   "entrypoints": [
@@ -23,6 +24,6 @@
     "static/css/2.92c2f793.chunk.css",
     "static/js/2.c74211a3.chunk.js",
     "static/css/main.434c83f2.chunk.css",
-    "static/js/main.5ba2c72f.chunk.js"
+    "static/js/main.ec9d6f86.chunk.js"
   ]
 }
