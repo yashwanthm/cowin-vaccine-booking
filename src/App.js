@@ -1118,22 +1118,23 @@ class App extends React.Component{
         {this.renderModal()}
 
         <div>
-          <p>
-            <a
+          <Row>
+            <Button
+            type="link"
               href="https://github.com/yashwanthm/cowin-vaccine-booking/issues"
               rel="noreferrer"
               target="_blank"
             >
               Report an issue
-            </a> <a
+            </Button>  <Button type="link"
               href="https://github.com/yashwanthm/cowin-vaccine-booking/"
               rel="noreferrer"
               target="_blank"
             >
               Git Repo is here
-            </a> 
+            </Button> 
             <Button type="link" onClick={e=>{this.setState({showPrivacyPolicy: true})}}>Privacy Policy</Button>
-          </p>
+          </Row>
         </div>
 
         <Modal title="" okText="Close"  footer={[
