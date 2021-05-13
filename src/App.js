@@ -9,6 +9,7 @@ import walletImage from './wallet.png'
 import PayTMQR from './OfflineMerchant.png'
 // import captcha from './captcha.json';
 import parseHTML from 'html-react-parser';
+import privacy from './privacy';
 
 import moment from "moment";
 import {
@@ -1130,9 +1131,17 @@ class App extends React.Component{
               target="_blank"
             >
               Git Repo is here
-            </a>
+            </a> 
+            <Button type="link" onClick={e=>{this.setState({showPrivacyPolicy: true})}}>Privacy Policy</Button>
           </p>
         </div>
+
+        <Modal title="" okText="Close"  footer={[
+            <Button key="back" onClick={e=>{this.setState({showPrivacyPolicy: false})}}>
+              Okay
+            </Button>]}  visible={this.state.showPrivacyPolicy} onOk={e=>{this.setState({showPrivacyPolicy: false})}}>
+          {parseHTML(privacy)}
+        </Modal>
       </div>
     );
   }

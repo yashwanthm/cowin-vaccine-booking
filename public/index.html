@@ -27,6 +27,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GS2F4HCX5T"></script>
     <title>Cowin Vaccine - Bookings & Notifications</title>
   </head>
   <body>
@@ -43,12 +44,46 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GS2F4HCX5T"></script>
+  
   <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
 
     gtag('config', 'G-GS2F4HCX5T');
+  </script>
+  <script type="application/html" crossorigin="anonymous" src="{HOST}/merchantpgpui/checkoutjs/merchants/{iYkTKu71969141065232}.js" onload="onScriptLoad();"> </script>
+  <script>
+    function onScriptLoad(){
+        var config = {
+          "root": "",
+          "flow": "DEFAULT",
+          "data": {
+          "orderId": "", /* update order id */
+          "token": "", /* update token value */
+          "tokenType": "TXN_TOKEN",
+          "amount": "" /* update amount */
+          },
+          "handler": {
+            "notifyMerchant": function(eventName,data){
+              console.log("notifyMerchant handler function called");
+              console.log("eventName => ",eventName);
+              console.log("data => ",data);
+            } 
+          }
+        };
+  
+        if(window.Paytm && window.Paytm.CheckoutJS){
+            window.Paytm.CheckoutJS.onLoad(function excecuteAfterCompleteLoad() {
+                // initialze configuration using init method 
+                window.Paytm.CheckoutJS.init(config).then(function onSuccess() {
+                    // after successfully updating configuration, invoke JS Checkout
+                    window.Paytm.CheckoutJS.invoke();
+                }).catch(function onError(error){
+                    console.log("error => ",error);
+                });
+            });
+        } 
+    }
   </script>
 </html>
