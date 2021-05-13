@@ -58,7 +58,7 @@ class App extends React.Component{
       bookingInProgress: false,
       isAuthenticated: localStorage.token ? true : false,
       minAge: 18,
-      districtId: null,
+      districtIds: [],
       stateId: null,
       beneficiaries: [],
       selectedBeneficiaries: [],
@@ -166,7 +166,7 @@ class App extends React.Component{
     cowinApi.getStates().then(data=>{
       this.setState({states: data.states},()=>{
         this.selectState(this.state.stateId);
-        this.selectDistrict(this.state.districtId);
+        this.selectDistricts(this.state.districtIds);
       })
     }).catch(err=>{
       console.log(err);
@@ -369,22 +369,24 @@ class App extends React.Component{
     this.setStorage();
     this.setState({isWatchingAvailability: true});
     if(this.state.selectedTab === "1"){
-      this.watcher = cowinApi
-      .initDist(this.state.districtId, moment().format("DD-MM-YYYY"))
-      .subscribe({
-        next(data) {
-          self.setState({vaccineCalendar: data},()=>{
-            self.handleNotification();
-            // self.setStorage()
-          })
-        },
-        error(err) {
-          console.error("something wrong occurred: " + err);
-        },
-        complete() {
-          console.log("done");
-          this.setState({ isWatchingAvailability: false });
-        },
+      this.state.districtIds.forEach((districtId) => {
+        this.watcher = cowinApi
+        .initDist(districtId, moment().format("DD-MM-YYYY"))
+        .subscribe({
+          next(data) {
+            self.setState({vaccineCalendar: data},()=>{
+              self.handleNotification();
+              // self.setStorage()
+            })
+          },
+          error(err) {
+            console.error("something wrong occurred: " + err);
+          },
+          complete() {
+            console.log("done");
+            this.setState({ isWatchingAvailability: false });
+          },
+        });
       });
     }else{
       this.watcher = cowinApi
@@ -559,8 +561,8 @@ class App extends React.Component{
       })
     })
   }
-  selectDistrict(districtId){
-    this.setState({districtId}, ()=>{
+  selectDistricts(districtIds){
+    this.setState({districtIds}, ()=>{
     })
   }
   renderCaptcha(){
@@ -919,10 +921,11 @@ class App extends React.Component{
 
                 <Select
                   style={{ width: 234 }}
-                  defaultValue={this.state.districtId}
+                  defaultValue={this.state.districtIds}
+                  mode="multiple"
                   size="large"
                   onChange={(val) => {
-                    this.selectDistrict(val);
+                    this.selectDistricts(val);
                   }}
                   placeholder="Select District"
                 >
