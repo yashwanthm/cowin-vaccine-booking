@@ -653,7 +653,7 @@ class App extends React.Component{
           <p>
             This web-app can continously track for availability of vaccine and
             proceed with booking on your behalf if you are logged in. <br />
-            <b>The app does not store any of your personal information.</b>
+            <b>The app does not store any of your personal information on a remote server. All the data remains within your browser. Please see the Privacy Policy at the bottom of the page for any concerns.</b>
           </p>
           <p style={{ color: "#555" }}>
             Please register on{" "}
