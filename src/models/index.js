@@ -10,8 +10,12 @@ const secret = "U2FsdGVkX19mD56KTNfQsZgXJMwOG7u/6tuj0Qvil1LEjx783oxHXGUTDWYm+XMY
 const pollFreq = parseInt(localStorage.pollFreq) || 520;
 export default class CowinApi {
     req(endpoint){
+      let headers = {}
+      if(localStorage.token){
+        headers.authorization = localStorage.token
+      }
         return new Promise((resolve, reject)=>{
-            axios.get(endpoint).then(function (response) {
+            axios.get(endpoint, headers).then(function (response) {
                 // handle success
                 return resolve(response.data)
               })
@@ -22,10 +26,14 @@ export default class CowinApi {
         })
     }
     init(zip, date){
+      let headers = {}
+      if(localStorage.token){
+        headers.authorization = localStorage.token
+      }
         return new Observable(subscriber => {
             let req = this.req.bind(this);
             this.watcher = setInterval(()=>{
-                req(`${url}?pincode=${zip}&date=${date}`).then(data=>{
+                req(`${url}?pincode=${zip}&date=${date}`, headers).then(data=>{
                     subscriber.next(data);
                 }).catch(err=>{
                     subscriber.error(err);
