@@ -905,6 +905,7 @@ class App extends React.Component{
                   style={{ width: 234 }}
                   size="large"
                   defaultValue={this.state.stateId}
+                  disabled={this.state.isWatchingAvailability}
                   onChange={this.selectState.bind(this)}
                   placeholder="Select State"
                 >
@@ -920,6 +921,7 @@ class App extends React.Component{
                 <Select
                   style={{ width: 234 }}
                   defaultValue={this.state.districtId}
+                  disabled={this.state.isWatchingAvailability}
                   size="large"
                   onChange={(val) => {
                     this.selectDistrict(val);
