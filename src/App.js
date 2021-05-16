@@ -236,58 +236,57 @@ class App extends React.Component{
           parseInt(s.available_capacity) >= requiredNums && 
           !this.state.bookingInProgress
         ) {
-
           let vt = this.state.vaccineType;
-          if(vt !== 'ANY' && vt!== s.vaccine){
+          if (vt !== "ANY" && vt !== s.vaccine) {
             return;
           }
 
-          if(this.state.feeType && this.state.feeType !== "Any" && this.state.feeType !== c.fee_type){
+          if (
+            this.state.feeType &&
+            this.state.feeType !== "Any" &&
+            this.state.feeType !== c.fee_type
+          ) {
             return;
           }
-          
+
           try {
-            // this.notifSound.play();  
-          } catch (error) {
-            
-          }
+            // this.notifSound.play();
+          } catch (error) {}
 
           let opts = {
             title: c.name,
             body: `${c.pincode} ${c.address} has ${s.available_capacity} on ${s.date}`,
             vibrate: [300, 100, 400],
-            native: true
-          }
+            native: true,
+          };
           try {
-            Notification.requestPermission(function(result) {
-              if (result === 'granted') {
-                navigator.serviceWorker.ready.then(function(registration) {
+            Notification.requestPermission(function (result) {
+              if (result === "granted") {
+                navigator.serviceWorker.ready.then(function (registration) {
                   registration.showNotification(opts.message, opts);
                 });
               }
             });
-            new Notification(opts.title, opts);    
-            
-            this.speak(`Vaccines available at ${c.name}`);
-            if(this.state.isAuthenticated){
-              this.setState({bookingInProgress: true, bookingCenter: c, bookingSession: s},()=>{
-                if(!this.state.bookingCaptcha && !bkgInProgress){
+            new Notification(opts.title, opts);
+          } catch (error) {
+            console.log(error);
+          }
+          this.speak(`Vaccines available at ${c.name}`);
+          if (this.state.isAuthenticated) {
+            this.setState(
+              { bookingInProgress: true, bookingCenter: c, bookingSession: s },
+              () => {
+                if (!this.state.bookingCaptcha && !bkgInProgress) {
                   this.getCaptcha();
                   bkgInProgress = true;
                   this.clearWatch();
                   // this.book(s, c);
                 }
-              })
-            }else{
-              // this.generateOtp();
-            }
-            
-            
-          } catch (error) {
-            console.log(error);
+              }
+            );
+          } else {
+            // this.generateOtp();
           }
-          
-          
         }
       })
     })
@@ -299,9 +298,10 @@ class App extends React.Component{
     });
   };
   getCaptcha(){
+    window.speechSynthesis.cancel()
     this.setState({bookingInProgress: true}, ()=>{
       cowinApi.getCaptcha().then(data=>{
-        this.speak('Enter captcha to verify and proceed booking')
+        this.speak(`Enter captcha to proceed with booking. Vaccines available at ${this.state.bookingCenter.name}`)
         this.setState({captcha: data.captcha, showCaptcha: true},()=>{
         })
       }).catch(err=>{
