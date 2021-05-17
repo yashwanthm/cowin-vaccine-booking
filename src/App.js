@@ -248,6 +248,12 @@ class App extends React.Component{
           ) {
             return;
           }
+          if(parseInt(this.state.dose)===1 && s.available_capacity_dose1 < requiredNums){
+            return
+          }
+          if(parseInt(this.state.dose)===2 && s.available_capacity_dose2 < requiredNums){
+            return
+          }
 
           try {
             // this.notifSound.play();
