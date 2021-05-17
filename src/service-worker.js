@@ -12,9 +12,6 @@ import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
-import {BroadcastUpdatePlugin} from 'workbox-broadcast-update';
-console.log('swwwww');
-
 
 clientsClaim();
 
@@ -60,28 +57,15 @@ registerRoute(
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
       new ExpirationPlugin({ maxEntries: 50 }),
-      new BroadcastUpdatePlugin()
     ],
   })
 );
 
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
-self.addEventListener('message', async (event) => {
-  console.log('message - ', event)
+self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
-  }
-  if (event.data.meta === 'workbox-broadcast-update') {
-    const {cacheName, updatedUrl} = event.data.payload;
-
-    // Do something with cacheName and updatedUrl.
-    // For example, get the cached content and update
-    // the content on the page.
-    const cache = await caches.open(cacheName);
-    const updatedResponse = await cache.match(updatedUrl);
-    const updatedText = await updatedResponse.text();
-    console.log(updatedText);
   }
 });
 
