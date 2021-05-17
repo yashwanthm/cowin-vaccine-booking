@@ -464,7 +464,7 @@ class App extends React.Component{
   }
   renderTable(vaccineCalendar){
     return (
-      <div>
+      <div style={{maxWidth: "100%", overflow: 'scroll'}}>
         <h2 style={{ marginTop: 10 }}>Vaccination Centers & Availability Info</h2>
         <Text type="secondary">You will see all kinds of availability below. But, the notifications and bookings will be done for your selected preferences only.</Text>
         <table style={{ marginTop: 10 }}>
@@ -762,11 +762,7 @@ class App extends React.Component{
           <p>
             This web-app can continously track for availability of vaccine and
             proceed with booking on your behalf if you are logged in. <br />
-            <b>
-              The app does not store any of your personal information on a
-              remote server. All the data remains within your browser. Please
-              see the Privacy Policy at the bottom of the page for any concerns.
-            </b>
+            
           </p>
           <p style={{ color: "#555" }}>
             Please register on{" "}
@@ -793,32 +789,7 @@ class App extends React.Component{
             >
               Help/Usage Guide
             </a>
-            <br />
-            <br />
-            *Please be careful with the location selection as the booking can
-            automatically happen at any center that has availability within your
-            selected region.
-            <br />
-            *If you are on mobile, make sure that you keep the tab active and
-            the auto screenlock is off.Tracking will be automatically paused
-            unless your device has a way to keeping the app from pausing when it
-            goes to background.
-            <br />
-            **There are limited number of slots opening up and it is running out
-            almost instantly. Please keep feeding in OTPs when the session
-            expires to input the captcha available to book as soon as there's
-            availability. It takes time, it took me 2 days to get a slot.
-            <br />
-            <b>
-              This app now{" "}
-              <a
-                href="https://github.com/yashwanthm/cowin-vaccine-booking/issues/4"
-                target="_blank"
-                rel="noreferrer"
-              >
-                supports captcha/security code.
-              </a>
-            </b>
+
           </p>
         </header>
 
