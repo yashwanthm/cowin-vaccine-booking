@@ -361,6 +361,7 @@ class App extends React.Component{
         let msg = 'Booking did not get through. ';
         let desc = "The availability probably ran out before you could take an action. You can refresh if needed. Otherwise the app will continue to look for slots."
         this.bookingError(msg, desc);
+        this.initWatch();
         // this.speak(msg);
         console.log(msg);
       })  
