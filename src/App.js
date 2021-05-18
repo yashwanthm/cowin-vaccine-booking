@@ -53,6 +53,7 @@ class App extends React.Component{
       })
     }, 1000);
     let state = {
+      urlData: null,
       isWatchingAvailability: false,
       vaccineType: 'ANY',
       bookingInProgress: false,
@@ -155,7 +156,29 @@ class App extends React.Component{
     
 
   }
+  getQueryObj(){
+    let search = window.location.search.substring(1);
+    let urlData = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
+    if(urlData.session_id && urlData.dose && urlData.slot){
+      this.setState({urlData, dose: urlData.dose},()=>{
+        if(this.state.isAuthenticated){
+          this.getCaptcha(urlData);
+        }else if(this.state.mobile){
+          this.generateOtp()
+        }else{
+          this.speak("Please login");
+        }
+        
+      })
+    }
+  }
   componentDidMount(){
+    try {
+      this.getQueryObj();  
+    } catch (error) {
+      console.log(error);
+    }
+    
     this.notifSound = document.getElementById("notif");
     let token = localStorage.token || this.state.token;
     if(token){
@@ -180,11 +203,6 @@ class App extends React.Component{
     } catch (error) {
       console.log(error);
     }  
-    
-
-    
-
-
     try {
       // this.notifSound.play();  
     } catch (error) {
@@ -320,7 +338,7 @@ class App extends React.Component{
     window.speechSynthesis.cancel()
     this.setState({bookingInProgress: true}, ()=>{
       cowinApi.getCaptcha().then(data=>{
-        this.speak(`Enter captcha to proceed with booking. Dose ${this.state.dose} Vaccines available at ${this.state.bookingCenter.name}`)
+        this.speak(`Enter captcha to proceed with booking. Dose ${this.state.dose} vaccines available  ${this.state.bookingCenter ? 'at '+this.state.bookingCenter.name : ''}`)
         this.setState({captcha: data.captcha, showCaptcha: true},()=>{
         })
       }).catch(err=>{
@@ -345,11 +363,14 @@ class App extends React.Component{
       })
     }
     
-    
+    let urlData = this.state.urlData;
+    let dose = urlData.dose || this.state.dose || 1;
+    let session_id = urlData.session_id || session.session_id;
+    let slot = urlData.slot || session.slots[Math.floor(Math.random() * session.slots.length)];
     let payload = {
-      dose: this.state.dose ? parseInt(this.state.dose) : 1,
-      session_id: session.session_id,
-      slot: session.slots[Math.floor(Math.random() * session.slots.length)],
+      dose,
+      session_id,
+      slot,
       beneficiaries: benIds,
       captcha: this.state.bookingCaptcha
     }
@@ -537,7 +558,7 @@ class App extends React.Component{
     this.setState({enableOtp: true}, ()=>{
       cowinApi.generateOtp(this.state.mobile).then(data=>{
         // console.log(data);
-        this.speak("One Time Password has been sent to your phone. Please enter.");
+        this.speak("One Time Password has been sent to your phone. Please enter to login");
         // this.notifSound.play();  
         this.setState({otpData: data, enableOtp: true});
         // this.waitForOtp();
@@ -556,6 +577,10 @@ class App extends React.Component{
         this.setStorage();
         this.getBeneficiaries();
         this.trackAuth(data.token);
+        if(this.state.urlData){
+          this.getQueryObj();
+        }
+        
       })
     }).catch(err=>{
       console.log(err);
