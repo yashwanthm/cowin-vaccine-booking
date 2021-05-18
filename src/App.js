@@ -731,24 +731,25 @@ class App extends React.Component{
     return (
       <div>
         <h3 style={{ marginTop: 15, marginBottom: 0 }}>Donate</h3>
-
+        <p></p>
         <div>
-          <a
+          <img style={{ width: 300 }} src={PayTMQR} alt="PayTM QR Code" />
+          {/* <a
             className="paytm-button"
             href="upi://pay?pa=paytmqr28100505010152i3ynyg1dyg@paytm&pn=Paytm%20Merchant&mc=5499&mode=02&orgid=000000&paytmqr=28100505010152I3YNYG1DYG&sign=MEUCIQCB2ibaai5dumiHg3yR/XpPBRcHPxHGe3pch1Ehmhr5GgIgJVZIzjQ+ZXBtpJHJEBVbwyR3p/gVmtZIpk7s+RL5gHk="
             rel="noreferrer"
             target="_blank"
           >
             Donate with UPI
-          </a>
-          <Button
+          </a> */}
+          {/* <Button
             onClick={(e) => {
               this.setState({ showPayTMQR: true });
             }}
             type="link"
           >
             Show QR Code
-          </Button>
+          </Button> */}
         </div>
         <div>
           {/* <a
