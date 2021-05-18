@@ -132,13 +132,36 @@ class App extends React.Component{
   getBeneficiaries(){
     // console.log('get bens');
     cowinApi.getBenefeciaries(this.state.token).then(data=>{
-      this.setState({beneficiaries: data},()=>{this.setStorage()});
+      this.setState({beneficiaries: data},()=>{
+        this.setStorage();
+        if(this.state.urlData){
+          if(this.state.isAuthenticated){
+            // console.log('1')
+            this.getCaptcha();
+          }else if(this.state.mobile){
+            // console.log('2')
+            this.generateOtp()
+          }else{
+            // console.log('3');
+            this.speak("Please login");
+          }
+        }
+      });
     }).catch(err=>{
       console.log(err);
       delete localStorage.token;
       this.setState({isAuthenticated: false, token: null, enableOtp: false},()=>{
         if(this.state.mobile){
           // this.generateOtp()
+        }
+        if(this.state.urlData){
+          if(this.state.mobile){
+            // console.log('2')
+            this.generateOtp()
+          }else{
+            // console.log('3');
+            this.speak("Please login");
+          }
         }
       })
     })
@@ -157,18 +180,7 @@ class App extends React.Component{
     let urlData = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
     // console.log(urlData);
     if(urlData.session_id && urlData.dose && urlData.slot){
-      this.setState({urlData, dose: parseInt(urlData.dose)},()=>{
-        if(this.state.isAuthenticated){
-          // console.log('1')
-          this.getCaptcha();
-        }else if(this.state.mobile){
-          // console.log('2')
-          this.generateOtp()
-        }else{
-          // console.log('3');
-          this.speak("Please login");
-        }
-        
+      this.setState({urlData, dose: parseInt(urlData.dose)},()=>{        
       })
     }
   }
