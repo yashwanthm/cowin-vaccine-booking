@@ -155,14 +155,17 @@ class App extends React.Component{
   getQueryObj(){
     let search = window.location.search.substring(1);
     let urlData = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
-    console.log(urlData);
+    // console.log(urlData);
     if(urlData.session_id && urlData.dose && urlData.slot){
       this.setState({urlData, dose: parseInt(urlData.dose)},()=>{
         if(this.state.isAuthenticated){
-          this.getCaptcha(urlData);
+          // console.log('1')
+          this.getCaptcha();
         }else if(this.state.mobile){
+          // console.log('2')
           this.generateOtp()
         }else{
+          // console.log('3');
           this.speak("Please login");
         }
         
