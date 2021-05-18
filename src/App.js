@@ -703,21 +703,53 @@ class App extends React.Component{
       </div>
     );
   }
+  renderPayTMQR(){
+    return (
+      <Modal
+        visible={this.state.showPayTMQR}
+        title="PayTM ALL-IN-ONE QR"
+        okText="Close"
+        onCancel={e=>{this.setState({showPayTMQR: false})}}
+        footer={[
+          <Button
+            key="back"
+            onClick={(e) => {
+              this.setState({ showPayTMQR: false });
+            }}
+          >
+            Okay
+          </Button>,
+        ]}
+      >
+        <div style={{ width: "100%", textAlign: "center" }}>
+          <img style={{ width: 300 }} src={PayTMQR} alt="PayTM QR Code" />
+        </div>
+      </Modal>
+    );
+  }
   renderDonate(){
     return (
       <div>
         <h3 style={{ marginTop: 15, marginBottom: 0 }}>Donate</h3>
-        <img style={{ width: 300 }} src={PayTMQR} alt="PayTM QR Code" />
-        {/* <div>
+
+        <div>
           <a
             className="paytm-button"
-            href="https://paytm.me/yV-4JXd"
+            href="upi://pay?pa=paytmqr28100505010152i3ynyg1dyg@paytm&pn=Paytm%20Merchant&mc=5499&mode=02&orgid=000000&paytmqr=28100505010152I3YNYG1DYG&sign=MEUCIQCB2ibaai5dumiHg3yR/XpPBRcHPxHGe3pch1Ehmhr5GgIgJVZIzjQ+ZXBtpJHJEBVbwyR3p/gVmtZIpk7s+RL5gHk="
             rel="noreferrer"
             target="_blank"
           >
-            Donate with PayTM
+            Donate with UPI
           </a>
-        </div> */}
+          <Button
+            onClick={(e) => {
+              this.setState({ showPayTMQR: true });
+            }}
+            type="link"
+          >
+            Show QR Code
+          </Button>
+        </div>
         <div>
           {/* <a
             className="paypal-button"
@@ -740,10 +772,10 @@ class App extends React.Component{
             Donate
           </a> */}
 
-          <p style={{ marginTop: 10, marginBottom: 0, fontWeight: "bold" }}>
+          {/* <p style={{ marginTop: 10, marginBottom: 0, fontWeight: "bold" }}>
             Crypto Wallet
           </p>
-          <img style={{ width: 100 }} src={walletImage} alt="crypto-wallet" />
+          <img style={{ width: 100 }} src={walletImage} alt="crypto-wallet" /> */}
         </div>
       </div>
     );
@@ -1172,7 +1204,7 @@ class App extends React.Component{
                 this.setState({ showPrivacyPolicy: false });
               }}
             >
-              Okay
+              Close
             </Button>,
           ]}
           visible={this.state.showPrivacyPolicy}
@@ -1182,6 +1214,7 @@ class App extends React.Component{
         >
           {parseHTML(privacy)}
         </Modal>
+        {this.renderPayTMQR()}
       </div>
     );
   }
