@@ -144,23 +144,20 @@ class App extends React.Component{
     })
   }
   speak(msg){
-    
       let speech = new SpeechSynthesisUtterance();
-
       speech.lang = "en-UK";
       speech.volume = 1;
       speech.rate = 1;
       speech.pitch = 1; 
       speech.text = msg;
       window.speechSynthesis.speak(speech);  
-    
-
   }
   getQueryObj(){
     let search = window.location.search.substring(1);
     let urlData = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
+    console.log(urlData);
     if(urlData.session_id && urlData.dose && urlData.slot){
-      this.setState({urlData, dose: urlData.dose},()=>{
+      this.setState({urlData, dose: parseInt(urlData.dose)},()=>{
         if(this.state.isAuthenticated){
           this.getCaptcha(urlData);
         }else if(this.state.mobile){
@@ -234,6 +231,9 @@ class App extends React.Component{
     delete state.enableOtp;
     delete state.vaccineCalendar;
     delete state.isWatchingAvailability;
+    delete state.urlData;
+    delete state.captcha;
+    delete state.bookingCaptcha;
     localStorage.appData = JSON.stringify(state);
   }
   componentWillUnmount() {
@@ -338,12 +338,15 @@ class App extends React.Component{
     window.speechSynthesis.cancel()
     this.setState({bookingInProgress: true}, ()=>{
       cowinApi.getCaptcha().then(data=>{
+        if(this.state.urlData){
+          this.speak('Please select beneficiaries');
+        }
         this.speak(`Enter captcha to proceed with booking. Dose ${this.state.dose} vaccines available  ${this.state.bookingCenter ? 'at '+this.state.bookingCenter.name : ''}`)
         this.setState({captcha: data.captcha, showCaptcha: true},()=>{
         })
       }).catch(err=>{
         console.log('error getting captcha ',err)
-        this.setState({bookingInProgress: false})
+        this.setState({bookingInProgress: false, urlData: null})
       })
     })
   }
@@ -364,7 +367,7 @@ class App extends React.Component{
     }
     
     let urlData = this.state.urlData;
-    let dose = urlData.dose || this.state.dose || 1;
+    let dose = this.state.dose || 1;
     let session_id = urlData.session_id || session.session_id;
     let slot = urlData.slot || session.slots[Math.floor(Math.random() * session.slots.length)];
     let payload = {
@@ -382,6 +385,7 @@ class App extends React.Component{
       }).catch(err=>{
         this.setState({
           bookingInProgress: false, 
+          urlData: null,
           session: null, 
           bookingCenter: null, 
           captcha: null, 
@@ -392,7 +396,10 @@ class App extends React.Component{
         let msg = 'Booking did not get through. ';
         let desc = "The availability probably ran out before you could take an action. The app will continue to look for slots."
         this.bookingError(msg, desc);
-        this.initWatch();
+        if(this.state.districtId || this.state.zip){
+          this.initWatch();
+        }
+        
         // this.speak(msg);
         // console.log(msg);
       })  
@@ -605,6 +612,7 @@ class App extends React.Component{
     })
   }
   renderCaptcha(){
+    if(!this.state.captcha) return;
     return (
       <div>
         <h2 style={{ marginTop: 10, marginBottom: 0 }}>Enter Captcha</h2>
@@ -650,6 +658,7 @@ class App extends React.Component{
           this.messagesEnd.scrollIntoView({ behavior: "smooth" });
           this.setState({
             bookingInProgress: false, 
+            urlData: null,
             showSuccessModal: false, 
             bookingCenter: null, 
             bookingSession: null, 
@@ -814,6 +823,195 @@ class App extends React.Component{
       </div>
     );
   }
+  renderTrackingSelection(){
+    if(this.state.urlData){
+      return;
+    }
+    return <div>
+      <h2 style={{ marginTop: 15, marginBottom: 0 }}>
+              Select Location for Tracking Availability
+            </h2>
+            <Tabs
+              defaultActiveKey={this.state.selectedTab || "1"}
+              onChange={(e) => {
+                this.setState({ selectedTab: e });
+              }}
+            >
+              <TabPane tab="Track By District" key={1}>
+                <Select
+                  style={{ width: 234 }}
+                  size="large"
+                  defaultValue={this.state.stateId}
+                  disabled={this.state.isWatchingAvailability}
+                  onChange={this.selectState.bind(this)}
+                  placeholder="Select State"
+                >
+                  {this.state.states.map((s) => {
+                    return (
+                      <Option key={s.state_id} value={s.state_id}>
+                        {s.state_name}
+                      </Option>
+                    );
+                  })}
+                </Select>
+
+                <Select
+                  style={{ width: 234 }}
+                  defaultValue={this.state.districtId}
+                  disabled={this.state.isWatchingAvailability}
+                  size="large"
+                  onChange={(val) => {
+                    this.selectDistrict(val);
+                  }}
+                  placeholder="Select District"
+                >
+                  {this.state.districs.map((d) => {
+                    return (
+                      <Option key={d.district_id} value={d.district_id}>
+                        {d.district_name}
+                      </Option>
+                    );
+                  })}
+                </Select>
+                <Button
+                  type="primary"
+                  size="large"
+                  loading={this.state.isWatchingAvailability}
+                  onClick={(e) => this.initWatch()}
+                >
+                  {this.state.isWatchingAvailability
+                    ? "Tracking"
+                    : this.state.isAuthenticated
+                    ? "Track Availability & Book"
+                    : "Track Availability"}
+                </Button>
+                {this.state.isWatchingAvailability ? (
+                  <Button
+                    type="primary"
+                    icon={<CloseCircleOutlined />}
+                    size={"large"}
+                    danger
+                    onClick={this.clearWatch.bind(this)}
+                  >
+                    Stop
+                  </Button>
+                ) : null}
+              </TabPane>
+              <TabPane tab="Track By Pincode" key={2}>
+                <Row>
+                  <Search
+                    disabled={this.state.isWatchingAvailability}
+                    placeholder={
+                      this.state.zip
+                        ? this.state.zip
+                        : "Enter your area pincode"
+                    }
+                    allowClear
+                    defaultValue={this.state.zip || null}
+                    type="number"
+                    // value={this.state.zip}
+                    enterButton={
+                      this.state.isWatchingAvailability
+                        ? `Tracking`
+                        : this.state.isAuthenticated
+                        ? "Track Availability & Book"
+                        : "Track Availability"
+                    }
+                    size="large"
+                    loading={this.state.isWatchingAvailability}
+                    onSearch={(txt) => {
+                      this.setState(
+                        { zip: txt, isWatchingAvailability: true },
+                        () => {
+                          this.initWatch();
+                        }
+                      );
+                    }}
+                  />
+                  {this.state.isWatchingAvailability ? (
+                    <Button
+                      type="primary"
+                      icon={<CloseCircleOutlined />}
+                      size={"large"}
+                      danger
+                      onClick={this.clearWatch.bind(this)}
+                    >
+                      Stop
+                    </Button>
+                  ) : null}
+                </Row>
+              </TabPane>
+            </Tabs>
+    </div>
+  }
+  renderBookingPreferences(){
+    if(this.state.urlData) return;
+    return (
+      <div>
+        <h2 style={{ marginTop: 14, marginBottom: 0 }}>Booking Preferences</h2>
+        <Row style={{ marginTop: 10 }}>
+          <h3 style={{ marginTop: 10, marginBottom: 0 }}>Vaccine Type</h3>
+          <Radio.Group
+            style={{ marginTop: 12, marginLeft: 10 }}
+            onChange={(e) => {
+              this.setState({ vaccineType: e.target.value });
+            }}
+            value={this.state.vaccineType}
+            disabled={this.state.isWatchingAvailability}
+          >
+            <Radio value={"ANY"}>Any</Radio>
+            <Radio value={"COVAXIN"}>Covaxin</Radio>
+            <Radio value={"COVISHIELD"}>Covishield</Radio>
+          </Radio.Group>
+        </Row>
+
+        <Row style={{ marginTop: 10 }}>
+          <h3 style={{ marginTop: 10, marginBottom: 0 }}>Age Group</h3>
+          <Radio.Group
+            style={{ marginTop: 12, marginLeft: 10 }}
+            onChange={this.setMinAge.bind(this)}
+            value={this.state.minAge}
+            disabled={this.state.isWatchingAvailability}
+          >
+            <Radio value={18}>18 to 45 Years</Radio>
+            <Radio value={45}>45+ Years</Radio>
+          </Radio.Group>
+        </Row>
+
+        <Row style={{ marginTop: 10 }}>
+          <h3 style={{ marginTop: 10, marginBottom: 0 }}>Fee Type</h3>
+          <Radio.Group
+            style={{ marginTop: 12, marginLeft: 10 }}
+            onChange={(e) => {
+              this.setState({ feeType: e.target.value });
+            }}
+            value={this.state.feeType}
+            disabled={this.state.isWatchingAvailability}
+          >
+            <Radio value={"Any"}>Any</Radio>
+            <Radio value={"Free"}>Free</Radio>
+            <Radio value={"Paid"}>Paid</Radio>
+          </Radio.Group>
+        </Row>
+
+        <Row style={{ marginTop: 5 }}>
+          <h3 style={{ marginTop: 10, marginBottom: 0 }}>Dose</h3>
+          <Radio.Group
+            style={{ marginTop: 12, marginLeft: 10 }}
+            onChange={(e) => {
+              this.setState({ dose: e.target.value });
+            }}
+            defaultValue={1}
+            value={this.state.dose}
+            disabled={this.state.isWatchingAvailability}
+          >
+            <Radio value={1}>Dose 1</Radio>
+            <Radio value={2}>Dose 2</Radio>
+          </Radio.Group>
+        </Row>
+      </div>
+    );
+  }
   render() {
     const vaccineCalendar = this.state.vaccineCalendar;
     const isAuthenticated = this.state.isAuthenticated;
@@ -974,6 +1172,7 @@ class App extends React.Component{
                             sbs.splice(idx, 1);
                           }
                           this.setState({ selectedBeneficiaries: sbs });
+                          this.setStorage();
                         }}
                       >
                         {b.name}
@@ -983,184 +1182,10 @@ class App extends React.Component{
                 })}
               </div>
             ) : null}
-            <h2 style={{ marginTop: 14, marginBottom: 0 }}>
-              Booking Preferences
-            </h2>
-            <Row style={{ marginTop: 10 }}>
-              <h3 style={{ marginTop: 10, marginBottom: 0 }}>Vaccine Type</h3>
-              <Radio.Group
-                style={{ marginTop: 12, marginLeft: 10 }}
-                onChange={(e) => {
-                  this.setState({ vaccineType: e.target.value });
-                }}
-                value={this.state.vaccineType}
-                disabled={this.state.isWatchingAvailability}
-              >
-                <Radio value={"ANY"}>Any</Radio>
-                <Radio value={"COVAXIN"}>Covaxin</Radio>
-                <Radio value={"COVISHIELD"}>Covishield</Radio>
-              </Radio.Group>
-            </Row>
-
-            <Row style={{ marginTop: 10 }}>
-              <h3 style={{ marginTop: 10, marginBottom: 0 }}>Age Group</h3>
-              <Radio.Group
-                style={{ marginTop: 12, marginLeft: 10 }}
-                onChange={this.setMinAge.bind(this)}
-                value={this.state.minAge}
-                disabled={this.state.isWatchingAvailability}
-              >
-                <Radio value={18}>18 to 45 Years</Radio>
-                <Radio value={45}>45+ Years</Radio>
-              </Radio.Group>
-            </Row>
-
-            <Row style={{ marginTop: 10 }}>
-              <h3 style={{ marginTop: 10, marginBottom: 0 }}>Fee Type</h3>
-              <Radio.Group
-                style={{ marginTop: 12, marginLeft: 10 }}
-                onChange={(e) => {
-                  this.setState({ feeType: e.target.value });
-                }}
-                value={this.state.feeType}
-                disabled={this.state.isWatchingAvailability}
-              >
-                <Radio value={"Any"}>Any</Radio>
-                <Radio value={"Free"}>Free</Radio>
-                <Radio value={"Paid"}>Paid</Radio>
-              </Radio.Group>
-            </Row>
-
-            <Row style={{ marginTop: 5 }}>
-              <h3 style={{ marginTop: 10, marginBottom: 0 }}>Dose</h3>
-              <Radio.Group
-                style={{ marginTop: 12, marginLeft: 10 }}
-                onChange={(e) => {
-                  this.setState({ dose: e.target.value });
-                }}
-                defaultValue={1}
-                value={this.state.dose}
-                disabled={this.state.isWatchingAvailability}
-              >
-                <Radio value={1}>Dose 1</Radio>
-                <Radio value={2}>Dose 2</Radio>
-              </Radio.Group>
-            </Row>
-
-            <h2 style={{ marginTop: 15, marginBottom: 0 }}>
-              Select Location for Tracking Availability
-            </h2>
-            <Tabs
-              defaultActiveKey={this.state.selectedTab || "1"}
-              onChange={(e) => {
-                this.setState({ selectedTab: e });
-              }}
-            >
-              <TabPane tab="Track By District" key={1}>
-                <Select
-                  style={{ width: 234 }}
-                  size="large"
-                  defaultValue={this.state.stateId}
-                  disabled={this.state.isWatchingAvailability}
-                  onChange={this.selectState.bind(this)}
-                  placeholder="Select State"
-                >
-                  {this.state.states.map((s) => {
-                    return (
-                      <Option key={s.state_id} value={s.state_id}>
-                        {s.state_name}
-                      </Option>
-                    );
-                  })}
-                </Select>
-
-                <Select
-                  style={{ width: 234 }}
-                  defaultValue={this.state.districtId}
-                  disabled={this.state.isWatchingAvailability}
-                  size="large"
-                  onChange={(val) => {
-                    this.selectDistrict(val);
-                  }}
-                  placeholder="Select District"
-                >
-                  {this.state.districs.map((d) => {
-                    return (
-                      <Option key={d.district_id} value={d.district_id}>
-                        {d.district_name}
-                      </Option>
-                    );
-                  })}
-                </Select>
-                <Button
-                  type="primary"
-                  size="large"
-                  loading={this.state.isWatchingAvailability}
-                  onClick={(e) => this.initWatch()}
-                >
-                  {this.state.isWatchingAvailability
-                    ? "Tracking"
-                    : this.state.isAuthenticated
-                    ? "Track Availability & Book"
-                    : "Track Availability"}
-                </Button>
-                {this.state.isWatchingAvailability ? (
-                  <Button
-                    type="primary"
-                    icon={<CloseCircleOutlined />}
-                    size={"large"}
-                    danger
-                    onClick={this.clearWatch.bind(this)}
-                  >
-                    Stop
-                  </Button>
-                ) : null}
-              </TabPane>
-              <TabPane tab="Track By Pincode" key={2}>
-                <Row>
-                  <Search
-                    disabled={this.state.isWatchingAvailability}
-                    placeholder={
-                      this.state.zip
-                        ? this.state.zip
-                        : "Enter your area pincode"
-                    }
-                    allowClear
-                    defaultValue={this.state.zip || null}
-                    type="number"
-                    // value={this.state.zip}
-                    enterButton={
-                      this.state.isWatchingAvailability
-                        ? `Tracking`
-                        : this.state.isAuthenticated
-                        ? "Track Availability & Book"
-                        : "Track Availability"
-                    }
-                    size="large"
-                    loading={this.state.isWatchingAvailability}
-                    onSearch={(txt) => {
-                      this.setState(
-                        { zip: txt, isWatchingAvailability: true },
-                        () => {
-                          this.initWatch();
-                        }
-                      );
-                    }}
-                  />
-                  {this.state.isWatchingAvailability ? (
-                    <Button
-                      type="primary"
-                      icon={<CloseCircleOutlined />}
-                      size={"large"}
-                      danger
-                      onClick={this.clearWatch.bind(this)}
-                    >
-                      Stop
-                    </Button>
-                  ) : null}
-                </Row>
-              </TabPane>
-            </Tabs>
+            {this.renderBookingPreferences()}
+            
+            {this.renderTrackingSelection()}
+            
 
             {/* <Col>
               {this.state.isWatchingAvailability ? (
