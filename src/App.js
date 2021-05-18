@@ -135,16 +135,7 @@ class App extends React.Component{
       this.setState({beneficiaries: data},()=>{
         this.setStorage();
         if(this.state.urlData){
-          if(this.state.isAuthenticated){
-            // console.log('1')
-            this.getCaptcha();
-          }else if(this.state.mobile){
-            // console.log('2')
-            this.generateOtp()
-          }else{
-            // console.log('3');
-            this.speak("Please login");
-          }
+          this.getQueryObj();
         }
       });
     }).catch(err=>{
@@ -153,14 +144,8 @@ class App extends React.Component{
       this.setState({isAuthenticated: false, token: null, enableOtp: false},()=>{
         if(this.state.mobile){
           // this.generateOtp()
-        }
-        if(this.state.urlData){
-          if(this.state.mobile){
-            // console.log('2')
-            this.generateOtp()
-          }else{
-            // console.log('3');
-            this.speak("Please login");
+          if(this.state.urlData){
+            this.getQueryObj();
           }
         }
       })
