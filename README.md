@@ -1,6 +1,11 @@
 This utility can login into Cowin, track vaccine availability and automatically book a a vaccination slot if you are logged in.
 The app is made possible by https://apisetu.gov.in/public/api/cowin 
-This also supports the captcha code that Cowin recently added. 
+This app also supports
+* Dose based availability
+* Captcha code 
+* Paid/Free selection
+* Age Group Selection
+that Cowin recently added. 
 
 The webpage is available at https://yashwanthm.github.io/cowin-vaccine-booking/
 
