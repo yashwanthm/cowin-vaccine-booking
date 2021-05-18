@@ -320,7 +320,7 @@ class App extends React.Component{
     window.speechSynthesis.cancel()
     this.setState({bookingInProgress: true}, ()=>{
       cowinApi.getCaptcha().then(data=>{
-        this.speak(`Enter captcha to proceed with booking. Vaccines available at ${this.state.bookingCenter.name}`)
+        this.speak(`Enter captcha to proceed with booking. Dose ${this.state.dose} Vaccines available at ${this.state.bookingCenter.name}`)
         this.setState({captcha: data.captcha, showCaptcha: true},()=>{
         })
       }).catch(err=>{
