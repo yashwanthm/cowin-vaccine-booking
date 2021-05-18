@@ -402,6 +402,7 @@ class App extends React.Component{
         if(this.state.districtId || this.state.zip){
           this.initWatch();
         }
+        window.history.pushState(null, "", window.location.href.split("?")[0]);
         
         // this.speak(msg);
         // console.log(msg);
