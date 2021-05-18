@@ -581,6 +581,7 @@ class App extends React.Component{
           <Search
             placeholder="Enter Captcha"
             allowClear
+            autoFocus={true}
             style={{width: 300, marginTop: 10}}
             // value={this.state.zip}
             enterButton={"Submit & Book"}
