@@ -250,12 +250,23 @@ class App extends React.Component{
           ) {
             return;
           }
-          if(parseInt(this.state.dose)===1 && s.available_capacity_dose1 && s.available_capacity_dose1 < requiredNums){
-            return
+
+          try {
+            if(parseInt(this.state.dose)===1 ){
+              if(s.available_capacity_dose1 >= 0 && s.available_capacity_dose1 < requiredNums){
+                return
+              }
+            } 
+            
+            if(parseInt(this.state.dose)===2){
+              if(s.available_capacity_dose2 >=0 && s.available_capacity_dose2 < requiredNums){
+                return;
+              }
+            }
+          } catch (error) {
+            console.log(error);
           }
-          if(parseInt(this.state.dose)===2 && s.available_capacity_dose2 && s.available_capacity_dose2 < requiredNums){
-            return
-          }
+          
 
           try {
             // this.notifSound.play();
