@@ -96,7 +96,7 @@ class App extends React.Component{
   }
   async waitForOtp(){
 
-    console.log('waiting for otp');
+    // console.log('waiting for otp');
     if(this.ac){
       this.ac.abort();
     }
@@ -124,7 +124,7 @@ class App extends React.Component{
           }
           
     } else {
-      console.log('Web OTP API not supported');
+      // console.log('Web OTP API not supported');
     }
       
   }
@@ -175,7 +175,7 @@ class App extends React.Component{
     // const self = this;  
     try {
       Notification.requestPermission((status) => {
-        console.log("Notification permission status:", status);
+        // console.log("Notification permission status:", status);
       });  
     } catch (error) {
       console.log(error);
@@ -198,10 +198,10 @@ class App extends React.Component{
       };
       try {
         Notification.requestPermission(function(result) {
-          console.log('result is', result)
+          // console.log('result is', result)
           if (result === 'granted') {
             navigator.serviceWorker.ready.then(function(registration) {
-              console.log('registration i s', registration);
+              // console.log('registration i s', registration);
               registration.showNotification(opts.title, opts);
             });
           }
@@ -330,7 +330,6 @@ class App extends React.Component{
     })
   }
   async book(captcha){
-    console.log('book');
     let benIds = [];
     let session = this.state.bookingSession;
     if(this.state.selectedBeneficiaries.length === 0){
@@ -370,11 +369,11 @@ class App extends React.Component{
           showCaptcha: false
         });
         let msg = 'Booking did not get through. ';
-        let desc = "The availability probably ran out before you could take an action. You can refresh if needed. Otherwise the app will continue to look for slots."
+        let desc = "The availability probably ran out before you could take an action. The app will continue to look for slots."
         this.bookingError(msg, desc);
         this.initWatch();
         // this.speak(msg);
-        console.log(msg);
+        // console.log(msg);
       })  
     // }, 100)
     // if(!this.bookingIntervals){
@@ -402,7 +401,7 @@ class App extends React.Component{
           console.error("something wrong occurred: " + err);
         },
         complete() {
-          console.log("done");
+          // console.log("done");
           this.setState({ isWatchingAvailability: false });
         },
       });
@@ -429,7 +428,6 @@ class App extends React.Component{
   }
   trackAuth() {
     const self = this;
-    console.log('trackauth');
     if(this.state.isAuthenticated===false) return;
     this.authWatch = cowinApi
       .trackAuth(this.state.token)
@@ -439,7 +437,6 @@ class App extends React.Component{
           if(Array.isArray(data)){
             self.setState({beneficiaries: data})
           }else{
-            console.log('asasad');
             cowinApi.clearAuthWatch();
             delete localStorage.token;
             self.setState({isAuthenticated: false, token: null},()=>{
@@ -467,7 +464,6 @@ class App extends React.Component{
           })
         },
         complete() {
-          console.log("done");
           self.setState({ isWatchingAvailability: false });
         },
       });
