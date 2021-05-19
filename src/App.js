@@ -380,7 +380,7 @@ class App extends React.Component{
     let urlData = this.state.urlData;
     let dose = this.state.dose || 1;
     let session_id = urlData ? urlData.session_id : session.session_id;
-    let slot = urlData.slot || session.slots[Math.floor(Math.random() * session.slots.length)];
+    let slot = urlData ? urlData.slot.session : session.slots[Math.floor(Math.random() * session.slots.length)];
     let payload = {
       dose,
       session_id,
@@ -405,7 +405,8 @@ class App extends React.Component{
           showCaptcha: false
         });
         let msg = 'Booking did not get through. ';
-        let desc = "The availability probably ran out before you could take an action. The app will continue to look for slots."
+        console.log(err);
+        let desc = err.error || "The availability probably ran out before you could take an action. The app will continue to look for slots."
         this.bookingError(msg, desc);
         if(this.state.districtId || this.state.zip){
           this.initWatch();
