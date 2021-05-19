@@ -162,6 +162,7 @@ class App extends React.Component{
   }
   getQueryObj(){
     let search = window.location.search.substring(1);
+    if(search.length===0) return;
     let urlData = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
     // console.log(urlData);
     if(urlData.session_id && urlData.dose && urlData.slot){
@@ -170,11 +171,7 @@ class App extends React.Component{
     }
   }
   componentDidMount(){
-    try {
-      this.getQueryObj();  
-    } catch (error) {
-      console.log(error);
-    }
+    
     
     this.notifSound = document.getElementById("notif");
     let token = localStorage.token || this.state.token;
@@ -222,6 +219,12 @@ class App extends React.Component{
           }
         });
         new Notification(opts.title, opts);  
+      } catch (error) {
+        console.log(error);
+      }
+
+      try {
+        this.getQueryObj();  
       } catch (error) {
         console.log(error);
       }
@@ -535,6 +538,8 @@ class App extends React.Component{
                           {parseInt(s.available_capacity) > 0
                             ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
                             : `No Availability ${s.min_age_limit}`}
+                            Dose1 - {s.available_capacity_dose1 || 0}
+                            Dose2 - {s.available_capacity_dose2 || 0}
                         </div>
                         {parseInt(s.available_capacity > 0) ? (
                           <div>
