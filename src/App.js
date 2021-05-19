@@ -130,7 +130,6 @@ class App extends React.Component{
       
   }
   getBeneficiaries(){
-    // console.log('get bens');
     cowinApi.getBenefeciaries(this.state.token).then(data=>{
       this.setState({beneficiaries: data},()=>{
         this.setStorage();
@@ -161,12 +160,20 @@ class App extends React.Component{
       window.speechSynthesis.speak(speech);  
   }
   getQueryObj(){
+    console.log('callee');
     let search = window.location.search.substring(1);
     if(search.length===0) return;
     let urlData = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
     // console.log(urlData);
     if(urlData.session_id && urlData.dose && urlData.slot){
       this.setState({urlData, dose: parseInt(urlData.dose)},()=>{        
+        if(this.state.isAuthenticated){
+          this.getCaptcha()
+        }else if(this.state.mobile){
+          this.generateOtp()
+        }else{
+          this.speak("Please login")
+        }
       })
     }
   }
