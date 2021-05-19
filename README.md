@@ -8,7 +8,7 @@ This app also supports
 * Paid/Free selection
 * Age Group Selection
 
-# API for integrating link based booking into your app
+# API for integrating link based booking into your app/Notifications system
 This API allows you to open a URL from within your application where a user will be readily available to book. Support for passing user's token coming soon. Please report an issue if you need this expedited.
 
 ### URL Pattern: 
