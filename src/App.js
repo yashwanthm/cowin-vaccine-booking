@@ -130,11 +130,18 @@ class App extends React.Component{
       
   }
   getBeneficiaries(){
+    console.log('getBens')
     cowinApi.getBenefeciaries(this.state.token).then(data=>{
       this.setState({beneficiaries: data},()=>{
         this.setStorage();
         if(this.state.urlData){
-          this.getQueryObj();
+          if(this.state.isAuthenticated){
+            this.getCaptcha()
+          }else if(this.state.mobile){
+            this.generateOtp()
+          }else{
+            this.speak("Please login")
+          }
         }
       });
     }).catch(err=>{
@@ -167,13 +174,7 @@ class App extends React.Component{
     // console.log(urlData);
     if(urlData.session_id && urlData.dose && urlData.slot){
       this.setState({urlData, dose: parseInt(urlData.dose)},()=>{        
-        if(this.state.isAuthenticated){
-          this.getCaptcha()
-        }else if(this.state.mobile){
-          this.generateOtp()
-        }else{
-          this.speak("Please login")
-        }
+        
       })
     }
   }
