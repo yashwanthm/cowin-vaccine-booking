@@ -379,7 +379,7 @@ class App extends React.Component{
     
     let urlData = this.state.urlData;
     let dose = this.state.dose || 1;
-    let session_id = urlData.session_id || session.session_id;
+    let session_id = urlData ? urlData.session_id : session.session_id;
     let slot = urlData.slot || session.slots[Math.floor(Math.random() * session.slots.length)];
     let payload = {
       dose,
