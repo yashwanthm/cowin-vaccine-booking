@@ -188,7 +188,7 @@ class App extends React.Component{
     try {
       new Notification(opts.title, opts);    
     } catch (error) {
-      
+      console.log(error);
     }
     
   }
