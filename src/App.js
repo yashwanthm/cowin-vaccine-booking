@@ -185,7 +185,12 @@ class App extends React.Component{
       native: true,
       vibrate: [300, 100, 400]
     };
-    new Notification(opts.title, opts);  
+    try {
+      new Notification(opts.title, opts);    
+    } catch (error) {
+      
+    }
+    
   }
   componentDidMount(){
     
