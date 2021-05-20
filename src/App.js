@@ -178,6 +178,15 @@ class App extends React.Component{
       })
     }
   }
+  sendNotification(title, msg){
+    let opts = {
+      title: title,
+      body: msg,
+      native: true,
+      vibrate: [300, 100, 400]
+    };
+    new Notification(opts.title, opts);  
+  }
   componentDidMount(){
     
     
@@ -485,6 +494,7 @@ class App extends React.Component{
               if(self.state.isWatchingAvailability){
                 self.generateOtp();
                 self.speak('Session expired!');
+                self.sendNotification('Session expired', 'Session expired, please login')
               }
               
             })
