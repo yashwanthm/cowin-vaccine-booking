@@ -562,6 +562,7 @@ class App extends React.Component{
                           {parseInt(s.available_capacity) > 0
                             ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
                             : `No Availability ${s.min_age_limit}`}
+                            <br/>
                             Dose1 - {s.available_capacity_dose1 || 0}
                             Dose2 - {s.available_capacity_dose2 || 0}
                         </div>
