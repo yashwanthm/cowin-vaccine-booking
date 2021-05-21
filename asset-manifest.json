@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/cowin-vaccine-booking/static/css/main.434c83f2.chunk.css",
-    "main.js": "/cowin-vaccine-booking/static/js/main.fa8ff083.chunk.js",
-    "main.js.map": "/cowin-vaccine-booking/static/js/main.fa8ff083.chunk.js.map",
+    "main.js": "/cowin-vaccine-booking/static/js/main.bd7faf91.chunk.js",
+    "main.js.map": "/cowin-vaccine-booking/static/js/main.bd7faf91.chunk.js.map",
     "runtime-main.js": "/cowin-vaccine-booking/static/js/runtime-main.09bbbbbd.js",
     "runtime-main.js.map": "/cowin-vaccine-booking/static/js/runtime-main.09bbbbbd.js.map",
     "static/css/2.92c2f793.chunk.css": "/cowin-vaccine-booking/static/css/2.92c2f793.chunk.css",
@@ -24,6 +24,6 @@
     "static/css/2.92c2f793.chunk.css",
     "static/js/2.319859ff.chunk.js",
     "static/css/main.434c83f2.chunk.css",
-    "static/js/main.fa8ff083.chunk.js"
+    "static/js/main.bd7faf91.chunk.js"
   ]
 }
