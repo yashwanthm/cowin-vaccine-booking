@@ -4,6 +4,7 @@ import "./App.css";
 import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typography, notification } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
+import Rollbar from "rollbar";
 import CowinApi from "./models";
 import walletImage from './wallet.png'
 import PayTMQR from './OfflineMerchant.png'
@@ -32,6 +33,12 @@ const { TabPane } = Tabs;
 const cowinApi = new CowinApi();
 const { Search } = Input;
 const { Option } = Select;       
+
+const rollbar = new Rollbar({
+  accessToken: '4c4fe28a636e4d3cbc82690da97f38e8',
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+})
 
 const promosg = {
   text: 'Use this link to track vaccine availability and automatically book a slot for you and your family. The app will automatically send OTPs and speak out to tell you to enter security code at the time of booking. ',
@@ -164,7 +171,7 @@ class App extends React.Component{
       speech.rate = 1;
       speech.pitch = 1; 
       speech.text = msg;
-      window.speechSynthesis.speak(speech);  
+      // window.speechSynthesis.speak(speech);  
   }
   getQueryObj(){
     console.log('callee');
@@ -342,6 +349,10 @@ class App extends React.Component{
                 center: c
               });
             }
+            rollbar.log({
+              event: 'availability',
+              center: c
+            });
           } catch (error) {
             
           }
@@ -425,6 +436,10 @@ class App extends React.Component{
             data
           });
         }
+        rollbar.log({
+          event: 'booking_success',
+          data: data
+        });
       }).catch(err=>{
         this.setState({
           bookingInProgress: false, 
@@ -451,6 +466,10 @@ class App extends React.Component{
             err
           });
         }
+        rollbar.log({
+          event: 'booking_fail',
+          data: err
+        });
         
         // this.speak(msg);
         // console.log(msg);
