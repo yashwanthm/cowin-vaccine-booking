@@ -158,6 +158,7 @@ class App extends React.Component{
     })
   }
   speak(msg){
+    try {
       let speech = new SpeechSynthesisUtterance();
       speech.lang = "en-UK";
       speech.volume = 1;
@@ -165,6 +166,10 @@ class App extends React.Component{
       speech.pitch = 1; 
       speech.text = msg;
       window.speechSynthesis.speak(speech);  
+    } catch (error) {
+      console.log(error);
+    }
+      
   }
   getQueryObj(){
     console.log('callee');
