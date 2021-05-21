@@ -273,6 +273,7 @@ class App extends React.Component{
       requiredNums = this.state.selectedBeneficiaries.length;
     }
     let bkgInProgress = false;
+    if(!Array.isArray(centers)) return;
     centers.map(c=>{
       c.sessions.map(s=>{
         
