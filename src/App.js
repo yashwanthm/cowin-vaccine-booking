@@ -334,6 +334,17 @@ class App extends React.Component{
             console.log(error);
           }
           this.speak(`Vaccines available at ${c.name}`);
+          try {
+            if(window.ga){
+              window.ga('send', 'event', {
+                eventCategory: 'availability',
+                eventAction: 'success',
+                center: c
+              });
+            }
+          } catch (error) {
+            
+          }
           if (this.state.isAuthenticated) {
             this.setState(
               { bookingInProgress: true, bookingCenter: c, bookingSession: s },
@@ -407,6 +418,13 @@ class App extends React.Component{
         console.log('Booking success ', data.appointment_id);
         this.clearWatch();
         this.setState({bookingInProgress: false, appointment_id: JSON.stringify(data), showSuccessModal: true});
+        if(window.ga){
+          window.ga('send', 'event', {
+            eventCategory: 'booking',
+            eventAction: 'success',
+            data
+          });
+        }
       }).catch(err=>{
         this.setState({
           bookingInProgress: false, 
@@ -426,6 +444,13 @@ class App extends React.Component{
           this.initWatch();
         }
         window.history.pushState(null, "", window.location.href.split("?")[0]);
+        if(window.ga){
+          window.ga('send', 'event', {
+            eventCategory: 'booking',
+            eventAction: 'fail',
+            err
+          });
+        }
         
         // this.speak(msg);
         // console.log(msg);
