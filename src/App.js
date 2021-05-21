@@ -563,7 +563,7 @@ class App extends React.Component{
                             ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
                             : `No Availability ${s.min_age_limit}+`}
                             <br/>
-                            Dose1 - {s.available_capacity_dose1 || 0}
+                            Dose1 - {s.available_capacity_dose1 || 0} <br/>
                             Dose2 - {s.available_capacity_dose2 || 0}
                         </div>
                         {parseInt(s.available_capacity > 0) ? (
@@ -860,7 +860,7 @@ class App extends React.Component{
     }
     return <div>
       <h2 style={{ marginTop: 15, marginBottom: 0 }}>
-              Select Location for Tracking Availability
+              Select Location for Vaccination
             </h2>
             <Tabs
               defaultActiveKey={this.state.selectedTab || "1"}
