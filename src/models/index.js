@@ -118,7 +118,7 @@ export default class CowinApi {
             }).catch(err=>{
                 subscriber.next('err');
             });
-        }, 1000 * 10 )
+        }, 1000 * 60 * (15 + 0.06) )
       });
     }
     async getStates(){
