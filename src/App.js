@@ -1026,6 +1026,9 @@ class App extends React.Component{
             <Radio value={"ANY"}>Any</Radio>
             <Radio value={"COVAXIN"}>Covaxin</Radio>
             <Radio value={"COVISHIELD"}>Covishield</Radio>
+            <Radio value={"SPUTNIK V"}>Sputnik V</Radio>
+            
+
           </Radio.Group>
         </Row>
 
