@@ -238,7 +238,7 @@ class App extends React.Component{
       try {
         Notification.requestPermission(function(result) {
           // console.log('result is', result)
-          if (result === 'granted') {
+          if (result === 'granted' && navigator.serviceWorker) {
             navigator.serviceWorker.ready.then(function(registration) {
               // console.log('registration i s', registration);
               registration.showNotification(opts.title, opts);
