@@ -377,7 +377,9 @@ class App extends React.Component{
     });
   };
   getCaptcha(){
-    window.speechSynthesis.cancel()
+    if(window.speechSynthesis){
+      window.speechSynthesis.cancel()
+    }
     this.setState({bookingInProgress: true}, ()=>{
       cowinApi.getCaptcha().then(data=>{
         if(this.state.urlData){
