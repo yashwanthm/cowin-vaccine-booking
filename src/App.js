@@ -586,7 +586,7 @@ class App extends React.Component{
                   <td>No Availability</td>
                 ) : (
                   vc.sessions.map((s) => {
-
+                    //display filters
                     return (
                       <td key={s.session_id}>
                         <h4>{s.date}</h4>
