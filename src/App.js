@@ -54,6 +54,7 @@ class App extends React.Component{
     }, 1000);
     let state = {
       urlData: null,
+      date: moment().format('DD-MM-YYYY'),
       isWatchingAvailability: false,
       vaccineType: 'ANY',
       bookingInProgress: false,
@@ -67,6 +68,7 @@ class App extends React.Component{
         txnId: null
       },
       vaccineCalendar: {},
+      vaccineSessions: null,
       zip: null,
       enableOtp: false,
       otp: null,
@@ -385,7 +387,13 @@ class App extends React.Component{
         if(this.state.urlData){
           this.speak('Please select beneficiaries');
         }
-        this.speak(`Enter captcha to proceed with booking. Dose ${this.state.dose} vaccines available  ${this.state.bookingCenter ? 'at '+this.state.bookingCenter.name : ''}`)
+        let centerName;
+        if(this.state.bookingCenter){
+          centerName = this.state.bookingCenter.name
+        }else if(this.state.bookingSession && this.state.bookingSession.name){
+          centerName = this.state.bookingSession.name
+        }
+        this.speak(`Enter captcha to proceed with booking. Dose ${this.state.dose} vaccines available  ${centerName ? 'at '+centerName : ''}`)
         this.setState({captcha: data.captcha, showCaptcha: true},()=>{
         })
       }).catch(err=>{
@@ -468,6 +476,123 @@ class App extends React.Component{
     //   this.bookingIntervals = [];
     // }
     // this.bookingIntervals.push(thisInterval);
+  }
+  handleNotificationS(){
+    let sessions = this.state.vaccineSessions;
+    let requiredNums = 1;
+    if(this.state.selectedBeneficiaries && Array.isArray(this.state.selectedBeneficiaries) && this.state.selectedBeneficiaries.length>0){
+      requiredNums = this.state.selectedBeneficiaries.length;
+    }
+    let bkgInProgress = false;
+    if(!Array.isArray(sessions.sessions)) return;
+      sessions.sessions.map(s=>{
+        console.log(s);
+        if (
+          parseInt(s.min_age_limit) === this.state.minAge &&
+          parseInt(s.available_capacity) >= requiredNums && 
+          !this.state.bookingInProgress
+        ) {
+          let vt = this.state.vaccineType;
+          if (vt !== "ANY" && vt !== s.vaccine) {
+            return;
+          }
+
+          if (
+            this.state.feeType &&
+            this.state.feeType !== "Any" &&
+            this.state.feeType !== s.fee_type
+          ) {
+            return;
+          }
+
+          try {
+            if(parseInt(this.state.dose)===1 ){
+              if(s.available_capacity_dose1 >= 0 && s.available_capacity_dose1 < requiredNums){
+                return
+              }
+            } 
+            
+            if(parseInt(this.state.dose)===2){
+              if(s.available_capacity_dose2 >=0 && s.available_capacity_dose2 < requiredNums){
+                return;
+              }
+            }
+          } catch (error) {
+            console.log(error);
+          }
+          
+
+          try {
+            // this.notifSound.play();
+          } catch (error) {}
+
+          let opts = {
+            title: s.name,
+            body: `${s.name} ${s.address} has ${s.available_capacity} on ${s.date}`,
+            vibrate: [300, 100, 400],
+            native: true,
+          };
+          try {
+            Notification.requestPermission(function (result) {
+              if (result === "granted" && navigator.serviceWorker) {
+                navigator.serviceWorker.ready.then(function (registration) {
+                  registration.showNotification(opts.message, opts);
+                });
+              }
+            });
+            new Notification(opts.title, opts);
+          } catch (error) {
+            console.log(error);
+          }
+          this.speak(`Vaccines available at ${s.name}`);
+          try {
+            if(window.ga){
+              window.ga('send', 'event', {
+                eventCategory: 'availability',
+                eventAction: 'success'
+              });
+            }
+          } catch (error) {
+            
+          }
+          if (this.state.isAuthenticated) {
+            this.setState(
+              { bookingInProgress: true, bookingSession: s },
+              () => {
+                if (!this.state.bookingCaptcha && !bkgInProgress) {
+                  this.getCaptcha();
+                  bkgInProgress = true;
+                  this.clearWatch();
+                  // this.book(s, c);
+                }
+              }
+            );
+          } else {
+            this.speak('Login to book');
+          }
+        }
+      })
+  }
+  initDistS(){
+    const self = this;
+    this.setStorage();
+    this.setState({isWatchingAvailability: true});
+    this.watcher = cowinApi
+      .initDistS(this.state.districtId, moment().format("DD-MM-YYYY"))
+      .subscribe({
+        next(data) {
+          self.setState({vaccineSessions: data},()=>{
+            self.handleNotificationS();
+          })
+        },
+        error(err) {
+          console.error("something wrong occurred: " + err);
+        },
+        complete() {
+          // console.log("done");
+          this.setState({ isWatchingAvailability: false });
+        },
+      });
   }
 
   initWatch(zip) {
@@ -941,7 +1066,7 @@ class App extends React.Component{
                   type="primary"
                   size="large"
                   loading={this.state.isWatchingAvailability}
-                  onClick={(e) => this.initWatch()}
+                  onClick={(e) => this.initDistS()}
                 >
                   {this.state.isWatchingAvailability
                     ? "Tracking"
