@@ -69,6 +69,7 @@ class App extends React.Component{
       },
       vaccineCalendar: {},
       vaccineSessions: null,
+      sessionBasedTracking: true,
       zip: null,
       enableOtp: false,
       otp: null,
@@ -486,7 +487,7 @@ class App extends React.Component{
     let bkgInProgress = false;
     if(!Array.isArray(sessions.sessions)) return;
       sessions.sessions.map(s=>{
-        console.log(s);
+        
         if (
           parseInt(s.min_age_limit) === this.state.minAge &&
           parseInt(s.available_capacity) >= requiredNums && 
@@ -600,6 +601,10 @@ class App extends React.Component{
 
     this.setStorage();
     this.setState({isWatchingAvailability: true});
+    if(this.state.sessionBasedTracking){
+      this.initDistS();
+      return;
+    }
     if(this.state.selectedTab === "1"){
       this.watcher = cowinApi
       .initDist(this.state.districtId, moment().format("DD-MM-YYYY"))
@@ -746,6 +751,54 @@ class App extends React.Component{
     );
       
   }
+  renderSessionTable(){
+    if(!this.state.vaccineSessions){
+      return;
+    }
+    let sessions = this.state.vaccineSessions.sessions;
+
+    return (
+      <div style={{ maxWidth: "100%", overflow: "scroll" }}>
+        <h2 style={{ marginTop: 10 }}>
+          Vaccination Centers & Availability Info - {this.state.date}
+        </h2>
+        <Text type="secondary">
+          You will see all kinds of availability below. But, the notifications
+          and bookings will be done for your selected preferences only.
+        </Text>
+        <table style={{ marginTop: 10 }}>
+          {sessions.map((s) => {
+            //display filters
+            return (
+              <td key={s.session_id}>
+                <h3>{s.name}</h3>
+                  <b>Fee: {s.fee_type} - {s.fee}</b><br/>
+                  {s.block_name}, {s.address}, {s.pincode}.
+                <p>{s.vaccine}</p>
+                <div>
+                  {parseInt(s.available_capacity) > 0
+                    ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
+                    : `No Availability ${s.min_age_limit}+`}
+                  <br />
+                  Dose1 - {s.available_capacity_dose1 || 0} <br />
+                  Dose2 - {s.available_capacity_dose2 || 0}
+                </div>
+                {parseInt(s.available_capacity > 0) ? (
+                  <div>
+                    <b>Available Slots</b>
+                    {s.slots.map((sl) => {
+                      return <Row>{sl}</Row>;
+                    })}
+                  </div>
+                ) : null}
+              </td>
+            );
+          })}
+        </table>
+      </div>
+    );
+      
+  }
   setMinAge(e){
     this.setState({minAge: e.target.value});
   }
@@ -802,9 +855,15 @@ class App extends React.Component{
   }
   renderCaptcha(){
     if(!this.state.captcha) return;
+    let centerName;
+    if(this.state.bookingCenter){
+      centerName = this.state.bookingCenter.name
+    }else if(this.state.bookingSession && this.state.bookingSession.name){
+      centerName = this.state.bookingSession.name;
+    }
     return (
       <div>
-        <h2 style={{ marginTop: 10, marginBottom: 0 }}>Enter Captcha</h2>
+        <h2 style={{ marginTop: 10, marginBottom: 0 }}>Enter Captcha to book at {centerName}</h2>
         <Row>
           <Col>{parseHTML(this.state.captcha)}</Col>
           <Search
@@ -1399,6 +1458,8 @@ class App extends React.Component{
         {vaccineCalendar && vaccineCalendar.centers
           ? this.renderTable(vaccineCalendar)
           : null}
+
+        {this.renderSessionTable()}
 
         <div
           style={{ float: "left", clear: "both" }}

@@ -79,7 +79,7 @@ export default class CowinApi {
     return new Observable(subscriber => {
         let req = this.distS.bind(this);
         let m = ()=>{
-            req(`${apipath}/v2/appointment/sessions/findByDistrict?district_id=${dist}&date=${date}`).then(data=>{
+            req(`${apipath}/v2/appointment/sessions/public/findByDistrict?district_id=${dist}&date=${date}`).then(data=>{
                 subscriber.next(data);
             }).catch(err=>{
                 subscriber.error(err);
