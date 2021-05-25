@@ -603,46 +603,84 @@ class App extends React.Component{
     this.setStorage();
     this.setState({isWatchingAvailability: true});
     if(this.state.sessionBasedTracking){
-      this.initDistS();
-      return;
-    }
-    if(this.state.selectedTab === "1"){
-      this.watcher = cowinApi
-      .initDist(this.state.districtId, moment().format("DD-MM-YYYY"))
-      .subscribe({
-        next(data) {
-          self.setState({vaccineCalendar: data},()=>{
-            self.handleNotification();
-            // self.setStorage()
-          })
-        },
-        error(err) {
-          console.error("something wrong occurred: " + err);
-        },
-        complete() {
-          // console.log("done");
-          this.setState({ isWatchingAvailability: false });
-        },
-      });
+      // this.initDistS();
+      // return;
+
+      if(this.state.selectedTab === "1"){
+        this.watcher = cowinApi
+          .initDistS(this.state.districtId, moment().format("DD-MM-YYYY"))
+          .subscribe({
+            next(data) {
+              self.setState({ vaccineSessions: data }, () => {
+                self.handleNotificationS();
+              });
+            },
+            error(err) {
+              console.error("something wrong occurred: " + err);
+            },
+            complete() {
+              // console.log("done");
+              this.setState({ isWatchingAvailability: false });
+            },
+          });
+      }else{
+        this.watcher = cowinApi
+          .initS(this.state.zip, moment().format("DD-MM-YYYY"))
+          .subscribe({
+            next(data) {
+              self.setState({ vaccineSessions: data }, () => {
+                self.handleNotificationS();
+              });
+            },
+            error(err) {
+              console.error("something wrong occurred: " + err);
+            },
+            complete() {
+              // console.log("done");
+              this.setState({ isWatchingAvailability: false });
+            },
+          });
+      }
     }else{
-      this.watcher = cowinApi
-      .init(this.state.zip, moment().format("DD-MM-YYYY"))
-      .subscribe({
-        next(data) {
-          self.setState({vaccineCalendar: data},()=>{
-            self.handleNotification();
-            self.setStorage()
-          })
-        },
-        error(err) {
-          console.error("something wrong occurred: " + err);
-        },
-        complete() {
-          console.log("done");
-          this.setState({ isWatchingAvailability: false });
-        },
-      });
+      if(this.state.selectedTab === "1"){
+        this.watcher = cowinApi
+        .initDist(this.state.districtId, moment().format("DD-MM-YYYY"))
+        .subscribe({
+          next(data) {
+            self.setState({vaccineCalendar: data},()=>{
+              self.handleNotification();
+              // self.setStorage()
+            })
+          },
+          error(err) {
+            console.error("something wrong occurred: " + err);
+          },
+          complete() {
+            // console.log("done");
+            this.setState({ isWatchingAvailability: false });
+          },
+        });
+      }else{
+        this.watcher = cowinApi
+          .init(this.state.zip, moment().format("DD-MM-YYYY"))
+          .subscribe({
+            next(data) {
+              self.setState({ vaccineCalendar: data }, () => {
+                self.handleNotification();
+                self.setStorage();
+              });
+            },
+            error(err) {
+              console.error("something wrong occurred: " + err);
+            },
+            complete() {
+              console.log("done");
+              this.setState({ isWatchingAvailability: false });
+            },
+          });
+      }
     }
+    
     
   }
   trackAuth() {
@@ -692,7 +730,11 @@ class App extends React.Component{
     cowinApi.clearWatch();
     this.setState({ isWatchingAvailability: false });
   }
-  renderTable(vaccineCalendar){
+  renderTable(){
+    let vaccineCalendar = this.state.vaccineCalendar;
+    if(!vaccineCalendar.centers){
+      return;
+    }
     return (
       <div style={{maxWidth: "100%", overflow: 'scroll'}}>
         <h2 style={{ marginTop: 10 }}>Vaccination Centers & Availability Info</h2>
@@ -1467,11 +1509,8 @@ class App extends React.Component{
         </Row>
 
         {this.state.showCaptcha ? this.renderCaptcha() : null}
-        {vaccineCalendar && vaccineCalendar.centers
-          ? this.renderTable(vaccineCalendar)
-          : null}
-
-        {this.state.sessionBasedTracking ? this.renderSessionTable() : null}
+        
+        {this.state.sessionBasedTracking ? this.renderSessionTable() : this.renderTable()}
 
         <div
           style={{ float: "left", clear: "both" }}

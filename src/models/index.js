@@ -9,177 +9,235 @@ const burl = `https://cdn-api.co-vin.in/api/v2/appointment/schedule`
 const secret = "U2FsdGVkX19mD56KTNfQsZgXJMwOG7u/6tuj0Qvil1LEjx783oxHXGUTDWYm+XMYVGXPeu+a24sl5ndEKcLTUQ==";
 const pollFreq = parseInt(localStorage.pollFreq) || 3200;
 export default class CowinApi {
-    req(endpoint){
-      let headers = {}
-      if(localStorage.token){
-        headers.authorization = `Bearer ${localStorage.token}`
-      }
-        return new Promise((resolve, reject)=>{
-            axios.get(endpoint).then(function (response) {
-                // handle success
-                return resolve(response.data)
-              })
-              .catch(function (error) {
-                // handle error
-                return reject(error)
-              })
-        })
-    }
-    init(zip, date){
-      let headers = {}
-      if(localStorage.token){
-        headers.authorization = `Bearer ${localStorage.token}`
-      }
-        return new Observable(subscriber => {
-            let req = this.req.bind(this);
-            let m = () => {
-              req(`${url}?pincode=${zip}&date=${date}`)
-                .then((data) => {
-                  subscriber.next(data);
-                })
-                .catch((err) => {
-                  subscriber.error(err);
-                });
-            }
-            m();
-            this.watcher = setInterval(m, pollFreq);
-          });
-    }
-    initDist(dist, date){
-      return new Observable(subscriber => {
-          let req = this.req.bind(this);
-          let m = ()=>{
-              req(`${zurl}?district_id=${dist}&date=${date}`).then(data=>{
-                  subscriber.next(data);
-              }).catch(err=>{
-                  subscriber.error(err);
-              });
-            }
-          m();
-          this.watcher = setInterval(m, pollFreq)
-        });
-  }
-  distS(url){
+  req(endpoint) {
     let headers = {};
-    if(localStorage.token){
+    if (localStorage.token) {
       headers.authorization = `Bearer ${localStorage.token}`;
     }
-    return new Promise((resolve, reject)=>{
-      axios.get(url, {headers}).then(function (response) {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(endpoint)
+        .then(function (response) {
           // handle success
-          return resolve(response.data)
+          return resolve(response.data);
         })
         .catch(function (error) {
           // handle error
-          return reject(error)
-        })
-  })
+          return reject(error);
+        });
+    });
   }
-  initDistS(dist, date){
-    return new Observable(subscriber => {
-        let req = this.distS.bind(this);
-        let m = ()=>{
-            req(`${apipath}/v2/appointment/sessions/public/findByDistrict?district_id=${dist}&date=${date}`).then(data=>{
-                subscriber.next(data);
-            }).catch(err=>{
-                subscriber.error(err);
-            });
-          }
-        m();
-        this.watcher = setInterval(m, pollFreq)
-      });
-}
-    clearWatch(){
-        console.log(this);
-        clearInterval(this.watcher);
+  init(zip, date) {
+    let headers = {};
+    if (localStorage.token) {
+      headers.authorization = `Bearer ${localStorage.token}`;
     }
-    clearAuthWatch(){
-      clearInterval(this.authWatcher)
-    }
-    async generateOtp(mobile){
-        return await axios.post('https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP', {
-            mobile: mobile,
-            secret
+    return new Observable((subscriber) => {
+      let req = this.req.bind(this);
+      let m = () => {
+        req(`${url}?pincode=${zip}&date=${date}`)
+          .then((data) => {
+            subscriber.next(data);
           })
-          .then(function (response) {
-            return response.data;
-          })
-          .catch(function (error) {
-            throw error
+          .catch((err) => {
+            subscriber.error(err);
           });
-    }
-    async verifyOtp(otp, txnId){
-      let otpHasKey = CryptoJS.SHA256(otp).toString(CryptoJS.enc.Hex);
-      console.log(otpHasKey);
-        return await axios
-          .post("https://cdn-api.co-vin.in/api/v2/auth/validateMobileOtp", {
-            otp: otpHasKey,
-            txnId: txnId,
-          })
-          .then((res) => {
-            return res.data;
-          })
-          .catch((error) => console.log(error));
-    }
-    async getBenefeciaries(token){
-      return await axios.get('https://cdn-api.co-vin.in/api/v2/appointment/beneficiaries',{headers: {
-        "content-type": "application/json",
-        "authorization": `Bearer ${localStorage.token}`
-      }}).then(response=>{
-        return response.data.beneficiaries
-      }).catch(err=>{
-        throw err
-      })
-    }
+      };
+      m();
+      this.watcher = setInterval(m, pollFreq);
+    });
+  }
 
-    async book(payload, token){
-      return await axios.post(burl, payload, {headers: {
-        "content-type": "application/json",
-        "authorization": `Bearer ${localStorage.token}`
-      }}).then(response=>{
-        return response.data
-      }).catch(err=>{
-        throw err;
-      })
+  initS(zip, date) {
+    let headers = {};
+    if (localStorage.token) {
+      headers.authorization = `Bearer ${localStorage.token}`;
     }
+    return new Observable((subscriber) => {
+      let req = this.req.bind(this);
+      let m = () => {
+        req(`${apipath}/v2/appointment/sessions/public/findByPin?pincode=${zip}&date=${date}`)
+          .then((data) => {
+            subscriber.next(data);
+          })
+          .catch((err) => {
+            subscriber.error(err);
+          });
+      };
+      m();
+      this.watcher = setInterval(m, pollFreq);
+    });
+  }
 
-    trackAuth(token){
-      return new Observable(subscriber => {
-        let req = this.getBenefeciaries.bind(this);
-        this.authWatcher = setInterval(()=>{
-            req(token).then(data=>{
-                subscriber.next(data);
-            }).catch(err=>{
-                subscriber.next('err');
-            });
-        }, 1000 * 60 * ((15 + 0.06)) )
-      });
+  initDist(dist, date) {
+    return new Observable((subscriber) => {
+      let req = this.req.bind(this);
+      let m = () => {
+        req(`${zurl}?district_id=${dist}&date=${date}`)
+          .then((data) => {
+            subscriber.next(data);
+          })
+          .catch((err) => {
+            subscriber.error(err);
+          });
+      };
+      m();
+      this.watcher = setInterval(m, pollFreq);
+    });
+  }
+  distS(url) {
+    let headers = {};
+    if (localStorage.token) {
+      headers.authorization = `Bearer ${localStorage.token}`;
     }
-    async getStates(){
-      return axios.get(`${apipath}/v2/admin/location/states`).then(response=>{
+    return new Promise((resolve, reject) => {
+      axios
+        .get(url, { headers })
+        .then(function (response) {
+          // handle success
+          return resolve(response.data);
+        })
+        .catch(function (error) {
+          // handle error
+          return reject(error);
+        });
+    });
+  }
+  initDistS(dist, date) {
+    return new Observable((subscriber) => {
+      let req = this.distS.bind(this);
+      let m = () => {
+        req(
+          `${apipath}/v2/appointment/sessions/public/findByDistrict?district_id=${dist}&date=${date}`
+        )
+          .then((data) => {
+            subscriber.next(data);
+          })
+          .catch((err) => {
+            subscriber.error(err);
+          });
+      };
+      m();
+      this.watcher = setInterval(m, pollFreq);
+    });
+  }
+  clearWatch() {
+    console.log(this);
+    clearInterval(this.watcher);
+  }
+  clearAuthWatch() {
+    clearInterval(this.authWatcher);
+  }
+  async generateOtp(mobile) {
+    return await axios
+      .post("https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP", {
+        mobile: mobile,
+        secret,
+      })
+      .then(function (response) {
         return response.data;
-      }).catch(err=>{
-        throw err
       })
-    }
-    async getDistricts(stateId){
-      return axios.get(`${apipath}/v2/admin/location/districts/${stateId}`).then(response=>{
-        return response.data.districts;
-      }).catch(err=>{
-        throw err
+      .catch(function (error) {
+        throw error;
+      });
+  }
+  async verifyOtp(otp, txnId) {
+    let otpHasKey = CryptoJS.SHA256(otp).toString(CryptoJS.enc.Hex);
+    console.log(otpHasKey);
+    return await axios
+      .post("https://cdn-api.co-vin.in/api/v2/auth/validateMobileOtp", {
+        otp: otpHasKey,
+        txnId: txnId,
       })
-    }
-
-    async getCaptcha(){
-      return await axios.post('https://cdn-api.co-vin.in/api/v2/auth/getRecaptcha', {}, {headers: {
-        "content-type": "application/json",
-        "authorization": `Bearer ${localStorage.token}`
-      }}).then(response=>{
-        return response.data
-      }).catch(err=>{
+      .then((res) => {
+        return res.data;
+      })
+      .catch((error) => console.log(error));
+  }
+  async getBenefeciaries(token) {
+    return await axios
+      .get("https://cdn-api.co-vin.in/api/v2/appointment/beneficiaries", {
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${localStorage.token}`,
+        },
+      })
+      .then((response) => {
+        return response.data.beneficiaries;
+      })
+      .catch((err) => {
         throw err;
+      });
+  }
+
+  async book(payload, token) {
+    return await axios
+      .post(burl, payload, {
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${localStorage.token}`,
+        },
       })
-    }
-    
-    
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  trackAuth(token) {
+    return new Observable((subscriber) => {
+      let req = this.getBenefeciaries.bind(this);
+      this.authWatcher = setInterval(() => {
+        req(token)
+          .then((data) => {
+            subscriber.next(data);
+          })
+          .catch((err) => {
+            subscriber.next("err");
+          });
+      }, 1000 * 60 * (15 + 0.06));
+    });
+  }
+  async getStates() {
+    return axios
+      .get(`${apipath}/v2/admin/location/states`)
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+  async getDistricts(stateId) {
+    return axios
+      .get(`${apipath}/v2/admin/location/districts/${stateId}`)
+      .then((response) => {
+        return response.data.districts;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  async getCaptcha() {
+    return await axios
+      .post(
+        "https://cdn-api.co-vin.in/api/v2/auth/getRecaptcha",
+        {},
+        {
+          headers: {
+            "content-type": "application/json",
+            authorization: `Bearer ${localStorage.token}`,
+          },
+        }
+      )
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
 }
