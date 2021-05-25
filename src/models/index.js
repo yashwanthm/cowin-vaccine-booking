@@ -15,7 +15,7 @@ export default class CowinApi {
         headers.authorization = `Bearer ${localStorage.token}`
       }
         return new Promise((resolve, reject)=>{
-            axios.get(endpoint, {headers}).then(function (response) {
+            axios.get(endpoint).then(function (response) {
                 // handle success
                 return resolve(response.data)
               })
@@ -26,15 +26,23 @@ export default class CowinApi {
         })
     }
     init(zip, date){
+      let headers = {}
+      if(localStorage.token){
+        headers.authorization = `Bearer ${localStorage.token}`
+      }
         return new Observable(subscriber => {
             let req = this.req.bind(this);
-            this.watcher = setInterval(()=>{
-                req(`${url}?pincode=${zip}&date=${date}`).then(data=>{
-                    subscriber.next(data);
-                }).catch(err=>{
-                    subscriber.error(err);
+            let m = () => {
+              req(`${url}?pincode=${zip}&date=${date}`)
+                .then((data) => {
+                  subscriber.next(data);
+                })
+                .catch((err) => {
+                  subscriber.error(err);
                 });
-            }, pollFreq)
+            }
+            m();
+            this.watcher = setInterval(m, pollFreq);
           });
     }
     initDist(dist, date){
@@ -47,10 +55,40 @@ export default class CowinApi {
                   subscriber.error(err);
               });
             }
-            m();
+          m();
           this.watcher = setInterval(m, pollFreq)
         });
   }
+  distS(url){
+    let headers = {};
+    if(localStorage.token){
+      headers.authorization = `Bearer ${localStorage.token}`;
+    }
+    return new Promise((resolve, reject)=>{
+      axios.get(url, {headers}).then(function (response) {
+          // handle success
+          return resolve(response.data)
+        })
+        .catch(function (error) {
+          // handle error
+          return reject(error)
+        })
+  })
+  }
+  initDistS(dist, date){
+    return new Observable(subscriber => {
+        let req = this.distS.bind(this);
+        let m = ()=>{
+            req(`${apipath}/v2/appointment/sessions/public/findByDistrict?district_id=${dist}&date=${date}`).then(data=>{
+                subscriber.next(data);
+            }).catch(err=>{
+                subscriber.error(err);
+            });
+          }
+        m();
+        this.watcher = setInterval(m, pollFreq)
+      });
+}
     clearWatch(){
         console.log(this);
         clearInterval(this.watcher);
