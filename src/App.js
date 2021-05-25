@@ -975,11 +975,7 @@ class App extends React.Component{
       >
         <p>
           Your vaccination slot is booked for selected beneficiaries at{" "}
-          {this.state.bookingCenter.name}, {this.state.bookingCenter.block_name}
-          , {this.state.bookingCenter.address},{" "}
-          {this.state.bookingCenter.district_name},{" "}
-          {this.state.bookingCenter.state_name},{" "}
-          {this.state.bookingCenter.pincode}
+          {center.name}, {center.address}
         </p>
         <p>Your appointment id is {this.state.appointment_id}</p>
         <p>
