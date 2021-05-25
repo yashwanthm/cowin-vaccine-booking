@@ -930,7 +930,21 @@ class App extends React.Component{
     );
   }
   renderModal(){
-    if(!this.state.bookingSession || !this.state.bookingCenter){
+    let center = {
+      name: null,
+      address: null
+    }
+    if(this.state.bookingSession && this.state.bookingSession.name){
+      let s = this.state.bookingSession
+      center.name = this.state.bookingSession.name;
+      center.address = `${s.block_name}, ${s.address}, ${s.pincode}.`;
+    }
+    if(this.state.bookingCenter){
+      let c = this.state.bookingCenter;
+      center.name = this.state.bookingCenter.name
+      center.address = `${c.block_name}, ${c.address}, ${c.pincode}.`;
+    }
+    if(!center.name){
       return;
     }
     return <Modal
