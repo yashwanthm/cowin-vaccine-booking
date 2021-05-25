@@ -12,7 +12,7 @@ export default class CowinApi {
     req(endpoint){
       let headers = {}
       if(localStorage.token){
-        headers.authorization = localStorage.token
+        headers.authorization = `Bearer ${localStorage.token}`
       }
         return new Promise((resolve, reject)=>{
             axios.get(endpoint, {headers}).then(function (response) {
@@ -26,14 +26,10 @@ export default class CowinApi {
         })
     }
     init(zip, date){
-      let headers = {}
-      if(localStorage.token){
-        headers.authorization = localStorage.token
-      }
         return new Observable(subscriber => {
             let req = this.req.bind(this);
             this.watcher = setInterval(()=>{
-                req(`${url}?pincode=${zip}&date=${date}`, {headers}).then(data=>{
+                req(`${url}?pincode=${zip}&date=${date}`).then(data=>{
                     subscriber.next(data);
                 }).catch(err=>{
                     subscriber.error(err);
