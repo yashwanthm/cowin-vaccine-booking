@@ -263,6 +263,7 @@ class App extends React.Component{
     let state = Object.assign({}, this.state)
     delete state.enableOtp;
     delete state.vaccineCalendar;
+    delete state.vaccineSessions;
     delete state.isWatchingAvailability;
     delete state.urlData;
     delete state.captcha;
@@ -1125,7 +1126,7 @@ class App extends React.Component{
                   type="primary"
                   size="large"
                   loading={this.state.isWatchingAvailability}
-                  onClick={(e) => this.initDistS()}
+                  onClick={(e) => this.initWatch()}
                 >
                   {this.state.isWatchingAvailability
                     ? "Tracking"
@@ -1275,12 +1276,12 @@ class App extends React.Component{
         </audio>
         <header className="App-header">
           <h1>
-            Covid-19 automatic vaccine bookings and availability tracking in India
+            Covid-19 automatic vaccine bookings and availability tracking in
+            India
           </h1>
           <p>
             This web-app can continously track for availability of vaccine and
             proceed with booking on your behalf if you are logged in. <br />
-            
           </p>
           <p style={{ color: "#555" }}>
             Please register on{" "}
@@ -1307,7 +1308,6 @@ class App extends React.Component{
             >
               Help/Usage Guide
             </a>
-
           </p>
         </header>
 
@@ -1433,10 +1433,22 @@ class App extends React.Component{
                 })}
               </div>
             ) : null}
+            
             {this.renderBookingPreferences()}
-            
+            <Checkbox
+            style={{marginTop: 15}}
+              checked={
+                this.state.sessionBasedTracking
+              }
+              onClick={(e) => {
+                this.clearWatch();
+                this.setState({sessionBasedTracking: !this.state.sessionBasedTracking})
+              }}
+            >
+              Alternate Tracking Mode. Use this in case you think that the app is not picking up availability
+            </Checkbox>
+
             {this.renderTrackingSelection()}
-            
 
             {/* <Col>
               {this.state.isWatchingAvailability ? (
@@ -1459,7 +1471,7 @@ class App extends React.Component{
           ? this.renderTable(vaccineCalendar)
           : null}
 
-        {this.renderSessionTable()}
+        {this.state.sessionBasedTracking ? this.renderSessionTable() : null}
 
         <div
           style={{ float: "left", clear: "both" }}
