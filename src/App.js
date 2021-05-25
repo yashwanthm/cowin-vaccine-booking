@@ -1478,7 +1478,7 @@ class App extends React.Component{
                           this.setStorage();
                         }}
                       >
-                        {b.name}
+                        {b.name} - <i style={{color: '#999'}}>{b.vaccination_status} {b.vaccine!=='' ? `with ${b.vaccine}`: null}</i>
                       </Checkbox>
                     </Row>
                   );
