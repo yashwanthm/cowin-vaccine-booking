@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 import "./App.css";
 // import { Notifications } from "react-push-notification";
-import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typography, notification } from "antd";
+import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typography, notification, DatePicker } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import CowinApi from "./models";
@@ -90,6 +90,7 @@ class App extends React.Component{
     };
     if(localStorage.appData){
       state = Object.assign(state, JSON.parse(localStorage.appData))
+      state.date = moment().format('DD-MM-YYYY');
     } 
     if(localStorage.token){
       state.token = localStorage.token;
@@ -580,7 +581,7 @@ class App extends React.Component{
     this.setStorage();
     this.setState({isWatchingAvailability: true});
     this.watcher = cowinApi
-      .initDistS(this.state.districtId, moment().format("DD-MM-YYYY"))
+      .initDistS(this.state.districtId, this.state.date)
       .subscribe({
         next(data) {
           self.setState({vaccineSessions: data},()=>{
@@ -608,7 +609,7 @@ class App extends React.Component{
 
       if(this.state.selectedTab === "1"){
         this.watcher = cowinApi
-          .initDistS(this.state.districtId, moment().format("DD-MM-YYYY"))
+          .initDistS(this.state.districtId, this.state.date)
           .subscribe({
             next(data) {
               self.setState({ vaccineSessions: data }, () => {
@@ -625,7 +626,7 @@ class App extends React.Component{
           });
       }else{
         this.watcher = cowinApi
-          .initS(this.state.zip, moment().format("DD-MM-YYYY"))
+          .initS(this.state.zip, this.state.date)
           .subscribe({
             next(data) {
               self.setState({ vaccineSessions: data }, () => {
@@ -644,7 +645,7 @@ class App extends React.Component{
     }else{
       if(this.state.selectedTab === "1"){
         this.watcher = cowinApi
-        .initDist(this.state.districtId, moment().format("DD-MM-YYYY"))
+        .initDist(this.state.districtId, this.state.date)
         .subscribe({
           next(data) {
             self.setState({vaccineCalendar: data},()=>{
@@ -662,7 +663,7 @@ class App extends React.Component{
         });
       }else{
         this.watcher = cowinApi
-          .init(this.state.zip, moment().format("DD-MM-YYYY"))
+          .init(this.state.zip, this.state.date)
           .subscribe({
             next(data) {
               self.setState({ vaccineCalendar: data }, () => {
@@ -737,9 +738,9 @@ class App extends React.Component{
     }
     return (
       <div style={{maxWidth: "100%", overflow: 'scroll'}}>
-        <h2 style={{ marginTop: 10 }}>Vaccination Centers & Availability Info</h2>
+        <h2 style={{ marginTop: 10 }}>Vaccination Centers & Availability Info - {this.state.date}</h2>
         <Text type="secondary">You will see all kinds of availability below. But, the notifications and bookings will be done for your selected preferences only.</Text>
-        <table style={{ marginTop: 10 }}>
+        <table className="table" style={{ marginTop: 10 }}>
           {vaccineCalendar.centers.map((vc) => {
             let noAvailability = true;
             vc.sessions.map((ss) => {
@@ -809,7 +810,7 @@ class App extends React.Component{
           You will see all kinds of availability below. But, the notifications
           and bookings will be done for your selected preferences only.
         </Text>
-        <table style={{ marginTop: 10 }}>
+        <table className="table" style={{ marginTop: 10 }}>
           {sessions.map((s) => {
             //display filters
             return (
@@ -1312,6 +1313,17 @@ class App extends React.Component{
             <Radio value={1}>Dose 1</Radio>
             <Radio value={2}>Dose 2</Radio>
           </Radio.Group>
+        </Row>
+        <Row style={{ marginTop: 5 }}>
+          <h3 style={{ marginTop: 10, marginBottom: 0 }}>Date</h3>
+          <DatePicker defaultValue={moment().startOf('day')} disabledDate={(current) =>{
+            return current < moment().startOf('day');
+          }} style={{marginLeft: 10}} onChange={e=>{
+            if(e && e.format){
+              this.setState({date: e.format("DD-MM-YYYY")});
+            }
+            
+          }} />
         </Row>
       </div>
     );
