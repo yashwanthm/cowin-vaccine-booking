@@ -1403,6 +1403,8 @@ class App extends React.Component{
             >
               Help/Usage Guide
             </a>
+            <br/>
+            <b>If you are on mobile, please make sure that the browser doesn't go into background or your screen gets locked. If that happens, the tracking will pause automatically.</b>
           </p>
         </header>
 
