@@ -1509,7 +1509,7 @@ class App extends React.Component{
                 this.setState({sessionBasedTracking: !this.state.sessionBasedTracking})
               }}
             >
-              Alternate Tracking Mode. Use this in case you think that the app is not picking up availability. If you are tracking any telegram channels and the app doesn't pick up the avaiable slot within seconds, toggle this and track again to detect availability instantly.
+              Alternate Tracking Mode.(Use this in case you think that the app is not picking up availability. If you are tracking any telegram channels and the app doesn't pick up the avaiable slot within seconds, toggle this and track again to detect availability instantly.)
             </Checkbox>
 
             {this.renderTrackingSelection()}
