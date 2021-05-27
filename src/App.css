@@ -12,7 +12,12 @@
   height: 40vmin;
   pointer-events: none;
 } */
-td, th {
+.table td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+.table th {
   border: 1px solid #dddddd;
   text-align: left;
   padding: 8px;

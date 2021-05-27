@@ -1,12 +1,12 @@
 /* eslint-disable array-callback-return */
 import "./App.css";
 // import { Notifications } from "react-push-notification";
-import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typography, notification } from "antd";
+import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typography, notification, DatePicker } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import Rollbar from "rollbar";
 import CowinApi from "./models";
-import walletImage from './wallet.png'
+// import walletImage from './wallet.png'
 import PayTMQR from './OfflineMerchant.png'
 // import captcha from './captcha.json';
 import parseHTML from 'html-react-parser';
@@ -34,14 +34,9 @@ const cowinApi = new CowinApi();
 const { Search } = Input;
 const { Option } = Select;       
 
-const rollbar = new Rollbar({
-  accessToken: '4c4fe28a636e4d3cbc82690da97f38e8',
-  captureUncaught: true,
-  captureUnhandledRejections: true,
-})
 
 const promosg = {
-  text: 'Use this link to track vaccine availability and automatically book a slot for you and your family. The app will automatically send OTPs and speak out to tell you to enter security code at the time of booking. ',
+  text: 'Use this link to track vaccine availability and automatically book a slot for a set of beneficiaries. The app will automatically send OTPs and speak out to tell you to enter security code at the time of booking. ',
   title: 'Automated vaccine booking and availability tracking',
   tags: ['covid19vaccines', 'covid19help', 'vaccination2021', 'covid19india'],
   url: window.location.href.indexOf('localhost') ? 'https://yashwanthm.github.io/cowin-vaccine-booking/' : window.location.href
@@ -49,6 +44,12 @@ const promosg = {
 
 const metas = document.getElementsByTagName("meta");
 const version = metas[metas.length-1].getAttribute("build-version");
+
+const rollbar= new Rollbar({
+  accessToken: 'c667130295934cf280ef32ab70e96903',
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+});
 
 class App extends React.Component{
   constructor(props) {
@@ -61,6 +62,7 @@ class App extends React.Component{
     }, 1000);
     let state = {
       urlData: null,
+      date: moment().format('DD-MM-YYYY'),
       isWatchingAvailability: false,
       vaccineType: 'ANY',
       bookingInProgress: false,
@@ -74,6 +76,8 @@ class App extends React.Component{
         txnId: null
       },
       vaccineCalendar: {},
+      vaccineSessions: null,
+      sessionBasedTracking: true,
       zip: null,
       enableOtp: false,
       otp: null,
@@ -94,12 +98,14 @@ class App extends React.Component{
     };
     if(localStorage.appData){
       state = Object.assign(state, JSON.parse(localStorage.appData))
+      state.date = moment().format('DD-MM-YYYY');
     } 
     if(localStorage.token){
       state.token = localStorage.token;
       state.isAuthenticated = true;
       state.enableOtp = false;
     }
+    
     this.state = state;
   }
   async waitForOtp(){
@@ -165,13 +171,18 @@ class App extends React.Component{
     })
   }
   speak(msg){
+    try {
       let speech = new SpeechSynthesisUtterance();
       speech.lang = "en-UK";
       speech.volume = 1;
       speech.rate = 1;
       speech.pitch = 1; 
       speech.text = msg;
-      // window.speechSynthesis.speak(speech);  
+      window.speechSynthesis.speak(speech);  
+    } catch (error) {
+      console.log(error);
+    }
+      
   }
   getQueryObj(){
     console.log('callee');
@@ -240,7 +251,7 @@ class App extends React.Component{
       try {
         Notification.requestPermission(function(result) {
           // console.log('result is', result)
-          if (result === 'granted') {
+          if (result === 'granted' && navigator.serviceWorker) {
             navigator.serviceWorker.ready.then(function(registration) {
               // console.log('registration i s', registration);
               registration.showNotification(opts.title, opts);
@@ -262,6 +273,7 @@ class App extends React.Component{
     let state = Object.assign({}, this.state)
     delete state.enableOtp;
     delete state.vaccineCalendar;
+    delete state.vaccineSessions;
     delete state.isWatchingAvailability;
     delete state.urlData;
     delete state.captcha;
@@ -280,6 +292,7 @@ class App extends React.Component{
       requiredNums = this.state.selectedBeneficiaries.length;
     }
     let bkgInProgress = false;
+    if(!Array.isArray(centers)) return;
     centers.map(c=>{
       c.sessions.map(s=>{
         
@@ -330,7 +343,7 @@ class App extends React.Component{
           };
           try {
             Notification.requestPermission(function (result) {
-              if (result === "granted") {
+              if (result === "granted" && navigator.serviceWorker) {
                 navigator.serviceWorker.ready.then(function (registration) {
                   registration.showNotification(opts.message, opts);
                 });
@@ -349,10 +362,10 @@ class App extends React.Component{
                 center: c
               });
             }
-            rollbar.log({
-              event: 'availability',
-              center: c
-            });
+            // rollbar.info({
+            //   event: 'availability',
+            //   center: c
+            // });
           } catch (error) {
             
           }
@@ -382,13 +395,21 @@ class App extends React.Component{
     });
   };
   getCaptcha(){
-    window.speechSynthesis.cancel()
+    if(window.speechSynthesis){
+      window.speechSynthesis.cancel()
+    }
     this.setState({bookingInProgress: true}, ()=>{
       cowinApi.getCaptcha().then(data=>{
         if(this.state.urlData){
           this.speak('Please select beneficiaries');
         }
-        this.speak(`Enter captcha to proceed with booking. Dose ${this.state.dose} vaccines available  ${this.state.bookingCenter ? 'at '+this.state.bookingCenter.name : ''}`)
+        let centerName;
+        if(this.state.bookingCenter){
+          centerName = this.state.bookingCenter.name
+        }else if(this.state.bookingSession && this.state.bookingSession.name){
+          centerName = this.state.bookingSession.name
+        }
+        this.speak(`Enter captcha to proceed with booking. Dose ${this.state.dose} vaccines available  ${centerName ? 'at '+centerName : ''}`)
         this.setState({captcha: data.captcha, showCaptcha: true},()=>{
         })
       }).catch(err=>{
@@ -436,10 +457,7 @@ class App extends React.Component{
             data
           });
         }
-        rollbar.log({
-          event: 'booking_success',
-          data: data
-        });
+        rollbar.info( 'booking_success ' + JSON.stringify(this.state.selectedBeneficiaries) );
       }).catch(err=>{
         this.setState({
           bookingInProgress: false, 
@@ -466,10 +484,7 @@ class App extends React.Component{
             err
           });
         }
-        rollbar.log({
-          event: 'booking_fail',
-          data: err
-        });
+        rollbar.error('booking_fail');
         
         // this.speak(msg);
         // console.log(msg);
@@ -480,20 +495,112 @@ class App extends React.Component{
     // }
     // this.bookingIntervals.push(thisInterval);
   }
+  handleNotificationS(){
+    let sessions = this.state.vaccineSessions;
+    let requiredNums = 1;
+    if(this.state.selectedBeneficiaries && Array.isArray(this.state.selectedBeneficiaries) && this.state.selectedBeneficiaries.length>0){
+      requiredNums = this.state.selectedBeneficiaries.length;
+    }
+    let bkgInProgress = false;
+    if(!Array.isArray(sessions.sessions)) return;
+      sessions.sessions.map(s=>{
+        
+        if (
+          parseInt(s.min_age_limit) === this.state.minAge &&
+          parseInt(s.available_capacity) >= requiredNums && 
+          !this.state.bookingInProgress
+        ) {
+          let vt = this.state.vaccineType;
+          if (vt !== "ANY" && vt !== s.vaccine) {
+            return;
+          }
 
-  initWatch(zip) {
+          if (
+            this.state.feeType &&
+            this.state.feeType !== "Any" &&
+            this.state.feeType !== s.fee_type
+          ) {
+            return;
+          }
+
+          try {
+            if(parseInt(this.state.dose)===1 ){
+              if(s.available_capacity_dose1 >= 0 && s.available_capacity_dose1 < requiredNums){
+                return
+              }
+            } 
+            
+            if(parseInt(this.state.dose)===2){
+              if(s.available_capacity_dose2 >=0 && s.available_capacity_dose2 < requiredNums){
+                return;
+              }
+            }
+          } catch (error) {
+            console.log(error);
+          }
+          
+
+          try {
+            // this.notifSound.play();
+          } catch (error) {}
+
+          let opts = {
+            title: s.name,
+            body: `${s.name} ${s.address} has ${s.available_capacity} on ${s.date}`,
+            vibrate: [300, 100, 400],
+            native: true,
+          };
+          try {
+            Notification.requestPermission(function (result) {
+              if (result === "granted" && navigator.serviceWorker) {
+                navigator.serviceWorker.ready.then(function (registration) {
+                  registration.showNotification(opts.message, opts);
+                });
+              }
+            });
+            new Notification(opts.title, opts);
+          } catch (error) {
+            console.log(error);
+          }
+          this.speak(`Vaccines available at ${s.name}`);
+          try {
+            if(window.ga){
+              window.ga('send', 'event', {
+                eventCategory: 'availability',
+                eventAction: 'success'
+              });
+            }
+          } catch (error) {
+            
+          }
+          if (this.state.isAuthenticated) {
+            this.setState(
+              { bookingInProgress: true, bookingSession: s },
+              () => {
+                if (!this.state.bookingCaptcha && !bkgInProgress) {
+                  this.getCaptcha();
+                  bkgInProgress = true;
+                  this.clearWatch();
+                  // this.book(s, c);
+                }
+              }
+            );
+          } else {
+            this.speak('Login to book');
+          }
+        }
+      })
+  }
+  initDistS(){
     const self = this;
-
     this.setStorage();
     this.setState({isWatchingAvailability: true});
-    if(this.state.selectedTab === "1"){
-      this.watcher = cowinApi
-      .initDist(this.state.districtId, moment().format("DD-MM-YYYY"))
+    this.watcher = cowinApi
+      .initDistS(this.state.districtId, this.state.date)
       .subscribe({
         next(data) {
-          self.setState({vaccineCalendar: data},()=>{
-            self.handleNotification();
-            // self.setStorage()
+          self.setState({vaccineSessions: data},()=>{
+            self.handleNotificationS();
           })
         },
         error(err) {
@@ -504,25 +611,92 @@ class App extends React.Component{
           this.setState({ isWatchingAvailability: false });
         },
       });
+  }
+
+  initWatch(zip) {
+    const self = this;
+
+    this.setStorage();
+    this.setState({isWatchingAvailability: true});
+    if(this.state.sessionBasedTracking){
+      // this.initDistS();
+      // return;
+
+      if(this.state.selectedTab === "1"){
+        this.watcher = cowinApi
+          .initDistS(this.state.districtId, this.state.date)
+          .subscribe({
+            next(data) {
+              self.setState({ vaccineSessions: data }, () => {
+                self.handleNotificationS();
+              });
+            },
+            error(err) {
+              console.error("something wrong occurred: " + err);
+            },
+            complete() {
+              // console.log("done");
+              this.setState({ isWatchingAvailability: false });
+            },
+          });
+      }else{
+        this.watcher = cowinApi
+          .initS(this.state.zip, this.state.date)
+          .subscribe({
+            next(data) {
+              self.setState({ vaccineSessions: data }, () => {
+                self.handleNotificationS();
+              });
+            },
+            error(err) {
+              console.error("something wrong occurred: " + err);
+            },
+            complete() {
+              // console.log("done");
+              this.setState({ isWatchingAvailability: false });
+            },
+          });
+      }
     }else{
-      this.watcher = cowinApi
-      .init(this.state.zip, moment().format("DD-MM-YYYY"))
-      .subscribe({
-        next(data) {
-          self.setState({vaccineCalendar: data},()=>{
-            self.handleNotification();
-            self.setStorage()
-          })
-        },
-        error(err) {
-          console.error("something wrong occurred: " + err);
-        },
-        complete() {
-          console.log("done");
-          this.setState({ isWatchingAvailability: false });
-        },
-      });
+      if(this.state.selectedTab === "1"){
+        this.watcher = cowinApi
+        .initDist(this.state.districtId, this.state.date)
+        .subscribe({
+          next(data) {
+            self.setState({vaccineCalendar: data},()=>{
+              self.handleNotification();
+              // self.setStorage()
+            })
+          },
+          error(err) {
+            console.error("something wrong occurred: " + err);
+          },
+          complete() {
+            // console.log("done");
+            this.setState({ isWatchingAvailability: false });
+          },
+        });
+      }else{
+        this.watcher = cowinApi
+          .init(this.state.zip, this.state.date)
+          .subscribe({
+            next(data) {
+              self.setState({ vaccineCalendar: data }, () => {
+                self.handleNotification();
+                self.setStorage();
+              });
+            },
+            error(err) {
+              console.error("something wrong occurred: " + err);
+            },
+            complete() {
+              console.log("done");
+              this.setState({ isWatchingAvailability: false });
+            },
+          });
+      }
     }
+    
     
   }
   trackAuth() {
@@ -572,12 +746,16 @@ class App extends React.Component{
     cowinApi.clearWatch();
     this.setState({ isWatchingAvailability: false });
   }
-  renderTable(vaccineCalendar){
+  renderTable(){
+    let vaccineCalendar = this.state.vaccineCalendar;
+    if(!vaccineCalendar.centers){
+      return;
+    }
     return (
       <div style={{maxWidth: "100%", overflow: 'scroll'}}>
-        <h2 style={{ marginTop: 10 }}>Vaccination Centers & Availability Info</h2>
+        <h2 style={{ marginTop: 10 }}>Vaccination Centers & Availability Info - {this.state.date}</h2>
         <Text type="secondary">You will see all kinds of availability below. But, the notifications and bookings will be done for your selected preferences only.</Text>
-        <table style={{ marginTop: 10 }}>
+        <table className="table" style={{ marginTop: 10 }}>
           {vaccineCalendar.centers.map((vc) => {
             let noAvailability = true;
             vc.sessions.map((ss) => {
@@ -597,7 +775,7 @@ class App extends React.Component{
                   <td>No Availability</td>
                 ) : (
                   vc.sessions.map((s) => {
-
+                    //display filters
                     return (
                       <td key={s.session_id}>
                         <h4>{s.date}</h4>
@@ -625,6 +803,54 @@ class App extends React.Component{
 
                 {/* </th> */}
               </tr>
+            );
+          })}
+        </table>
+      </div>
+    );
+      
+  }
+  renderSessionTable(){
+    if(!this.state.vaccineSessions){
+      return;
+    }
+    let sessions = this.state.vaccineSessions.sessions;
+
+    return (
+      <div style={{ maxWidth: "100%", overflow: "scroll" }}>
+        <h2 style={{ marginTop: 10 }}>
+          Vaccination Centers & Availability Info - {this.state.date}
+        </h2>
+        <Text type="secondary">
+          You will see all kinds of availability below. But, the notifications
+          and bookings will be done for your selected preferences only.
+        </Text>
+        <table className="table" style={{ marginTop: 10 }}>
+          {sessions.map((s) => {
+            //display filters
+            return (
+              <td key={s.session_id}>
+                <h3>{s.name}</h3>
+                  <b>Fee: {s.fee_type} - {s.fee}</b><br/>
+                  {s.block_name}, {s.address}, {s.pincode}.
+                <p>{s.vaccine}</p>
+                <div>
+                  {parseInt(s.available_capacity) > 0
+                    ? `${s.available_capacity} shots available for ${s.min_age_limit}+`
+                    : `No Availability ${s.min_age_limit}+`}
+                  <br />
+                  Dose1 - {s.available_capacity_dose1 || 0} <br />
+                  Dose2 - {s.available_capacity_dose2 || 0}
+                </div>
+                {parseInt(s.available_capacity > 0) ? (
+                  <div>
+                    <b>Available Slots</b>
+                    {s.slots.map((sl) => {
+                      return <Row>{sl}</Row>;
+                    })}
+                  </div>
+                ) : null}
+              </td>
             );
           })}
         </table>
@@ -688,9 +914,15 @@ class App extends React.Component{
   }
   renderCaptcha(){
     if(!this.state.captcha) return;
+    let centerName;
+    if(this.state.bookingCenter){
+      centerName = this.state.bookingCenter.name
+    }else if(this.state.bookingSession && this.state.bookingSession.name){
+      centerName = this.state.bookingSession.name;
+    }
     return (
       <div>
-        <h2 style={{ marginTop: 10, marginBottom: 0 }}>Enter Captcha</h2>
+        <h2 style={{ marginTop: 10, marginBottom: 0 }}>Enter Captcha to book at {centerName}</h2>
         <Row>
           <Col>{parseHTML(this.state.captcha)}</Col>
           <Search
@@ -714,7 +946,21 @@ class App extends React.Component{
     );
   }
   renderModal(){
-    if(!this.state.bookingSession || !this.state.bookingCenter){
+    let center = {
+      name: null,
+      address: null
+    }
+    if(this.state.bookingSession && this.state.bookingSession.name){
+      let s = this.state.bookingSession
+      center.name = this.state.bookingSession.name;
+      center.address = `${s.block_name}, ${s.address}, ${s.pincode}.`;
+    }
+    if(this.state.bookingCenter){
+      let c = this.state.bookingCenter;
+      center.name = this.state.bookingCenter.name
+      center.address = `${c.block_name}, ${c.address}, ${c.pincode}.`;
+    }
+    if(!center.name){
       return;
     }
     return <Modal
@@ -745,11 +991,7 @@ class App extends React.Component{
       >
         <p>
           Your vaccination slot is booked for selected beneficiaries at{" "}
-          {this.state.bookingCenter.name}, {this.state.bookingCenter.block_name}
-          , {this.state.bookingCenter.address},{" "}
-          {this.state.bookingCenter.district_name},{" "}
-          {this.state.bookingCenter.state_name},{" "}
-          {this.state.bookingCenter.pincode}
+          {center.name}, {center.address}
         </p>
         <p>Your appointment id is {this.state.appointment_id}</p>
         <p>
@@ -1037,6 +1279,9 @@ class App extends React.Component{
             <Radio value={"ANY"}>Any</Radio>
             <Radio value={"COVAXIN"}>Covaxin</Radio>
             <Radio value={"COVISHIELD"}>Covishield</Radio>
+            <Radio value={"SPUTNIK V"}>Sputnik V</Radio>
+            
+
           </Radio.Group>
         </Row>
 
@@ -1084,11 +1329,22 @@ class App extends React.Component{
             <Radio value={2}>Dose 2</Radio>
           </Radio.Group>
         </Row>
+        <Row style={{ marginTop: 5 }}>
+          <h3 style={{ marginTop: 10, marginBottom: 0 }}>Date</h3>
+          <DatePicker defaultValue={moment().startOf('day')} disabledDate={(current) =>{
+            return current < moment().startOf('day');
+          }} style={{marginLeft: 10}} onChange={e=>{
+            if(e && e.format){
+              this.setState({date: e.format("DD-MM-YYYY")});
+            }
+            
+          }} />
+        </Row>
       </div>
     );
   }
   render() {
-    const vaccineCalendar = this.state.vaccineCalendar;
+    // const vaccineCalendar = this.state.vaccineCalendar;
     const isAuthenticated = this.state.isAuthenticated;
     const {beneficiaries, selectedBeneficiaries} = this.state;
     return (
@@ -1099,12 +1355,12 @@ class App extends React.Component{
         </audio>
         <header className="App-header">
           <h1>
-            Covid-19 automatic vaccine bookings and availability tracking in India
+            Covid-19 automatic vaccine bookings and availability tracking in
+            India
           </h1>
           <p>
             This web-app can continously track for availability of vaccine and
             proceed with booking on your behalf if you are logged in. <br />
-            
           </p>
           <p style={{ color: "#555" }}>
             Please register on{" "}
@@ -1131,7 +1387,6 @@ class App extends React.Component{
             >
               Help/Usage Guide
             </a>
-
           </p>
         </header>
 
@@ -1250,17 +1505,29 @@ class App extends React.Component{
                           this.setStorage();
                         }}
                       >
-                        {b.name}
+                        {b.name} - <i style={{color: '#999'}}>{b.vaccination_status} {b.vaccine!=='' ? `with ${b.vaccine}`: null}</i>
                       </Checkbox>
                     </Row>
                   );
                 })}
               </div>
             ) : null}
+            
             {this.renderBookingPreferences()}
-            
+            <Checkbox
+            style={{marginTop: 15}}
+              checked={
+                this.state.sessionBasedTracking
+              }
+              onClick={(e) => {
+                this.clearWatch();
+                this.setState({sessionBasedTracking: !this.state.sessionBasedTracking})
+              }}
+            >
+              Alternate Tracking Mode.(Use this in case you think that the app is not picking up availability. If you are tracking any telegram channels and the app doesn't pick up the avaiable slot within seconds, toggle this and track again to detect availability instantly.)
+            </Checkbox>
+
             {this.renderTrackingSelection()}
-            
 
             {/* <Col>
               {this.state.isWatchingAvailability ? (
@@ -1279,9 +1546,8 @@ class App extends React.Component{
         </Row>
 
         {this.state.showCaptcha ? this.renderCaptcha() : null}
-        {vaccineCalendar && vaccineCalendar.centers
-          ? this.renderTable(vaccineCalendar)
-          : null}
+        
+        {this.state.sessionBasedTracking ? this.renderSessionTable() : this.renderTable()}
 
         <div
           style={{ float: "left", clear: "both" }}
