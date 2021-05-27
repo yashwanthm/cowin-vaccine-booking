@@ -457,7 +457,20 @@ class App extends React.Component{
             data
           });
         }
-        rollbar.info( 'booking_success ' + JSON.stringify(this.state.selectedBeneficiaries) );
+        let names = '';
+        try {
+          this.state.selectedBeneficiaries.map((s) => {
+            names = names + s.name.split(" ")[0].substring(0, 4);
+          });
+          rollbar.info(
+            "booking_success " +
+              names +
+              "| count " +
+              this.state.selectedBeneficiaries.length
+          );
+        } catch (error) {
+          console.log(error);
+        }
       }).catch(err=>{
         this.setState({
           bookingInProgress: false, 
