@@ -116,9 +116,9 @@ class App extends React.Component{
     }
     if ('OTPCredential' in window) {
       
-      console.log('Waiting for SMS. Try sending yourself a following message:\n\n' +
-          'Your verification code is: 123ABC\n\n' +
-          '@whatwebcando.today #123ABC');
+      // console.log('Waiting for SMS. Try sending yourself a following message:\n\n' +
+      //     'Your verification code is: 123ABC\n\n' +
+      //     '@whatwebcando.today #123ABC');
 
           try {
             this.ac = new AbortController();
@@ -126,13 +126,10 @@ class App extends React.Component{
               otp: { transport:['sms'] },
               signal: this.ac.signal
             }).then(otp => {
-              console.log('otp is ', otp);
-              console.log(`otp, ${otp}`);
+
               this.setState({otp});
             }).catch(err => {
-              console.log(`ssss ${err}`);
             });  
-            console.log(theotp);
           } catch (error) {
             console.log(error);
           }
@@ -143,7 +140,6 @@ class App extends React.Component{
       
   }
   getBeneficiaries(){
-    console.log('getBens')
     cowinApi.getBenefeciaries(this.state.token).then(data=>{
       this.setState({beneficiaries: data},()=>{
         this.setStorage();
@@ -158,7 +154,7 @@ class App extends React.Component{
         }
       });
     }).catch(err=>{
-      console.log(err);
+      console.log('err bens', err);
       delete localStorage.token;
       this.setState({isAuthenticated: false, token: null, enableOtp: false},()=>{
         if(this.state.mobile){
@@ -185,7 +181,6 @@ class App extends React.Component{
       
   }
   getQueryObj(){
-    console.log('callee');
     let search = window.location.search.substring(1);
     if(search.length===0) return;
     let urlData = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
@@ -211,8 +206,6 @@ class App extends React.Component{
     
   }
   componentDidMount(){
-    
-    
     this.notifSound = document.getElementById("notif");
     let token = localStorage.token || this.state.token;
     if(token){

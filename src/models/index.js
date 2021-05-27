@@ -166,24 +166,39 @@ export default class CowinApi {
         return response.data.beneficiaries;
       })
       .catch((err) => {
+        // return err
         throw err;
       });
   }
 
+  async test(){
+    try {
+      const response = await axios.post("https://reqres.in/api/login", {
+        email: "peter@klaven",
+      });
+      if(response.data){
+        return response.data;
+      }
+    } catch (e) {
+      throw e.response.data;
+    }
+  }
+
   async book(payload, token) {
-    return await axios
+    try{
+      const response = await axios
       .post(burl, payload, {
         headers: {
           "content-type": "application/json",
           authorization: `Bearer ${localStorage.token}`,
         },
       })
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        throw err;
-      });
+      if(response.data){
+        return response.data
+      }
+    } catch( e ){
+      throw e.response.data
+    }
   }
 
   trackAuth(token) {
