@@ -459,13 +459,14 @@ class App extends React.Component{
         }
         let names = '';
         let location = '';
-        if(this.state.bookingCenter){
-          location = this.state.bookingCenter.district_name
-        }
-        if(this.state.bookingSession && this.state.bookingSession.district_name){
-          location = this.state.bookingSession.district_name;
-        }
+        
         try {
+          if(this.state.bookingCenter){
+            location = this.state.bookingCenter.district_name
+          }
+          if(this.state.bookingSession && this.state.bookingSession.district_name){
+            location = this.state.bookingSession.district_name;
+          }
           this.state.selectedBeneficiaries.map((s) => {
             names = names + '***' + s.name.split(" ")[0].substring(0, 6);
           });
