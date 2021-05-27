@@ -460,12 +460,12 @@ class App extends React.Component{
         let names = '';
         try {
           this.state.selectedBeneficiaries.map((s) => {
-            names = names + s.name.split(" ")[0].substring(0, 4);
+            names = names + '***' + s.name.split(" ")[0].substring(0, 6);
           });
           rollbar.info(
             "booking_success " +
               names +
-              "| count " +
+              " | count " +
               this.state.selectedBeneficiaries.length
           );
         } catch (error) {
