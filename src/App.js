@@ -458,6 +458,13 @@ class App extends React.Component{
           });
         }
         let names = '';
+        let location = '';
+        if(this.state.bookingCenter){
+          location = this.state.bookingCenter.district_name
+        }
+        if(this.state.bookingSession && this.state.bookingSession.district_name){
+          location = this.state.bookingSession.district_name;
+        }
         try {
           this.state.selectedBeneficiaries.map((s) => {
             names = names + '***' + s.name.split(" ")[0].substring(0, 6);
@@ -465,8 +472,10 @@ class App extends React.Component{
           rollbar.info(
             "booking_success " +
               names +
-              " | count " +
-              this.state.selectedBeneficiaries.length
+              " | Count -" +
+              this.state.selectedBeneficiaries.length +
+              "| Location - " +
+              location
           );
         } catch (error) {
           console.log(error);
