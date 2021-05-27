@@ -489,9 +489,6 @@ class App extends React.Component{
         console.log(err);
         let desc = err.error || "The availability probably ran out before you could take an action. The app will continue to look for slots."
         this.bookingError(msg, desc);
-        if(err.error){
-          this.speak(err.error);
-        }
         if(this.state.districtId || this.state.zip){
           this.initWatch();
         }
