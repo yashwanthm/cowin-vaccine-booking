@@ -171,19 +171,6 @@ export default class CowinApi {
       });
   }
 
-  async test(){
-    try {
-      const response = await axios.post("https://reqres.in/api/login", {
-        email: "peter@klaven",
-      });
-      if(response.data){
-        return response.data;
-      }
-    } catch (e) {
-      throw e.response.data;
-    }
-  }
-
   async book(payload, token) {
     try{
       const response = await axios
