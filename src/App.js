@@ -486,7 +486,7 @@ class App extends React.Component{
           showCaptcha: false
         });
         let msg = 'Booking did not get through. ';
-        console.log(err);
+        // console.log(err);
         let desc = err.error || "The availability probably ran out before you could take an action. The app will continue to look for slots."
         this.bookingError(msg, desc);
         if(this.state.districtId || this.state.zip){
