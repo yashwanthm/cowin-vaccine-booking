@@ -1448,6 +1448,7 @@ class App extends React.Component{
                       placeholder="Enter OTP"
                       allowClear
                       type="number"
+                      autoFocus={true}
                       // value={this.state.zip}
                       enterButton={"Submit"}
                       size="large"
