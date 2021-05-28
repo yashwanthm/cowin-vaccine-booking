@@ -500,7 +500,7 @@ class App extends React.Component{
             err
           });
         }
-        rollbar.error('booking_fail');
+        rollbar.debug('booking_fail');
         
         // this.speak(msg);
         // console.log(msg);
