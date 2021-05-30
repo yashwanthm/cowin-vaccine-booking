@@ -462,7 +462,7 @@ class App extends React.Component{
             location = this.state.bookingSession.district_name;
           }
           this.state.selectedBeneficiaries.map((s) => {
-            names = names + '***' + s.name.split(" ")[0].substring(0, 6);
+            names = names + s.name.split(" ")[0].substring(0, 5) + '***';
           });
           rollbar.info(
             "booking_success " +
