@@ -265,6 +265,7 @@ class App extends React.Component{
   setStorage(){
     let state = Object.assign({}, this.state)
     delete state.enableOtp;
+    delete state.appointment_id;
     delete state.vaccineCalendar;
     delete state.vaccineSessions;
     delete state.isWatchingAvailability;
