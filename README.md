@@ -3,6 +3,7 @@ This utility can login into Cowin, track vaccine availability and automatically 
 The deployment is available at https://yashwanthm.github.io/cowin-vaccine-booking/
 
 This app also supports
+* Booking for mutliple beneficiaries
 * Dose based availability
 * Captcha code 
 * Paid/Free selection
