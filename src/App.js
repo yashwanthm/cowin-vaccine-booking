@@ -501,7 +501,7 @@ class App extends React.Component{
             err
           });
         }
-        rollbar.debug('booking_fail');
+        // rollbar.debug('booking_fail');
         
         // this.speak(msg);
         // console.log(msg);
@@ -1495,6 +1495,7 @@ class App extends React.Component{
                     availability and make a booking.
                   </p>
                 )}
+
                 {this.state.beneficiaries.map((b) => {
                   return (
                     <Row>
@@ -1530,6 +1531,19 @@ class App extends React.Component{
                     </Row>
                   );
                 })}
+                <Button
+                  type="link"
+                  danger
+                  onClick={e=>{
+                    delete localStorage.token;
+                    delete localStorage.appData;
+                    window.location.reload();
+                  }}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Logout
+                </Button>{" "}
               </div>
             ) : null}
             
