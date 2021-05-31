@@ -97,7 +97,12 @@ class App extends React.Component{
       showSuccessModal: false
     };
     if(localStorage.appData){
-      state = Object.assign(state, JSON.parse(localStorage.appData))
+      try {
+        state = Object.assign(state, JSON.parse(localStorage.appData))  
+      } catch (error) {
+
+      }
+      
       state.date = moment().format('DD-MM-YYYY');
     } 
     if(localStorage.token){
@@ -263,7 +268,13 @@ class App extends React.Component{
       }
   }
   setStorage(){
-    let state = Object.assign({}, this.state)
+    let state;
+    try {
+      state = Object.assign({}, this.state)
+    } catch (error) {
+      state = this.state;
+    }
+    
     delete state.enableOtp;
     delete state.appointment_id;
     delete state.vaccineCalendar;
