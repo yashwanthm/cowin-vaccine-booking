@@ -1033,7 +1033,7 @@ class App extends React.Component{
           </a>{" "}
           to see details of your vaccincation slot.
         </p>
-        <h3>If you have liked using this app, please consider donating and sharing a word around.</h3>
+        <h2>If you have liked using this app, please consider donating and sharing a word around. You can find these options at the bottom of the page.</h2>
       </Modal>;
     
   }
