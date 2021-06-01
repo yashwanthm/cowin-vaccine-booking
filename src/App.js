@@ -1118,12 +1118,12 @@ class App extends React.Component{
     return (
       <div>
         <h2 style={{ marginTop: 15, marginBottom: 0 }}>Donate</h2>
-        <p>If you've liked using this app. Please consider donating. The app is made possible by <a href="https://apisetu.gov.in/public/api/cowin" target="_blank">https://apisetu.gov.in/public/api/cowin</a> </p>
+        <p>If you've liked using this app. Please consider donating using one of the options below.</p>
         <div>
           <div
             className="razorpay-embed-btn"
             data-url="https://pages.razorpay.com/pl_HHshPmou625tDp/view"
-            data-text="Donate Now"
+            data-text="Click to Donate Now"
             data-color="#528FF0"
             data-size="large"
           ></div>
