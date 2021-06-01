@@ -6,8 +6,7 @@ const apipath = `https://cdn-api.co-vin.in/api`;
 const url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin`
 const zurl = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict`
 const burl = `https://cdn-api.co-vin.in/api/v2/appointment/schedule`
-// const secret = "U2FsdGVkX19mD56KTNfQsZgXJMwOG7u/6tuj0Qvil1LEjx783oxHXGUTDWYm+XMYVGXPeu+a24sl5ndEKcLTUQ==";
-const secret = "U2122FsdGVkX19mD56KTNfQsZgXJMwOG7u/6tuj0Qvil1LEjx783oxHXGUTDWYm+XMYVGXPeu+a24sl5ndEKcLTUQ==";
+const secret = "U2FsdGVkX19mD56KTNfQsZgXJMwOG7u/6tuj0Qvil1LEjx783oxHXGUTDWYm+XMYVGXPeu+a24sl5ndEKcLTUQ==";
 const pollFreq = parseInt(localStorage.pollFreq) || 3250;
 export default class CowinApi {
   req(endpoint) {
