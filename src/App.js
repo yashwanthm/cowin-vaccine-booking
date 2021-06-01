@@ -1119,8 +1119,8 @@ class App extends React.Component{
       <div>
         <h2 style={{ marginTop: 15, marginBottom: 0 }}>Donate</h2>
         <p>
-          It all started out as an experiemnt and the response has been great. I'd like to continue supporting this as long as possible.
-          If you've liked using this app. Please consider donating using one of the options below.
+          It all started out as an experiemnt and the response has been great. This app is free to use and will continue to remain free and I'd like to continue supporting this.
+          If you've liked using this app, please consider donating using one of the options below.
         </p>
         <div>
           <div
