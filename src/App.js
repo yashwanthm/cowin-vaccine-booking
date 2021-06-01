@@ -1117,9 +1117,16 @@ class App extends React.Component{
   renderDonate(){
     return (
       <div>
-        <h3 style={{ marginTop: 15, marginBottom: 0 }}>Donate</h3>
-        <p></p>
+        <h2 style={{ marginTop: 15, marginBottom: 0 }}>Donate</h2>
+        <p>If you've liked using this app. Please consider donating. The app is made possible by <a href="https://apisetu.gov.in/public/api/cowin" target="_blank">https://apisetu.gov.in/public/api/cowin</a> </p>
         <div>
+          <div
+            className="razorpay-embed-btn"
+            data-url="https://pages.razorpay.com/pl_HHshPmou625tDp/view"
+            data-text="Donate Now"
+            data-color="#528FF0"
+            data-size="large"
+          ></div>
           <img style={{ width: 300 }} src={PayTMQR} alt="PayTM QR Code" />
           {/* <a
             className="paytm-button"
