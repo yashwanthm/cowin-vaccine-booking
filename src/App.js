@@ -481,7 +481,7 @@ class App extends React.Component{
               " | Count -" +
               this.state.selectedBeneficiaries.length +
               "| Location - " +
-              location
+              location + '| b' + {version}
           );
         } catch (error) {
           console.log(error);
