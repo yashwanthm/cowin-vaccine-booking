@@ -3,8 +3,8 @@ import { Observable } from 'rxjs';
 import CryptoJS from 'crypto-js';
 const apipath = `https://cdn-api.co-vin.in/api`;
 // const testPath = 'https://api.demo.co-vin.in/api'
-const url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin`
-const zurl = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict`
+const url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin`
+const zurl = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict`
 const burl = `https://cdn-api.co-vin.in/api/v2/appointment/schedule`
 const secret = "U2FsdGVkX1+z/4Nr9nta+2DrVJSv7KS6VoQUSQ1ZXYDx/CJUkWxFYG6P3iM/VW+6jLQ9RDQVzp/RcZ8kbT41xw==";
 const pollFreq = parseInt(localStorage.pollFreq) || 3250;
