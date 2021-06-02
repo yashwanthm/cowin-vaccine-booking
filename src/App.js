@@ -211,6 +211,12 @@ class App extends React.Component{
     
   }
   componentDidMount(){
+    const Script = document.createElement("script");
+  //id should be same as given to form element
+  const Form = document.getElementById('donateForm');
+  Script.setAttribute('src','https://checkout.razorpay.com/v1/payment-button.js')
+  Script.setAttribute('data-payment_button_id','pl_HIEhjEZsLX0TtO')
+  Form.appendChild(Script);
     this.notifSound = document.getElementById("notif");
     let token = localStorage.token || this.state.token;
     if(token){
@@ -1123,13 +1129,7 @@ class App extends React.Component{
           If you've liked using this app, please consider donating using one of the options below.
         </p>
         <div>
-          <div
-            className="razorpay-embed-btn"
-            data-url="https://pages.razorpay.com/pl_HHshPmou625tDp/view"
-            data-text="Click to Donate Now"
-            data-color="#528FF0"
-            data-size="large"
-          ></div>
+        <form id="donateForm"></form>
           <img style={{ width: 300 }} src={PayTMQR} alt="PayTM QR Code" />
           {/* <a
             className="paytm-button"
