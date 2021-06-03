@@ -1130,6 +1130,7 @@ class App extends React.Component{
           app, please consider donating using one of the options below.
         </p>
         <div>
+          <form id="donateForm"></form>
           <img style={{ width: 300 }} src={PayTMQR} alt="PayTM QR Code" />
           {/* <a
             className="paytm-button"
@@ -1169,7 +1170,6 @@ class App extends React.Component{
             ></img>{" "}
             Donate
           </a> */}
-          <form id="donateForm"></form>
           <p style={{ marginTop: 10, marginBottom: 0, fontWeight: "bold" }}>
             Crypto Wallet
           </p>
