@@ -385,10 +385,10 @@ class App extends React.Component{
               { bookingInProgress: true, bookingCenter: c, bookingSession: s },
               () => {
                 if (!this.state.bookingCaptcha && !bkgInProgress) {
-                  this.getCaptcha();
+                  // this.getCaptcha();
                   bkgInProgress = true;
                   this.clearWatch();
-                  // this.book(s, c);
+                  this.book(s, c);
                 }
               }
             );
@@ -430,6 +430,7 @@ class App extends React.Component{
     })
   }
   async book(captcha){
+    window.speechSynthesis.cancel()
     let benIds = [];
     let session = this.state.bookingSession;
     if(this.state.selectedBeneficiaries.length === 0){
@@ -459,6 +460,7 @@ class App extends React.Component{
     // let thisInterval = setInterval(()=>{
       cowinApi.book(payload, this.state.token).then(data=>{
         console.log('Booking success ', data.appointment_id);
+        this.speak("Booking Success");
         this.clearWatch();
         this.setState({bookingInProgress: false, appointment_id: JSON.stringify(data), showSuccessModal: true});
         if(window.ga){
