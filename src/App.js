@@ -6,7 +6,7 @@ import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import Rollbar from "rollbar";
 import CowinApi from "./models";
-// import walletImage from './wallet.png'
+import walletImage from './wallet.png'
 import PayTMQR from './OfflineMerchant.png'
 // import captcha from './captcha.json';
 import parseHTML from 'html-react-parser';
@@ -1125,11 +1125,11 @@ class App extends React.Component{
       <div>
         <h2 style={{ marginTop: 15, marginBottom: 0 }}>Donate</h2>
         <p>
-          It all started out as an experiment and the response has been great and I'd like to continue supporting this.
-          If you've liked using this app, please consider donating using one of the options below.
+          It all started out as an experiment and the response has been great
+          and I'd like to continue supporting this. If you've liked using this
+          app, please consider donating using one of the options below.
         </p>
         <div>
-        <form id="donateForm"></form>
           <img style={{ width: 300 }} src={PayTMQR} alt="PayTM QR Code" />
           {/* <a
             className="paytm-button"
@@ -1169,11 +1169,11 @@ class App extends React.Component{
             ></img>{" "}
             Donate
           </a> */}
-
-          {/* <p style={{ marginTop: 10, marginBottom: 0, fontWeight: "bold" }}>
+          <form id="donateForm"></form>
+          <p style={{ marginTop: 10, marginBottom: 0, fontWeight: "bold" }}>
             Crypto Wallet
           </p>
-          <img style={{ width: 100 }} src={walletImage} alt="crypto-wallet" /> */}
+          <img style={{ width: 100 }} src={walletImage} alt="crypto-wallet" />
         </div>
       </div>
     );
