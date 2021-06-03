@@ -614,10 +614,10 @@ class App extends React.Component{
               { bookingInProgress: true, bookingSession: s },
               () => {
                 if (!this.state.bookingCaptcha && !bkgInProgress) {
-                  this.getCaptcha();
+                  // this.getCaptcha();
                   bkgInProgress = true;
                   this.clearWatch();
-                  // this.book(s, c);
+                  this.book(s);
                 }
               }
             );
