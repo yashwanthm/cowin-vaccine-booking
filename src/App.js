@@ -430,7 +430,10 @@ class App extends React.Component{
     })
   }
   async book(captcha){
-    window.speechSynthesis.cancel()
+    if(window.speechSynthesis){
+      window.speechSynthesis.cancel()
+    }
+    
     let benIds = [];
     let session = this.state.bookingSession;
     if(this.state.selectedBeneficiaries.length === 0){
