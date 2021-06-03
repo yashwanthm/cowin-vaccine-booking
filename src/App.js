@@ -6,7 +6,7 @@ import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import Rollbar from "rollbar";
 import CowinApi from "./models";
-import walletImage from './wallet.png'
+// import walletImage from './wallet.png'
 import PayTMQR from './OfflineMerchant.png'
 // import captcha from './captcha.json';
 import parseHTML from 'html-react-parser';
@@ -1170,10 +1170,10 @@ class App extends React.Component{
             ></img>{" "}
             Donate
           </a> */}
-          <p style={{ marginTop: 10, marginBottom: 0, fontWeight: "bold" }}>
+          {/* <p style={{ marginTop: 10, marginBottom: 0, fontWeight: "bold" }}>
             Crypto Wallet
           </p>
-          <img style={{ width: 100 }} src={walletImage} alt="crypto-wallet" />
+          <img style={{ width: 100 }} src={walletImage} alt="crypto-wallet" /> */}
         </div>
       </div>
     );
