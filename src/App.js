@@ -46,7 +46,7 @@ const metas = document.getElementsByTagName("meta");
 const version = metas[metas.length-1].getAttribute("build-version");
 
 const rollbar= new Rollbar({
-  accessToken: 'c667130295934cf280ef32ab70e96903',
+  accessToken: '9413c7d9e0174cca8b98ecd0f8054d8f',
   captureUncaught: true,
   captureUnhandledRejections: true,
 });
