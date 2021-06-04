@@ -1652,6 +1652,15 @@ class App extends React.Component{
             >
               Privacy Policy
             </Button>
+            <Button
+              type="link"
+              href="https://5c0x1zkltbk.typeform.com/to/s3Vo8L6E"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Contact
+            </Button>
+            
           </Row>
         </div>
 
