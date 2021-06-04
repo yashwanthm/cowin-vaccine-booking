@@ -29,3 +29,13 @@ https://yashwanthm.github.io/cowin-vaccine-booking/?dose=1&session_id=13526b72-3
 ## Update poll frequency using
 ```localStorage.pollFreq = 1000```
 This also works on the deployed version.
+
+
+## Running on docker
+
+
+```
+git clone https://github.com/yashwanthm/cowin-vaccine-booking.git
+cd cowin-vaccine-booking
+sudo docker-compose up --build
+```
