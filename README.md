@@ -27,5 +27,5 @@ https://yashwanthm.github.io/cowin-vaccine-booking/?dose=1&session_id=13526b72-3
 ```yarn start```
 
 ## Update poll frequency using
-```localstorage.pollFreq = 1000```
+```localStorage.pollFreq = 1000```
 This also works on the deployed version.
