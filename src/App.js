@@ -1540,7 +1540,7 @@ class App extends React.Component{
                 )}
                 {this.state.beneficiaries.map((b) => {
                   return (
-                    <Row>
+                    <Row key={b.beneficiary_reference_id}>
                       <Checkbox
                         disabled={this.state.isWatchingAvailability}
                         checked={
