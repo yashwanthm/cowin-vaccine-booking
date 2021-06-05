@@ -140,7 +140,9 @@ class App extends React.Component{
 
       }
       
-      state.date = moment().format('DD-MM-YYYY');
+      state.date = moment().hour() > 18
+      ? moment().add(1, "d").format("DD-MM-YYYY")
+      : moment().format("DD-MM-YYYY");
     } 
     if(localStorage.token){
       state.token = localStorage.token;
