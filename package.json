@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "http://yashwanthm.github.io/cowin-vaccine-booking",
+  "author": {
+    "name": "Yashwanth Maheshwaram",
+    "email": "yashwanth34@gmail.com",
+    "url": "https://github.com/yashwanthm/"
+  },
   "keywords": [
     "COVID-19",
     "India",
