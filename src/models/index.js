@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import CryptoJS from 'crypto-js';
 const apipath = `https://cdn-api.co-vin.in/api`;
 // const testPath = 'https://api.demo.co-vin.in/api'
+
 const url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin`
 const zurl = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict`
 const burl = `https://cdn-api.co-vin.in/api/v2/appointment/schedule`
@@ -16,7 +17,7 @@ export default class CowinApi {
     }
     return new Promise((resolve, reject) => {
       axios
-        .get(endpoint)
+        .get(endpoint, {headers})
         .then(function (response) {
           // handle success
           return resolve(response.data);
@@ -35,7 +36,11 @@ export default class CowinApi {
     return new Observable((subscriber) => {
       let req = this.req.bind(this);
       let m = () => {
-        req(`${url}?pincode=${zip}&date=${date}`)
+        let thisUrl = url;
+        if(localStorage.token){
+          thisUrl = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin`
+        }
+        req(`${thisUrl}?pincode=${zip}&date=${date}`)
           .then((data) => {
             subscriber.next(data);
           })
@@ -49,14 +54,14 @@ export default class CowinApi {
   }
 
   initS(zip, date) {
-    let headers = {};
-    if (localStorage.token) {
-      headers.authorization = `Bearer ${localStorage.token}`;
-    }
     return new Observable((subscriber) => {
       let req = this.req.bind(this);
+      let thisUrl = `${apipath}/v2/appointment/sessions/public/findByPin?pincode=${zip}&date=${date}`;
+      if(localStorage.token){
+        thisUrl = `${apipath}/v2/appointment/sessions/findByPin?pincode=${zip}&date=${date}`
+      }
       let m = () => {
-        req(`${apipath}/v2/appointment/sessions/public/findByPin?pincode=${zip}&date=${date}`)
+        req(thisUrl)
           .then((data) => {
             subscriber.next(data);
           })
@@ -72,8 +77,12 @@ export default class CowinApi {
   initDist(dist, date) {
     return new Observable((subscriber) => {
       let req = this.req.bind(this);
+      let thisZurl = zurl;
+      if(localStorage.token){
+        thisZurl = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict`
+      }
       let m = () => {
-        req(`${zurl}?district_id=${dist}&date=${date}`)
+        req(`${thisZurl}?district_id=${dist}&date=${date}`)
           .then((data) => {
             subscriber.next(data);
           })
@@ -106,9 +115,13 @@ export default class CowinApi {
   initDistS(dist, date) {
     return new Observable((subscriber) => {
       let req = this.distS.bind(this);
+      let thisUrl = `${apipath}/v2/appointment/sessions/public/findByDistrict?district_id=${dist}&date=${date}`
+      if(localStorage.token){
+        thisUrl = `${apipath}/v2/appointment/sessions/findByDistrict?district_id=${dist}&date=${date}`
+      }
       let m = () => {
         req(
-          `${apipath}/v2/appointment/sessions/public/findByDistrict?district_id=${dist}&date=${date}`
+          thisUrl
         )
           .then((data) => {
             subscriber.next(data);
