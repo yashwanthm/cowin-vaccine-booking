@@ -724,7 +724,7 @@ class App extends React.Component{
             self.setState({beneficiaries: data})
           }else{
             cowinApi.clearAuthWatch();
-            this.clearWatch();
+            self.clearWatch();
             delete localStorage.token;
             self.setState({isAuthenticated: false, token: null},()=>{
               
@@ -932,6 +932,9 @@ class App extends React.Component{
         if(this.state.isWatchingAvailability){
           this.clearWatch();
           this.initWatch();
+        }
+        if(this.state.selectedBeneficiaries.length===0){
+          this.clearWatch();
         }
         if(this.state.urlData){
           this.getQueryObj();
