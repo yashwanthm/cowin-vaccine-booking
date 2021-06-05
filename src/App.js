@@ -217,7 +217,7 @@ class App extends React.Component{
   const Form = document.getElementById('donateForm');
   Script.setAttribute('src','https://checkout.razorpay.com/v1/payment-button.js')
   Script.setAttribute('data-payment_button_id','pl_HIEhjEZsLX0TtO')
-  Form.appendChild(Script);
+  // Form.appendChild(Script);
     this.notifSound = document.getElementById("notif");
     let token = localStorage.token || this.state.token;
     if(token){
@@ -1616,21 +1616,20 @@ class App extends React.Component{
             this.messagesEnd = el;
           }}
         ></div>
-        {this.renderDonate()}
+        {/* {this.renderDonate()} */}
 
-        <h3 style={{ marginTop: 15, marginBottom: 0 }}>Share</h3>
+        {/* <h3 style={{ marginTop: 15, marginBottom: 0 }}>Share</h3> */}
         {/* <FacebookShareButton quote={promosg.text} hashtag={promosg.tags[0]}/> */}
-        {this.renderShare()}
+        {/* {this.renderShare()} */}
 
         <div style={{ marginTop: 10 }}></div>
-        <Text code>Build last updated at: {version}</Text>
         {this.renderModal()}
 
         <div>
           <Row>
             <Button
               type="link"
-              href="https://github.com/yashwanthm/cowin-vaccine-booking/issues"
+              href="https://github.com/hrushikeshk/cowin-vaccine-booking/issues"
               rel="noreferrer"
               target="_blank"
             >
@@ -1638,7 +1637,7 @@ class App extends React.Component{
             </Button>{" "}
             <Button
               type="link"
-              href="https://github.com/yashwanthm/cowin-vaccine-booking/"
+              href="https://github.com/hrushikeshk/cowin-vaccine-booking/"
               rel="noreferrer"
               target="_blank"
             >
@@ -1652,14 +1651,14 @@ class App extends React.Component{
             >
               Privacy Policy
             </Button>
-            <Button
+            {/* <Button
               type="link"
               href="https://5c0x1zkltbk.typeform.com/to/s3Vo8L6E"
               rel="noreferrer"
               target="_blank"
             >
               Contact
-            </Button>
+            </Button> */}
             
           </Row>
         </div>
@@ -1684,7 +1683,7 @@ class App extends React.Component{
         >
           {parseHTML(privacy)}
         </Modal>
-        {this.renderPayTMQR()}
+        {/* {this.renderPayTMQR()} */}
       </div>
     );
   }
