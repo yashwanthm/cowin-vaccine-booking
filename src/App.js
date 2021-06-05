@@ -925,6 +925,10 @@ class App extends React.Component{
         this.setStorage();
         this.getBeneficiaries();
         this.trackAuth(data.token);
+        if(this.state.isWatchingAvailability){
+          this.clearWatch();
+          this.initWatch();
+        }
         if(this.state.urlData){
           this.getQueryObj();
         }
