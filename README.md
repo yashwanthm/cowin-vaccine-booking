@@ -42,4 +42,4 @@ sudo docker-compose up --build
 - Special thanks to https://rollbar.com for the kind gesture to offer a free account. The app uses Rollbar to stay alerted of production issues and keep the software bug free.
 
 ## Credits
-- [https://github.com/hrushikeshk/cowin-vaccine-booking.git](https://github.com/hrushikeshk/cowin-vaccine-booking.git) 
+- [https://github.com/yashwanthm/cowin-vaccine-booking.git](https://github.com/yashwanthm/cowin-vaccine-booking.git) 
