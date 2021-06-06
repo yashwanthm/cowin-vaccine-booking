@@ -29,3 +29,6 @@ https://yashwanthm.github.io/cowin-vaccine-booking/?dose=1&session_id=13526b72-3
 ## Update poll frequency using
 ```localStorage.pollFreq = 1000```
 This also works on the deployed version.
+
+# Backers
+- Special thanks to https://rollbar.com for the kind gesture to offer a free account. The app uses Rollbar to stay alerted of production issues and keep the software bug free.
