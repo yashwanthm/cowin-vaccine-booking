@@ -771,7 +771,7 @@ class App extends React.Component{
     return (
       <div style={{maxWidth: "100%", overflow: 'scroll'}}>
         <h2 style={{ marginTop: 10 }}>Vaccination Centers & Availability Info - {this.state.date}</h2>
-        {/* <Text type="secondary">You will see all kinds of availability below. But, the notifications and bookings will be done for your selected preferences only.</Text> */}
+        <Text type="secondary">You will see all kinds of availability below. But, the notifications and bookings will be done for your selected preferences only.</Text>
         <table className="table" style={{ marginTop: 10 }}>
           <tbody>
           {vaccineCalendar.centers.map((vc) => {
@@ -793,9 +793,9 @@ class App extends React.Component{
                   <td>No Availability</td>
                 ) : (
                   vc.sessions.map((s, i) => {
-                    if(!filterSession(s, this.state)){
-                      return null;
-                    }
+                    // if(!filterSession(s, this.state)){
+                    //   return null;
+                    // }
                     return (
                       <td key={s.session_id}>
                         <h4>{s.date}</h4>
@@ -837,28 +837,29 @@ class App extends React.Component{
     }
     let sessions = this.state.vaccineSessions.sessions;
     let anyAvailatility = false;
-    sessions.map(s=>{
-      if(filterSession(s, this.state)){
-        anyAvailatility = true;
-      }
-    })
+    // sessions.map(s=>{
+    //   if(filterSession(s, this.state)){
+    //     anyAvailatility = true;
+    //   }
+    // })
+    anyAvailatility = true;
     return (
       <div style={{ maxWidth: "100%", overflow: "scroll" }}>
         <h2 style={{ marginTop: 10 }}>
           Vaccination Centers & Availability Info - {this.state.date}
         </h2>
-        {/* <Text type="secondary">
+        <Text type="secondary">
           You will see all kinds of availability below. But, the notifications
           and bookings will be done for your selected preferences only.
-        </Text> */}
+        </Text>
         <table className="table" style={{ marginTop: 10 }}>
           <tbody>
             {anyAvailatility ? (
               sessions.map((s) => {
                 //display filters
-                if (!filterSession(s, this.state)) {
-                  return null;
-                }
+                // if (!filterSession(s, this.state)) {
+                //   return null;
+                // }
                 return (
                   <td key={s.session_id}>
                     <h3>{s.name}</h3>
