@@ -1682,7 +1682,7 @@ class App extends React.Component{
               target="_blank"
             >
               Contact
-            </Button>
+            </Button>*/}
           </Row>
         </div>
 
