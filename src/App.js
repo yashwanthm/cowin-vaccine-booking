@@ -1460,7 +1460,7 @@ class App extends React.Component{
           <Col>
             {this.renderBookingPreferences()}
             {isAuthenticated ? null : (
-              <div style={{marginTop: 20}}>
+              <div style={{ marginTop: 20 }}>
                 <h2>Login</h2>
                 {this.state.enableOtp ? null : (
                   <Search
@@ -1640,10 +1640,19 @@ class App extends React.Component{
             this.messagesEnd = el;
           }}
         ></div>
+
+        <p>
+          This project has been made possible using
+          <Button
+            type="link"
+            href="https://github.com/yashwanthm/cowin-vaccine-booking/"
+            rel="noreferrer"
+            target="_blank"
+          ></Button>. If you have liked using this repo, please consider donating.
+        </p>
         {this.renderDonation()}
 
         {/* {this.renderDonate()} */}
-
 
         {/* <h3 style={{ marginTop: 15, marginBottom: 0 }}>Share</h3> */}
         {/* <FacebookShareButton quote={promosg.text} hashtag={promosg.tags[0]}/> */}
