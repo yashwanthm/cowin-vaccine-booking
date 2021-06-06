@@ -252,10 +252,10 @@ class App extends React.Component{
   componentDidMount(){
     const Script = document.createElement("script");
   //id should be same as given to form element
-  const Form = document.getElementById('donateForm');
-  Script.setAttribute('src','https://checkout.razorpay.com/v1/payment-button.js')
-  Script.setAttribute('data-payment_button_id','pl_HIEhjEZsLX0TtO')
-  Form.appendChild(Script);
+    const Form = document.getElementById('donateForm');
+    Script.setAttribute('src','https://checkout.razorpay.com/v1/payment-button.js')
+    Script.setAttribute('data-payment_button_id','pl_HIEhjEZsLX0TtO')
+    Form.appendChild(Script);
     this.notifSound = document.getElementById("notif");
     let token = localStorage.token || this.state.token;
     if(token){
@@ -1642,12 +1642,14 @@ class App extends React.Component{
         ></div>
         {this.renderDonation()}
 
-        <h3 style={{ marginTop: 15, marginBottom: 0 }}>Share</h3>
+        {/* {this.renderDonate()} */}
+
+
+        {/* <h3 style={{ marginTop: 15, marginBottom: 0 }}>Share</h3> */}
         {/* <FacebookShareButton quote={promosg.text} hashtag={promosg.tags[0]}/> */}
-        {this.renderShare()}
+        {/* {this.renderShare()} */}
 
         <div style={{ marginTop: 10 }}></div>
-        <Text code>Build last updated at: {version}</Text>
         {this.renderModal()}
 
         <div>
@@ -1676,14 +1678,14 @@ class App extends React.Component{
             >
               Privacy Policy
             </Button>
-            <Button
+            {/* <Button
               type="link"
               href="https://5c0x1zkltbk.typeform.com/to/s3Vo8L6E"
               rel="noreferrer"
               target="_blank"
             >
               Contact
-            </Button>
+            </Button>*/}
           </Row>
         </div>
 
@@ -1707,7 +1709,7 @@ class App extends React.Component{
         >
           {parseHTML(privacy)}
         </Modal>
-        {this.renderPayTMQR()}
+        {/* {this.renderPayTMQR()} */}
       </div>
     );
   }
