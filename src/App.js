@@ -1048,7 +1048,7 @@ class App extends React.Component{
         <p>
           You can login into{" "}
           <a
-            href="https://www.cowin.gov.in/home"
+            href="https://www.cowin.gov.in/"
             target="_blank"
             rel="noreferrer"
           >
@@ -1420,7 +1420,7 @@ class App extends React.Component{
           <p style={{ color: "#555" }}>
             Please register on{" "}
             <a
-              href="https://www.cowin.gov.in/home"
+              href="https://www.cowin.gov.in/"
               target="_blank"
               rel="noreferrer"
             >
@@ -1523,7 +1523,7 @@ class App extends React.Component{
                   <p>
                     You do not have ANY benificiares added yet. Please login to{" "}
                     <a
-                      href="https://www.cowin.gov.in/home"
+                      href="https://www.cowin.gov.in/"
                       target="_blank"
                       rel="noreferrer"
                     >
