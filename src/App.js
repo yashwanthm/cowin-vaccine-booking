@@ -724,22 +724,21 @@ class App extends React.Component{
             self.setState({beneficiaries: data})
           }else{
             cowinApi.clearAuthWatch();
-            self.clearWatch();
             delete localStorage.token;
             self.setState({isAuthenticated: false, token: null},()=>{
-              
               if(self.state.isWatchingAvailability){
+                self.clearWatch();
+                self.initWatch();
                 self.generateOtp();
-                self.speak('Session expired!');
                 self.sendNotification('Session expired', 'Session expired, please login')
               }
-              
+              self.speak("Session expired!");
             })
           }
           
         },
         error(err) {
-          console.error("something wrong occurred: " + err);
+          // console.error("something wrong occurred: " + err);
           self.speak('Session expired!');
           cowinApi.clearAuthWatch();
           delete localStorage.token;
