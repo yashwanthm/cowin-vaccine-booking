@@ -1666,7 +1666,7 @@ class App extends React.Component{
               rel="noreferrer"
               target="_blank"
             >
-              Git Repo is here
+              Git Repo
             </Button>
             <Button
               type="link"
