@@ -1641,16 +1641,19 @@ class App extends React.Component{
           }}
         ></div>
 
-        <p>
-          This project has been made possible using
-          <Button
+        
+        {this.renderDonation()}
+
+        <p style={{marginTop: 10}}>
+          This app has been made possible using 
+          <a
             type="link"
             href="https://github.com/yashwanthm/cowin-vaccine-booking/"
             rel="noreferrer"
             target="_blank"
-          ></Button>. If you have liked using this repo, please consider donating.
+          > https://github.com/yashwanthm/cowin-vaccine-booking/</a>. If you have liked using this repo, please consider donating using the options above.<br/>
+          The original project is available at <a href="http://yashwanthm.github.io/cowin-vaccine-booking/"> http://yashwanthm.github.io/cowin-vaccine-booking/</a>
         </p>
-        {this.renderDonation()}
 
         {/* {this.renderDonate()} */}
 
