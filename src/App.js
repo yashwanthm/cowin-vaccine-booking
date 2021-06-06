@@ -1137,7 +1137,7 @@ class App extends React.Component{
       </Modal>
     );
   }
-  renderDonate(){
+  renderDonation(){
     return (
       <div>
         <h2 style={{ marginTop: 15, marginBottom: 0 }}>Donate</h2>
@@ -1640,7 +1640,7 @@ class App extends React.Component{
             this.messagesEnd = el;
           }}
         ></div>
-        {this.renderDonate()}
+        {this.renderDonation()}
 
         <h3 style={{ marginTop: 15, marginBottom: 0 }}>Share</h3>
         {/* <FacebookShareButton quote={promosg.text} hashtag={promosg.tags[0]}/> */}
