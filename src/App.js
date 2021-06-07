@@ -1254,7 +1254,7 @@ class App extends React.Component{
                   {this.state.isWatchingAvailability
                     ? "Tracking"
                     : this.state.isAuthenticated
-                    ? "Track Availability & Book"
+                    ? "Track Availability & Auto-Book for selected preferences"
                     : "Track Availability"}
                 </Button>
                 {this.state.isWatchingAvailability ? (
@@ -1286,7 +1286,7 @@ class App extends React.Component{
                       this.state.isWatchingAvailability
                         ? `Tracking`
                         : this.state.isAuthenticated
-                        ? "Track Availability & Book"
+                        ? "Track Availability & Auto-Book for selected preferences"
                         : "Track Availability"
                     }
                     size="large"
@@ -1386,7 +1386,7 @@ class App extends React.Component{
         </Row>
         <Row style={{ marginTop: 5 }}>
           <h3 style={{ marginTop: 10, marginBottom: 0 }}>Date</h3>
-          <DatePicker defaultValue={moment().hour()>18 ? moment().add(1, 'd') : moment()} disabledDate={(current) =>{
+          <DatePicker disabled={this.state.isWatchingAvailability} defaultValue={moment().hour()>18 ? moment().add(1, 'd') : moment()} disabledDate={(current) =>{
             return current < moment().startOf('day');
           }} style={{marginLeft: 10}} onChange={e=>{
             if(e && e.format){
@@ -1603,11 +1603,12 @@ class App extends React.Component{
                 });
               }}
             >
-              Alternate Tracking Mode.(Use this in case you think that the app
+              Alternate Tracking Mode.<br/>
+              (Use this in case you think that the app
               is not picking up availability. If you are tracking ANY telegram
               channels and the app doesn't pick up the avaiable slot within
               seconds, toggle this and track again to detect availability
-              instantly.)
+              instantly. When alternate tracking is disabled, the app can track up to 7 days from the selected date.)
             </Checkbox>
 
             {this.renderTrackingSelection()}
