@@ -32,3 +32,5 @@ This also works on the deployed version.
 
 # Backers
 - Special thanks to https://rollbar.com for the kind gesture to offer a free account. The app uses Rollbar to stay alerted of production issues and keep the software bug free.
+- https://github.com/nirajgeorgian for support with development
+- https://github.com/yashtibrewal for support with polling frequency managment research
