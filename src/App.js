@@ -1603,13 +1603,14 @@ class App extends React.Component{
                 });
               }}
             >
-              Alternate Tracking Mode.<br/>
-              (Use this in case you think that the app
+              Search for selected date only (Alternate tracking mode)
+            </Checkbox>
+            <br/>
+            <Text type="secondary">(Use this in case you think that the app
               is not picking up availability. If you are tracking ANY telegram
               channels and the app doesn't pick up the avaiable slot within
               seconds, toggle this and track again to detect availability
-              instantly. When alternate tracking is disabled, the app can track up to 7 days from the selected date.)
-            </Checkbox>
+              instantly. When alternate tracking is disabled, the app can track up to 7 days from the selected date.)</Text>
 
             {this.renderTrackingSelection()}
 
