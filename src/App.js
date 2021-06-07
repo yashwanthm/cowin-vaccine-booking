@@ -11,6 +11,7 @@ import PayTMQR from './OfflineMerchant.png'
 // import captcha from './captcha.json';
 import parseHTML from 'html-react-parser';
 import privacy from './privacy';
+import GitHubButton from 'react-github-btn';
 
 import moment from "moment";
 import {
@@ -1441,7 +1442,7 @@ class App extends React.Component{
               rel="noreferrer"
             >
               Help/Usage Guide
-            </a>
+            </a> 
             <br />
             <b>
               If you are on mobile, please make sure that the browser doesn't go
@@ -1449,6 +1450,7 @@ class App extends React.Component{
               tracking will pause automatically.
             </b>
           </p>
+          
         </header>
 
         {/* <Col style={{ marginBottom: 10 }}>
@@ -1649,11 +1651,12 @@ class App extends React.Component{
         {this.renderShare()}
 
         <div style={{ marginTop: 10 }}></div>
-        <Text code>Build last updated at: {version}</Text>
+        
         {this.renderModal()}
 
         <div>
           <Row>
+          <GitHubButton href="https://github.com/yashwanthm/cowin-vaccine-booking" data-color-scheme="no-preference: dark; light: light; dark: dark_dimmed;" data-size="large" data-show-count="true" aria-label="Star yashwanthm/cowin-vaccine-booking on GitHub">Star</GitHubButton>
             <Button
               type="link"
               href="https://github.com/yashwanthm/cowin-vaccine-booking/issues"
@@ -1686,8 +1689,10 @@ class App extends React.Component{
             >
               Contact
             </Button>
+            
           </Row>
         </div>
+        <Text code>Build last updated at: {version}</Text>
 
         <Modal
           title=""

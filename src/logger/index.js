@@ -1,0 +1,1 @@
+const endpoint = 'https://search-vax-app-hr5scqmpvnw2s26t62qrr6tv4e.us-east-1.es.amazonaws.com';
