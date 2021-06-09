@@ -29,6 +29,8 @@ import {
   TelegramIcon
 
 } from "react-share"
+import log from "./logger";
+
 const { Text } = Typography;
 const { TabPane } = Tabs;
 const cowinApi = new CowinApi();
@@ -372,21 +374,7 @@ class App extends React.Component{
             console.log(error);
           }
           this.speak(`Vaccines available at ${c.name}`);
-          try {
-            if(window.ga){
-              window.ga('send', 'event', {
-                eventCategory: 'availability',
-                eventAction: 'success',
-                center: c
-              });
-            }
-            // rollbar.info({
-            //   event: 'availability',
-            //   center: c
-            // });
-          } catch (error) {
-            
-          }
+          
           if (this.state.isAuthenticated) {
             this.setState(
               { bookingInProgress: true, bookingCenter: c, bookingSession: s },
@@ -473,13 +461,7 @@ class App extends React.Component{
         this.speak("Booking Success");
         this.clearWatch();
         this.setState({bookingInProgress: false, appointment_id: JSON.stringify(data), showSuccessModal: true});
-        if(window.ga){
-          window.ga('send', 'event', {
-            eventCategory: 'booking',
-            eventAction: 'success',
-            data
-          });
-        }
+
         let names = '';
         let location = '';
         
@@ -490,17 +472,29 @@ class App extends React.Component{
           if(this.state.bookingSession && this.state.bookingSession.district_name){
             location = this.state.bookingSession.district_name;
           }
+          let benName = []
           this.state.selectedBeneficiaries.map((s) => {
-            names = names + s.name.split(" ")[0].substring(0, 5) + '***';
+            let maskedName = s.name.split(" ")[0].substring(0, 5) + '***' 
+            names = names + maskedName;
+            benName.push(maskedName);
           });
-          rollbar.info(
-            "booking_success " +
-              names +
-              " | Count -" +
-              this.state.selectedBeneficiaries.length +
-              "| Location - " +
-              location + '| b-' + version
-          );
+
+          log({
+            "type": "booking_success",
+            "count": this.state.selectedBeneficiaries.length,
+            "session": this.state.bookingSession,
+            "location": location,
+            "beneficiaries": benName,
+            "build": version
+          })
+          // rollbar.info(
+          //   "booking_success " +
+          //     names +
+          //     " | Count -" +
+          //     this.state.selectedBeneficiaries.length +
+          //     "| Location - " +
+          //     location + '| b-' + version
+          // );
         } catch (error) {
           console.log(error);
         }
@@ -523,14 +517,12 @@ class App extends React.Component{
           this.initWatch();
         }
         window.history.pushState(null, "", window.location.href.split("?")[0]);
-        if(window.ga){
-          window.ga('send', 'event', {
-            eventCategory: 'booking',
-            eventAction: 'fail',
-            err
+
+          log({
+            type: "booking_failed",
+            errorMessage: desc,
+            error: err,
           });
-        }
-        // rollbar.debug('booking_fail');
         
         // this.speak(msg);
         // console.log(msg);
