@@ -479,11 +479,23 @@ class App extends React.Component{
             benName.push(maskedName);
           });
 
+
+          let centerName = '';
+          if(this.state.bookingSession && this.state.bookingSession.name){
+            let s = this.state.bookingSession
+            centerName = this.state.bookingSession.name;
+          }
+          if(this.state.bookingCenter){
+            centerName = this.state.bookingCenter.name
+          }
+
           log({
             "type": "booking_success",
             "count": this.state.selectedBeneficiaries.length,
-            "session": this.state.bookingSession,
+            // "session": this.state.bookingSession,
+            "vaccine": this.state.bookingSession.vaccine,
             "location": location,
+            "centerName": centerName,
             "beneficiaries": benName,
             "build": version
           })
