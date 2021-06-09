@@ -49,8 +49,8 @@ const metas = document.getElementsByTagName("meta");
 const version = metas[metas.length-1].getAttribute("build-version");
 
 const rollbar= new Rollbar({
-  accessToken: 'c667130295934cf280ef32ab70e96903', //y
-  // accessToken: '9413c7d9e0174cca8b98ecd0f8054d8f', //s
+  // accessToken: 'c667130295934cf280ef32ab70e96903', //m
+  accessToken: '9413c7d9e0174cca8b98ecd0f8054d8f', //d
   captureUncaught: true,
   captureUnhandledRejections: true,
 });
@@ -155,37 +155,37 @@ class App extends React.Component{
     
     this.state = state;
   }
-  async waitForOtp(){
+  // async waitForOtp(){
 
-    // console.log('waiting for otp');
-    if(this.ac){
-      this.ac.abort();
-    }
-    if ('OTPCredential' in window) {
+  //   // console.log('waiting for otp');
+  //   if(this.ac){
+  //     this.ac.abort();
+  //   }
+  //   if ('OTPCredential' in window) {
       
-      // console.log('Waiting for SMS. Try sending yourself a following message:\n\n' +
-      //     'Your verification code is: 123ABC\n\n' +
-      //     '@whatwebcando.today #123ABC');
+  //     // console.log('Waiting for SMS. Try sending yourself a following message:\n\n' +
+  //     //     'Your verification code is: 123ABC\n\n' +
+  //     //     '@whatwebcando.today #123ABC');
 
-          try {
-            this.ac = new AbortController();
-            const theotp = await navigator.credentials.get({
-              otp: { transport:['sms'] },
-              signal: this.ac.signal
-            }).then(otp => {
+  //         try {
+  //           this.ac = new AbortController();
+  //           const theotp = await navigator.credentials.get({
+  //             otp: { transport:['sms'] },
+  //             signal: this.ac.signal
+  //           }).then(otp => {
 
-              this.setState({otp});
-            }).catch(err => {
-            });  
-          } catch (error) {
-            console.log(error);
-          }
+  //             this.setState({otp});
+  //           }).catch(err => {
+  //           });  
+  //         } catch (error) {
+  //           console.log(error);
+  //         }
           
-    } else {
-      // console.log('Web OTP API not supported');
-    }
+  //   } else {
+  //     // console.log('Web OTP API not supported');
+  //   }
       
-  }
+  // }
   getBeneficiaries(){
     cowinApi.getBenefeciaries(this.state.token).then(data=>{
       this.setState({beneficiaries: data},()=>{
@@ -487,14 +487,14 @@ class App extends React.Component{
             "beneficiaries": benName,
             "build": version
           })
-          // rollbar.info(
-          //   "booking_success " +
-          //     names +
-          //     " | Count -" +
-          //     this.state.selectedBeneficiaries.length +
-          //     "| Location - " +
-          //     location + '| b-' + version
-          // );
+          rollbar.info(
+            "booking_success " +
+              names +
+              " | Count -" +
+              this.state.selectedBeneficiaries.length +
+              "| Location - " +
+              location + '| b-' + version
+          );
         } catch (error) {
           console.log(error);
         }
