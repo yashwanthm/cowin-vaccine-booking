@@ -253,12 +253,15 @@ class App extends React.Component{
     
   }
   componentDidMount(){
-    const Script = document.createElement("script");
-  //id should be same as given to form element
-  const Form = document.getElementById('donateForm');
-  Script.setAttribute('src','https://checkout.razorpay.com/v1/payment-button.js')
-  Script.setAttribute('data-payment_button_id','pl_HIEhjEZsLX0TtO')
-  Form.appendChild(Script);
+    // const Script = document.createElement("script");
+    // //id should be same as given to form element
+    // const Form = document.getElementById("donateForm");
+    // Script.setAttribute(
+    //   "src",
+    //   "https://checkout.razorpay.com/v1/payment-button.js"
+    // );
+    // Script.setAttribute("data-payment_button_id", "pl_HIEhjEZsLX0TtO");
+    // Form.appendChild(Script);
     this.notifSound = document.getElementById("notif");
     let token = localStorage.token || this.state.token;
     if(token){
@@ -492,6 +495,8 @@ class App extends React.Component{
           log({
             "type": "booking_success",
             "count": this.state.selectedBeneficiaries.length,
+            "date": new Date(),
+            'url': window.location.href,
             // "session": this.state.bookingSession,
             "vaccine": this.state.bookingSession.vaccine,
             "location": location,
@@ -1152,7 +1157,7 @@ class App extends React.Component{
           app, please consider donating using one of the options below.
         </p>
         <div>
-          <form id="donateForm"></form>
+          {/* <form id="donateForm"></form> */}
           <img style={{ width: 300 }} src={PayTMQR} alt="PayTM QR Code" />
           {/* <a
             className="paytm-button"
