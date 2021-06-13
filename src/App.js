@@ -494,6 +494,7 @@ class App extends React.Component{
 
           log({
             "type": "booking_success",
+            "booking_id": data.appointment_id,
             "count": this.state.selectedBeneficiaries.length,
             "date": new Date(),
             'url': window.location.href,
