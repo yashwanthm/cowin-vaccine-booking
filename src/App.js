@@ -1442,7 +1442,7 @@ class App extends React.Component{
             For automatic bookings, login, select beneficiaries, keep feeding in
             OTPs every few mins. When there's availability, the app will
             automatically attempt for a booking based on your preferences. When
-            there's availability, you will have to enter captcha code. The app
+            there's availability, you will have to enter captcha code if it is required. The app
             will speak out for ANY inputs(OTP and Captcha) required. For more
             information, please see the{" "}
             <a
@@ -1473,6 +1473,7 @@ class App extends React.Component{
               tracking will pause automatically. If that happens, please close
               the browser in the background only before opening it.
             </li>
+            <li>The app could automatically book when availability is detected. Please be sure of your vaccination preferences before you start tracking.</li>
           </ol>
         </header>
 
