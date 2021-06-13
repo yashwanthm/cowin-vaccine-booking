@@ -1443,9 +1443,9 @@ class App extends React.Component{
             For automatic bookings, login, select beneficiaries, keep feeding in
             OTPs every few mins. When there's availability, the app will
             automatically attempt for a booking based on your preferences. When
-            there's availability, you will have to enter captcha code if it is required. The app
-            will speak out for ANY inputs(OTP and Captcha) required. For more
-            information, please see the{" "}
+            there's availability, you will have to enter captcha code if it is
+            required. The app will speak out for ANY inputs(OTP and Captcha)
+            required. For more information, please see the{" "}
             <a
               href="https://github.com/yashwanthm/cowin-vaccine-booking/wiki/Usage-Guide"
               target="_blank"
@@ -1455,18 +1455,31 @@ class App extends React.Component{
             </a>
             <br />
           </p>
-          <b style={{color: "#555"}}>Important things to note:</b>
-          <ol style={{color: "#555"}}>
-            <li>This app is currently in the approval process with and the application is approved. Please see <a href="https://github.com/yashwanthm/cowin-vaccine-booking/issues/95">Status of Approval</a>.</li>
+          <b style={{ color: "#555" }}>Important things to note:</b>
+          <ol style={{ color: "#555" }}>
+            <li>
+              This app is currently in the approval process with and the
+              application is approved. Please see{" "}
+              <a
+                href="https://github.com/yashwanthm/cowin-vaccine-booking/issues/95"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Status of Approval
+              </a>
+              .
+            </li>
             <li>
               If you have an issue about getting blocked, please add a comment
               here{" "}
               <a
                 href="https://github.com/yashwanthm/cowin-vaccine-booking/issues/96"
-                target="_blanck"
+                target="_blank"
+                rel="noreferrer"
               >
                 https://github.com/yashwanthm/cowin-vaccine-booking/issues/96
-              </a> along with clear details explaining your usage pattern.
+              </a>{" "}
+              along with clear details explaining your usage pattern.
             </li>
             <li>
               If you are on mobile, please make sure that the browser doesn't go
@@ -1474,7 +1487,11 @@ class App extends React.Component{
               tracking will pause automatically. If that happens, please close
               the browser in the background only before opening it.
             </li>
-            <li>The app could automatically book when availability is detected. Please be sure of your vaccination preferences before you start tracking.</li>
+            <li>
+              The app could automatically book when availability is detected.
+              Please be sure of your vaccination preferences before you start
+              tracking.
+            </li>
           </ol>
         </header>
 
