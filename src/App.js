@@ -1451,15 +1451,29 @@ class App extends React.Component{
               rel="noreferrer"
             >
               Help/Usage Guide
-            </a> 
+            </a>
             <br />
-            <b>
+          </p>
+          <b style={{color: "#555"}}>Important things to note:</b>
+          <ol style={{color: "#555"}}>
+            <li>This app is currently in the approval process with and the application is approved. Please see <a href="https://github.com/yashwanthm/cowin-vaccine-booking/issues/95">Status of Approval</a>.</li>
+            <li>
+              If you have an issue about getting blocked, please add a comment
+              here{" "}
+              <a
+                href="https://github.com/yashwanthm/cowin-vaccine-booking/issues/96"
+                target="_blanck"
+              >
+                https://github.com/yashwanthm/cowin-vaccine-booking/issues/96
+              </a> along with clear details explaining your usage pattern.
+            </li>
+            <li>
               If you are on mobile, please make sure that the browser doesn't go
               into background or your screen gets locked. If that happens, the
-              tracking will pause automatically.
-            </b>
-          </p>
-          
+              tracking will pause automatically. If that happens, please close
+              the browser in the background only before opening it.
+            </li>
+          </ol>
         </header>
 
         {/* <Col style={{ marginBottom: 10 }}>
@@ -1471,7 +1485,7 @@ class App extends React.Component{
           <Col>
             {this.renderBookingPreferences()}
             {isAuthenticated ? null : (
-              <div style={{marginTop: 20}}>
+              <div style={{ marginTop: 20 }}>
                 <h2>Login</h2>
                 {this.state.enableOtp ? null : (
                   <Search
@@ -1616,12 +1630,15 @@ class App extends React.Component{
             >
               Search for selected date only (Alternate tracking mode)
             </Checkbox>
-            <br/>
-            <Text type="secondary">(Use this in case you think that the app
-              is not picking up availability. If you are tracking ANY telegram
-              channels and the app doesn't pick up the avaiable slot within
-              seconds, toggle this and track again to detect availability
-              instantly. When alternate tracking is disabled, the app can track up to 7 days from the selected date.)</Text>
+            <br />
+            <Text type="secondary">
+              (Use this in case you think that the app is not picking up
+              availability. If you are tracking ANY telegram channels and the
+              app doesn't pick up the avaiable slot within seconds, toggle this
+              and track again to detect availability instantly. When alternate
+              tracking is disabled, the app can track up to 7 days from the
+              selected date.)
+            </Text>
 
             {this.renderTrackingSelection()}
 
@@ -1660,12 +1677,20 @@ class App extends React.Component{
         {this.renderShare()}
 
         <div style={{ marginTop: 10 }}></div>
-        
+
         {this.renderModal()}
 
         <div>
           <Row>
-          <GitHubButton href="https://github.com/yashwanthm/cowin-vaccine-booking" data-color-scheme="no-preference: dark; light: light; dark: dark_dimmed;" data-size="large" data-show-count="true" aria-label="Star yashwanthm/cowin-vaccine-booking on GitHub">Star</GitHubButton>
+            <GitHubButton
+              href="https://github.com/yashwanthm/cowin-vaccine-booking"
+              data-color-scheme="no-preference: dark; light: light; dark: dark_dimmed;"
+              data-size="large"
+              data-show-count="true"
+              aria-label="Star yashwanthm/cowin-vaccine-booking on GitHub"
+            >
+              Star
+            </GitHubButton>
             <Button
               type="link"
               href="https://github.com/yashwanthm/cowin-vaccine-booking/issues"
@@ -1698,7 +1723,6 @@ class App extends React.Component{
             >
               Contact
             </Button>
-            
           </Row>
         </div>
         <Text code>Build last updated at: {version}</Text>
