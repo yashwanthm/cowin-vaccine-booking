@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 import "./App.css";
 // import { Notifications } from "react-push-notification";
-import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typography, notification, DatePicker } from "antd";
+import { Button, Col, Input, Row, Radio, Select, Checkbox, Tabs, Modal, Typography, notification, DatePicker, InputNumber } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import Rollbar from "rollbar";
@@ -135,6 +135,7 @@ class App extends React.Component{
       bookingCaptcha: null,
       bookingCenter: null,
       showSuccessModal: false,
+      pollFreq: 45
     };
     if(localStorage.appData){
       try {
@@ -151,6 +152,9 @@ class App extends React.Component{
       state.token = localStorage.token;
       state.isAuthenticated = true;
       state.enableOtp = false;
+    }
+    if(localStorage.pollFreq){
+      state.pollFreq = parseInt(localStorage.pollFreq) / 1000 // to seconds
     }
     
     this.state = state;
@@ -1325,6 +1329,17 @@ class App extends React.Component{
                 </Row>
               </TabPane>
             </Tabs>
+            {!this.state.isWatchingAvailability ? (
+            <Row style={{ marginTop: 5 }}>
+              <h3 style={{ marginTop: 0, marginBottom: 0, marginRight: 10 }}>Checking Time Interval</h3>
+              <InputNumber min={1} defaultValue={this.state.pollFreq} onChange={
+                val => {
+                  this.setState({ pollFreq: val })
+                  localStorage.pollFreq = val * 1000
+                }} />
+              <h4 style={{ marginTop: 2, marginLeft: 10 }}>seconds</h4>
+            </Row>
+            ) : null}
     </div>
   }
   renderBookingPreferences(){
