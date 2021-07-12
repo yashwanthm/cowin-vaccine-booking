@@ -552,6 +552,7 @@ class App extends React.Component{
             type: "booking_failed",
             errorMessage: desc,
             error: err,
+            build: version
           });
         }         
         
