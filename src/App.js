@@ -536,11 +536,24 @@ class App extends React.Component{
         }
         window.history.pushState(null, "", window.location.href.split("?")[0]);
 
+        let errors = [];
+        if(localStorage.errors){
+          errors = JSON.parse(localStorage.errors);
+        }
+
+        let errorRecorded = false;
+        errors.map(e=>{
+          if(err.error === e.error){
+            errorRecorded = true;
+          }
+        })
+        if(!errorRecorded){
           log({
             type: "booking_failed",
             errorMessage: desc,
             error: err,
           });
+        }         
         
         // this.speak(msg);
         // console.log(msg);
@@ -1151,7 +1164,7 @@ class App extends React.Component{
   renderDonate(){
     return (
       <div>
-        <h2 style={{ marginTop: 15, marginBottom: 0 }}>Donate</h2>
+        <h2 style={{ marginTop: 15, marginBottom: 0 }}>Sponsor/Donate</h2>
         <p>
           It all started out as an experiment and the response has been great
           and I'd like to continue supporting this. If you've liked using this
