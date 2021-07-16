@@ -551,7 +551,7 @@ class App extends React.Component{
         })
         if(!errorRecorded){
           errors.push(err)
-          localStorage.errors = JSON.stringify(errros);
+          localStorage.errors = JSON.stringify(errors);
           log({
             type: "booking_failed",
             errorMessage: desc,
