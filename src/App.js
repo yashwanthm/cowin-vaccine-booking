@@ -49,7 +49,8 @@ const metas = document.getElementsByTagName("meta");
 const version = metas[metas.length-1].getAttribute("build-version");
 
 const rollbar= new Rollbar({
-  accessToken: '6cc1584388304eed9bf3a32008956052',
+  // accessToken: 'c667130295934cf280ef32ab70e96903', //m
+  accessToken: '9413c7d9e0174cca8b98ecd0f8054d8f', //d
   captureUncaught: true,
   captureUnhandledRejections: true,
 });
@@ -64,9 +65,6 @@ const filterSession = (s, state) => {
     return false;
   }
   if (parseInt(s.min_age_limit) !== minAge) {
-    if(s.allow_all_age){
-      return true;
-    }
     return false;
   }
   if (feeType !== "ANY" && feeType !== s.fee_type) {
@@ -487,7 +485,7 @@ class App extends React.Component{
 
           let centerName = '';
           if(this.state.bookingSession && this.state.bookingSession.name){
-            let s = this.state.bookingSession
+            // let s = this.state.bookingSession
             centerName = this.state.bookingSession.name;
           }
           if(this.state.bookingCenter){
@@ -550,8 +548,6 @@ class App extends React.Component{
           }
         })
         if(!errorRecorded){
-          errors.push(err)
-          localStorage.errors = JSON.stringify(errors);
           log({
             type: "booking_failed",
             errorMessage: desc,
@@ -1430,7 +1426,10 @@ class App extends React.Component{
   render() {
     // const vaccineCalendar = this.state.vaccineCalendar;
     const isAuthenticated = this.state.isAuthenticated;
-    const {beneficiaries, selectedBeneficiaries} = this.state;
+    var {beneficiaries, selectedBeneficiaries} = this.state;
+    // if(!Array.isArray(beneficiaries)){
+    //   beneficiaries = [];
+    // }
     return (
       <div className="App">
         {/* <Notifications /> */}
@@ -1600,7 +1599,7 @@ class App extends React.Component{
                     availability and make a booking.
                   </p>
                 )}
-                {this.state.beneficiaries.map((b) => {
+                {beneficiaries.map((b) => {
                   return (
                     <Row key={b.beneficiary_reference_id}>
                       <Checkbox
