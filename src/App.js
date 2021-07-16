@@ -65,6 +65,9 @@ const filterSession = (s, state) => {
     return false;
   }
   if (parseInt(s.min_age_limit) !== minAge) {
+    if(s.allow_all_age){
+      return true;
+    }
     return false;
   }
   if (feeType !== "ANY" && feeType !== s.fee_type) {
