@@ -492,27 +492,32 @@ class App extends React.Component{
             centerName = this.state.bookingCenter.name
           }
 
-          log({
-            "type": "booking_success",
-            "booking_id": data.appointment_id,
-            "count": this.state.selectedBeneficiaries.length,
-            "date": new Date(),
-            'url': window.location.href,
-            // "session": this.state.bookingSession,
-            "vaccine": this.state.bookingSession.vaccine,
-            "location": location,
-            "centerName": centerName,
-            "beneficiaries": benName,
-            "build": version
-          })
-          rollbar.info(
-            "booking_success " +
-              names +
-              " | Count -" +
-              this.state.selectedBeneficiaries.length +
-              "| Location - " +
-              location + '| b-' + version
-          );
+          if(location !== ''){
+            log({
+              "type": "booking_success",
+              "booking_id": data.appointment_id,
+              "count": this.state.selectedBeneficiaries.length,
+              "date": new Date(),
+              'url': window.location.href,
+              // "session": this.state.bookingSession,
+              "vaccine": this.state.bookingSession.vaccine,
+              "location": location,
+              "centerName": centerName,
+              "beneficiaries": benName,
+              "build": version
+            })
+            rollbar.info(
+              "booking_success " +
+                names +
+                " | Count -" +
+                this.state.selectedBeneficiaries.length +
+                "| Location - " +
+                location +
+                "| b-" +
+                version
+            );
+          }
+          
         } catch (error) {
           console.log(error);
         }
