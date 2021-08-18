@@ -56,7 +56,7 @@ const rollbar= new Rollbar({
 });
 
 const filterSession = (s, state) => {
-  let { dose, vaccineType, minAge, feeType } = state;
+  let { dose, vaccineType, minAge, fee_type } = state;
   let requiredNums = state.selectedBeneficiaries.length
     ? state.selectedBeneficiaries.length
     : 1;
@@ -67,7 +67,7 @@ const filterSession = (s, state) => {
   if (parseInt(s.min_age_limit) !== minAge) {
     return false;
   }
-  if (feeType !== "ANY" && feeType !== s.fee_type) {
+  if (fee_type !== "ANY" && fee_type !== s.fee_type) {
     return false;
   }
   if (vaccineType !== "ANY" && vaccineType !== s.vaccine) {
@@ -122,7 +122,7 @@ class App extends React.Component{
       enableOtp: false,
       otp: null,
       mobile: null,
-      feeType: "ANY",
+      fee_type: "ANY",
       token: localStorage.token || null,
       selectedTab: "1",
       dates: [],
@@ -1390,9 +1390,9 @@ class App extends React.Component{
           <Radio.Group
             style={{ marginTop: 12, marginLeft: 10 }}
             onChange={(e) => {
-              this.setState({ feeType: e.target.value });
+              this.setState({ fee_type: e.target.value });
             }}
-            value={this.state.feeType}
+            value={this.state.fee_type}
             disabled={this.state.isWatchingAvailability}
           >
             <Radio value={"ANY"}>Any</Radio>
