@@ -493,19 +493,19 @@ class App extends React.Component{
           }
 
           if(location !== ''){
-            log({
-              "type": "booking_success",
-              "booking_id": data.appointment_id,
-              "count": this.state.selectedBeneficiaries.length,
-              "date": new Date(),
-              'url': window.location.href,
-              // "session": this.state.bookingSession,
-              "vaccine": this.state.bookingSession.vaccine,
-              "location": location,
-              "centerName": centerName,
-              "beneficiaries": benName,
-              "build": version
-            })
+          //   log({
+          //     "type": "booking_success",
+          //     "booking_id": data.appointment_id,
+          //     "count": this.state.selectedBeneficiaries.length,
+          //     "date": new Date(),
+          //     'url': window.location.href,
+          //     // "session": this.state.bookingSession,
+          //     "vaccine": this.state.bookingSession.vaccine,
+          //     "location": location,
+          //     "centerName": centerName,
+          //     "beneficiaries": benName,
+          //     "build": version
+          //   })
             rollbar.info(
               "booking_success " +
                 names +
@@ -533,7 +533,7 @@ class App extends React.Component{
           showCaptcha: false
         });
         let msg = 'Booking did not get through. ';
-        // console.log(err);
+        console.log(err);
         let desc = err.error || "The availability probably ran out before you could take an action. The app will continue to look for slots."
         this.bookingError(msg, desc);
         if(this.state.districtId || this.state.zip){
@@ -555,12 +555,12 @@ class App extends React.Component{
         if(errorRecorded === false){
           errors.push(err);
           localStorage.errors = JSON.stringify(errors);
-          log({
-            type: "booking_failed",
-            errorMessage: desc,
-            error: err,
-            build: version
-          });
+          // log({
+          //   type: "booking_failed",
+          //   errorMessage: desc,
+          //   error: err,
+          //   build: version
+          // });
         }         
         
         // this.speak(msg);
