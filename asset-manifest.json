@@ -1,28 +1,28 @@
 {
   "files": {
-    "main.css": "/cowin-vaccine-booking/static/css/main.270b5c59.chunk.css",
-    "main.js": "/cowin-vaccine-booking/static/js/main.ab405a71.chunk.js",
-    "main.js.map": "/cowin-vaccine-booking/static/js/main.ab405a71.chunk.js.map",
-    "runtime-main.js": "/cowin-vaccine-booking/static/js/runtime-main.78aac02c.js",
-    "runtime-main.js.map": "/cowin-vaccine-booking/static/js/runtime-main.78aac02c.js.map",
-    "static/css/2.92c2f793.chunk.css": "/cowin-vaccine-booking/static/css/2.92c2f793.chunk.css",
-    "static/js/2.e953c335.chunk.js": "/cowin-vaccine-booking/static/js/2.e953c335.chunk.js",
-    "static/js/2.e953c335.chunk.js.map": "/cowin-vaccine-booking/static/js/2.e953c335.chunk.js.map",
-    "static/js/3.68ea7f7f.chunk.js": "/cowin-vaccine-booking/static/js/3.68ea7f7f.chunk.js",
-    "static/js/3.68ea7f7f.chunk.js.map": "/cowin-vaccine-booking/static/js/3.68ea7f7f.chunk.js.map",
+    "main.css": "/cowin-vaccine-booking/static/css/main.35503ba4.chunk.css",
+    "main.js": "/cowin-vaccine-booking/static/js/main.314353ef.chunk.js",
+    "main.js.map": "/cowin-vaccine-booking/static/js/main.314353ef.chunk.js.map",
+    "runtime-main.js": "/cowin-vaccine-booking/static/js/runtime-main.9dd0fa03.js",
+    "runtime-main.js.map": "/cowin-vaccine-booking/static/js/runtime-main.9dd0fa03.js.map",
+    "static/css/2.54787924.chunk.css": "/cowin-vaccine-booking/static/css/2.54787924.chunk.css",
+    "static/js/2.c5072312.chunk.js": "/cowin-vaccine-booking/static/js/2.c5072312.chunk.js",
+    "static/js/2.c5072312.chunk.js.map": "/cowin-vaccine-booking/static/js/2.c5072312.chunk.js.map",
+    "static/js/3.2c57b626.chunk.js": "/cowin-vaccine-booking/static/js/3.2c57b626.chunk.js",
+    "static/js/3.2c57b626.chunk.js.map": "/cowin-vaccine-booking/static/js/3.2c57b626.chunk.js.map",
     "index.html": "/cowin-vaccine-booking/index.html",
     "service-worker.js": "/cowin-vaccine-booking/service-worker.js",
     "service-worker.js.map": "/cowin-vaccine-booking/service-worker.js.map",
-    "static/css/2.92c2f793.chunk.css.map": "/cowin-vaccine-booking/static/css/2.92c2f793.chunk.css.map",
-    "static/css/main.270b5c59.chunk.css.map": "/cowin-vaccine-booking/static/css/main.270b5c59.chunk.css.map",
-    "static/js/2.e953c335.chunk.js.LICENSE.txt": "/cowin-vaccine-booking/static/js/2.e953c335.chunk.js.LICENSE.txt",
+    "static/css/2.54787924.chunk.css.map": "/cowin-vaccine-booking/static/css/2.54787924.chunk.css.map",
+    "static/css/main.35503ba4.chunk.css.map": "/cowin-vaccine-booking/static/css/main.35503ba4.chunk.css.map",
+    "static/js/2.c5072312.chunk.js.LICENSE.txt": "/cowin-vaccine-booking/static/js/2.c5072312.chunk.js.LICENSE.txt",
     "static/media/OfflineMerchant.b9f1ab6b.png": "/cowin-vaccine-booking/static/media/OfflineMerchant.b9f1ab6b.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.78aac02c.js",
-    "static/css/2.92c2f793.chunk.css",
-    "static/js/2.e953c335.chunk.js",
-    "static/css/main.270b5c59.chunk.css",
-    "static/js/main.ab405a71.chunk.js"
+    "static/js/runtime-main.9dd0fa03.js",
+    "static/css/2.54787924.chunk.css",
+    "static/js/2.c5072312.chunk.js",
+    "static/css/main.35503ba4.chunk.css",
+    "static/js/main.314353ef.chunk.js"
   ]
 }
