@@ -107,7 +107,7 @@ class App extends React.Component{
       vaccineType: "ANY",
       bookingInProgress: false,
       isAuthenticated: localStorage.token ? true : false,
-      minAge: 18,
+      minAge: 15,
       districtId: null,
       stateId: null,
       beneficiaries: [],
@@ -1380,6 +1380,7 @@ class App extends React.Component{
             value={this.state.minAge}
             disabled={this.state.isWatchingAvailability}
           >
+            <Radio value={15}>15 to 18 Years</Radio>
             <Radio value={18}>18 to 45 Years</Radio>
             <Radio value={45}>45+ Years</Radio>
           </Radio.Group>
