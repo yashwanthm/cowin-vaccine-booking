@@ -29,7 +29,7 @@ import {
   TelegramIcon
 
 } from "react-share"
-import log from "./logger";
+// import log from "./logger";
 
 const { Text } = Typography;
 const { TabPane } = Tabs;
@@ -82,6 +82,12 @@ const filterSession = (s, state) => {
   if (
     parseInt(dose) === 2 &&
     parseInt(s.available_capacity_dose2) < requiredNums
+  ) {
+    return false;
+  }
+  if (
+    parseInt(dose) === 3 &&
+    parseInt(s.available_capacity_dose3) < requiredNums
   ) {
     return false;
   }
@@ -838,7 +844,8 @@ class App extends React.Component{
                             : `No Availability ${s.min_age_limit}+`}
                             <br/>
                             Dose1 - {s.available_capacity_dose1 || 0} <br/>
-                            Dose2 - {s.available_capacity_dose2 || 0}
+                            Dose2 - {s.available_capacity_dose2 || 0} <br/>
+                            Dose3(Precautionary) - {s.available_capacity_dose3 || 0}
                         </div>
                         {parseInt(s.available_capacity > 0) ? (
                           <div>
@@ -906,7 +913,8 @@ class App extends React.Component{
                         : `No Availability ${s.min_age_limit}+`}
                       <br />
                       Dose1 - {s.available_capacity_dose1 || 0} <br />
-                      Dose2 - {s.available_capacity_dose2 || 0}
+                      Dose2 - {s.available_capacity_dose2 || 0} <br />
+                      Dose3(Precautionary) - {s.available_capacity_dose3 || 0}
                     </div>
                     {parseInt(s.available_capacity > 0) ? (
                       <div>
@@ -1415,6 +1423,7 @@ class App extends React.Component{
           >
             <Radio value={1}>Dose 1</Radio>
             <Radio value={2}>Dose 2</Radio>
+            <Radio value={3}>Precautionary Dose</Radio>
           </Radio.Group>
         </Row>
         <Row style={{ marginTop: 5 }}>
